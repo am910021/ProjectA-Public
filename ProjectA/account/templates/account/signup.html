@@ -41,7 +41,7 @@ function FAgreement(form)
 		<h3>
 			有星號(*)為必填項目
 		</h3><br>
-		<form class="form-horizontal" role="form" id="regedit-form" method="post" action="{% url 'account:SignUp' %}">
+		<form class="form-horizontal" role="form" id="regedit-form" method="post" action="{% url 'account:signup' %}">
 			{% csrf_token %}
 			<div class="form-group">
 				<label for="inputEmail3" class="col-sm-2 control-label text-size18">

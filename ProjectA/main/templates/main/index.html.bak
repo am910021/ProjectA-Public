@@ -25,83 +25,47 @@ margin-bottom:20px;
 </style>
 {% endblock %}
 {% block main %}
-{% if messages %}
-  <script>
-  $(function() {
-	    $( "#dialog" ).dialog({
-	      modal: true,
-	      buttons: {
-	        Ok: function() {
-	          $( this ).dialog( "close" );
-	        }
-	      }
-	    });
-	  });
-  
-  </script>
-
- {% for message in messages %}
- {% if 1 == 1 %}
-   <div id="dialog" title="{{message.tags}}">
-  <p>{{message}}</p>
-</div>
- {% endif %}
- {% endfor %}
- 
-{% endif %}
-
-
 <div class="row">
 	<div class="col-md-1"></div>
 	<div class="col-md-10">
 		<div class="thumbnail">
-		
-            <div class="carousel slide" id="carousel-209253">
-                <ol class="carousel-indicators">
-                    <li class="active" data-slide-to="0" data-target="#carousel-209253">
-                    </li>
-                    <li data-slide-to="1" data-target="#carousel-209253">
-                    </li>
-                    <li data-slide-to="2" data-target="#carousel-209253">
-                    </li>
-                </ol>
-                <div class="carousel-inner">
-                    <div class="item active">
-                        <img alt="Carousel Bootstrap First" src="http://lorempixel.com/image_output/technics-q-c-1600-500-6.jpg" />
-                        <div class="carousel-caption">
-                            <h4>
-                                First Thumbnail label
-                            </h4>
-                            <p>
-                                Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <img alt="Carousel Bootstrap Second" src="http://lorempixel.com/image_output/technics-q-c-1600-500-4.jpg" />
-                        <div class="carousel-caption">
-                            <h4>
-                                Second Thumbnail label
-                            </h4>
-                            <p>
-                                Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <img alt="Carousel Bootstrap Third" src="http://lorempixel.com/image_output/technics-q-c-1600-500-1.jpg" />
-                        <div class="carousel-caption">
-                            <h4>
-                                Third Thumbnail label
-                            </h4>
-                            <p>
-                                Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.
-                            </p>
-                        </div>
-                    </div>
-                </div> <a class="left carousel-control" href="#carousel-209253" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a> <a class="right carousel-control" href="#carousel-209253" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
-            </div>
-            
+			<div class="carousel slide" id="carousel-844085">
+				<ol class="carousel-indicators">
+                {% for i in data %}
+					{% if i.4 == 0 %}
+					<li class="active test" data-slide-to="0" data-target="#carousel-844085"></li>
+					{% else%}
+					<li data-slide-to="1" data-target="#carousel-844085"></li>
+					{% endif %}
+                {% endfor %}
+				</ol>
+				<div class="carousel-inner">
+				                {% for i in data %}
+					{% if i.4 == 0 %}
+					<div class="item active">
+						<a href="/news/{{ i.2 }}">
+							<img class="mid-img" alt="{{ i.0 }}" src="{{ i.3 }}" /></a>
+						<div class="carousel-caption">
+							<h4>保留 </h4>
+							<p>保留 </p>
+						</div>
+					</div>
+					{% else%}
+					<div class="item">
+						<a href="/news/{{ i.2 }}">
+							<img class="mid-img" alt="{{ i.0 }}" src="{{ i.3 }}" /></a>
+						<div class="carousel-caption"></div>
+					</div>
+					{% endif %}
+                {% endfor %}
+				</div>
+				<a class="left carousel-control" href="#carousel-844085" data-slide="prev">
+					<span class="glyphicon glyphicon-chevron-left"></span>
+				</a>
+				<a class="right carousel-control" href="#carousel-844085" data-slide="next">
+					<span class="glyphicon glyphicon-chevron-right"></span>
+				</a>
+			</div>
 		</div>
 	</div>
 	<div class="col-md-1"></div>

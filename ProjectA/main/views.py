@@ -3,7 +3,6 @@ from django.core.urlresolvers import reverse
 from django.views.generic import TemplateView
 from django.conf import settings
 
-
 def admin_required(fun):
     def auth(request, *args, **kwargs):
         if not request.user.is_authenticated():
@@ -12,6 +11,14 @@ def admin_required(fun):
             return redirect(reverse('main:main'))
         return fun(request, *args, **kwargs)
     return auth
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 
 class BaseView(TemplateView):
 

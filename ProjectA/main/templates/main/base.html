@@ -8,12 +8,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
-    <script type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
     
-    <noscript>
-    <meta http-equiv="refresh" content="5;URL=">
-    </noscript>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     
+    <noscript><meta http-equiv="refresh" content="5;URL="></noscript>
     
     <style type="text/css">
       body{
@@ -75,6 +76,7 @@ border-color:#A2A0A0;
     {% block style %}{% endblock %}
   </head>
   <body>
+  
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-12">
@@ -82,7 +84,7 @@ border-color:#A2A0A0;
             <div class="navbar-header">
               <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
               <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
-              </button> <a class="navbar-brand" href="{% url 'main:main' %}">{{ SITE_NAME }}</a>
+              </button> <a class="navbar-brand" href="{% url 'index:main' %}">{{ SITE_NAME }}</a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
               <ul class="nav navbar-nav ">
@@ -116,20 +118,20 @@ border-color:#A2A0A0;
               <ul class="nav navbar-nav navbar-right">
                 {% if user.is_authenticated %}
                 <li class="li-text16">
-                  <a href="{{Web_MyAccount}}">{{User_login|safe}}會員中心</a>
+                  <a href="{% url 'account:myaccount' %}">{{ request.user.username }} 會員中心</a>
                 </li >
                 <li class="li-text16">
                   <a href="{{Web_MyCart|safe}}"><spen class="glyphicon glyphicon-shopping-cart"></spen>購物車({{user_oder|safe}})</a>
                 </li>
                 <li class="li-text16">
-                  <a href="{% url 'account:SignOut' %}" style="margin-right:30px;">登出</a>
+                  <a href="{% url 'account:signout' %}" style="margin-right:30px;">登出</a>
                 </li>
                 {% else %}
                 <li class="li-text16">
-                  <a href="{% url 'account:SignIn' %}">登入</a>
+                  <a href="{% url 'account:signin' %}">登入</a>
                 </li>
                 <li class="li-text16">
-                  <a href="{% url 'account:SignUp' %}" style="margin-right:30px;">註冊</a>
+                  <a href="{% url 'account:signup' %}" style="margin-right:30px;">註冊</a>
                 </li>
                 {% endif %}
               </ul>
@@ -160,9 +162,9 @@ border-color:#A2A0A0;
           <h6 class="text-center">
               Copyright © 2015 Yuri, All Rights Reserved.
             </h6>
-            {% if is_admin %}
+            {% if request.user.is_superuser %}
             <h6 class="text-center">
-              <span><a href="{{Admin_Index|safe}}">Administrator</a></span>
+              <span><a href="{% url 'control:admin' %}">Administrator</a></span>
             </h6>
             {% endif %}
           </div>
@@ -170,9 +172,5 @@ border-color:#A2A0A0;
         	<div class="col-md-1"></div>
       </div>
     </div>
-    
-
-    <script src="https://code.jquery.com/jquery.js"></script>
-    <script src="/static/bootstrap/js/bootstrap.js"></script>
   </body>
 </html>

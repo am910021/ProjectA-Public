@@ -1,3 +1,5 @@
+from django.shortcuts import render, redirect
+from django.core.urlresolvers import reverse
 from main.views import BaseView, admin_required
 
 class AdminRequiredMixin(object):
@@ -16,3 +18,7 @@ class CAdminIndex(AdminView):
     
     def get(self, request, *args, **kwargs):
         return AdminView.get(self, request, *args, **kwargs)
+    
+class CAdminSignIn(AdminView):
+    def get(self, request, *args, **kwargs):
+        return redirect('/control/admin/')

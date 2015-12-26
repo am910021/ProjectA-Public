@@ -27,8 +27,9 @@ min-height:700px;
 		{% if not User_login%}
 		<div class="row">
 			<div class="col-md-12">
-				<form class="form-horizontal" role="form" method="POST" action="{% url 'account:SignIn' %}" >
+				<form class="form-horizontal" role="form" method="POST" action="{% url 'account:signin' %}" >
                     {% csrf_token %}
+                    <input type="hidden" name="next" value="{% if nextPage %}{{nextPage}}{% else %}{{ request.GET.next }}{% endif %}" />
 					<div class="form-group">
 						 
 						<label for="username" class="col-sm-2 control-label text-size18">
