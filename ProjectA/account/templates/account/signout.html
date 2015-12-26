@@ -1,0 +1,43 @@
+{% extends base_template_name %}
+{% load staticfiles %}
+
+{% block style %}
+<style type="text/css">
+.text-size18{
+	font-size: 18px;
+	line-height: 18px;
+}
+.set-height700{
+	height:700px;
+}
+  
+</style>
+
+{% endblock %}
+
+{% block main %}
+	<div class="row set-height700">
+		<div class="col-md-2">
+		</div>
+		<div class="col-md-8">
+			<div class="row">
+				<div class="col-md-12">
+					<h2>
+						登出成功
+					</h2>
+					
+					<div>
+						您己經登出{{SITE_NAME}}。
+					</div>如果您還要購物，請您重新登入。<br /><br />5秒後自動轉到首頁
+					
+					<p>
+						<a class="btn" href="{% url 'main:main' %}">回到首頁 »</a>
+						<meta http-equiv="refresh" content="5;url={% url 'main:main' %}" />
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-2">
+		</div>
+	</div>
+{% endblock %}

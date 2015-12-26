@@ -1,0 +1,178 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <title>{{ page_title}} | {{SITE_NAME}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+    <script type="text/javascript"></script>
+    
+    <noscript>
+    <meta http-equiv="refresh" content="5;URL=">
+    </noscript>
+    
+    
+    <style type="text/css">
+      body{
+      font-family: "微軟正黑體";
+      background-image:url( {% static 'background/background.jpg' %} );
+      background-color:#FFFFff;
+      }
+      .navbar-nav > li {
+      font-size: 16 px;
+      }
+      .dropdown-menu a{
+      font-size: 16px;
+      }
+      .navbar-header a{
+      font-size: 30px;
+      }
+      .dropdown-toggle{
+      font-size: 16px;
+      }
+      .li-text16{
+      font-size: 16px;
+      line-height:16px;
+      font-weight: bold;
+      }
+      
+.main {
+    margin-top: 55px;
+        min-height: 700px;
+  margin-bottom: 80px;
+  }
+
+@media (min-width: 768px) {
+.main {
+    margin-top: 105px;
+        min-height: 700px;
+          margin-bottom: 80px;
+  }
+}
+
+@media (min-width: 1080px) {
+.main {
+    margin-top: 55px;
+    min-height: 700px;
+      margin-bottom: 300px;
+  }
+}
+
+#bottom{
+width:100%;
+height: 80px;
+text-align:center;
+padding-top: 20px;
+border-top-style: solid;
+border-width: 2px;
+border-color:#A2A0A0;
+//background-color: #CECECE;
+}
+    </style>
+    {% block style %}{% endblock %}
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <nav class="navbar navbar-fixed-top navbar-default" role="navigation"> <!-- org class="navbar navbar-default navbar-fixed-top"-->
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+              <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+              </button> <a class="navbar-brand" href="{% url 'main:main' %}">{{ SITE_NAME }}</a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+              <ul class="nav navbar-nav ">
+                <!--<li class="li-text16">
+                  <a href="{{Web_Index|safe}}">回首頁</a>
+                </li>-->
+                                <li class="li-text16">
+                  <a href="#">關於</a>
+                </li>
+                <li class="li-text16">
+                  <a href="#">聯絡我們</a>
+                </li>
+                <li class="dropdown li-text16">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">　商品　<strong class="caret"></strong></a>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a><a href="{{Product_List|safe}}">全部分類</a></a>
+                    </li>
+                    {{list|safe}}
+                  </ul>
+                </li>
+              </ul>
+              <form class="navbar-form navbar-left" role="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" />
+                </div>
+                <button type="button" class="btn btn-default" aria-label="Left Align">
+                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                </button>
+              </form>
+              <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                <li class="li-text16">
+                  <a href="{{Web_MyAccount}}">{{User_login|safe}}會員中心</a>
+                </li >
+                <li class="li-text16">
+                  <a href="{{Web_MyCart|safe}}"><spen class="glyphicon glyphicon-shopping-cart"></spen>購物車({{user_oder|safe}})</a>
+                </li>
+                <li class="li-text16">
+                  <a href="{% url 'account:SignOut' %}" style="margin-right:30px;">登出</a>
+                </li>
+                {% else %}
+                <li class="li-text16">
+                  <a href="{% url 'account:SignIn' %}">登入</a>
+                </li>
+                <li class="li-text16">
+                  <a href="{% url 'account:SignUp' %}" style="margin-right:30px;">註冊</a>
+                </li>
+                {% endif %}
+              </ul>
+            </div>
+          </nav>
+        </div>
+      </div>
+      
+      <div class="main">
+      {% block main %}
+      {% endblock %}
+      </div>
+      
+      <div class="row">
+      	<div class="col-md-1"></div>
+        <div class="col-md-10">
+          <!--<div class="navbar navbar-fixed-bottom navbar-default ">
+            <h6 class="text-center">
+              Copyright © 2015 Yuri, All Rights Reserved.
+            </h6>
+            {% if is_admin %}
+            <h6 class="text-center">
+              <span><a href="{{Admin_Index|safe}}">Administrator</a></span>
+            </h6>
+            {% endif %}
+          </div>-->
+          <div id="bottom">
+          <h6 class="text-center">
+              Copyright © 2015 Yuri, All Rights Reserved.
+            </h6>
+            {% if is_admin %}
+            <h6 class="text-center">
+              <span><a href="{{Admin_Index|safe}}">Administrator</a></span>
+            </h6>
+            {% endif %}
+          </div>
+        </div>
+        	<div class="col-md-1"></div>
+      </div>
+    </div>
+    
+
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.js"></script>
+  </body>
+</html>

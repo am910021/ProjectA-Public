@@ -1,0 +1,114 @@
+{% extends base_template_name %}
+{% load staticfiles %}
+
+{% block style %}
+<style type="text/css">
+.text-size18{
+	font-size: 18px;
+	line-height: 18px;
+}
+.set-height700{
+	min-height:700px;
+}
+
+</style>
+
+{% endblock %}
+
+{% block main %}
+	<div class="row set-height700">
+		<div class="col-md-1">
+		</div>
+		<div class="col-md-10">
+			<div class="row">
+				<div class="col-md-6">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>
+									商品管理
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>
+									<a href="#">新增分類 & 分類清單</a>
+								</td>
+							</tr>
+							<tr class="active">
+								<td>
+									<a href="#">商品上架</a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<br><br><br>
+										<table class="table">
+						<thead>
+							<tr>
+								<th>
+									首頁相關-新增 & 移除
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>
+									<a href="#">公告</a>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="#">最新產品消息</a>
+								</td>
+							</tr>
+							
+						</tbody>
+					</table>
+				</div>
+				<div class="col-md-6">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>
+									訂單管理
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="active">
+								<td>
+									<a href="#">總覽(待處理+處理中)</a>
+								</td>
+							</tr>
+							<tr class="danger">
+								<td>
+									<a href="#">待處理</a>
+								</td>
+							</tr>
+							<tr class="warning">
+								<td>
+									<a href="#">處理中</a>
+								</td>
+							</tr>
+							<tr class="warning">
+								<td>
+									<a href="#">配送中</a>
+								</td>
+							</tr>
+
+							<tr class="success">
+								<td>
+									<a href="#">已完成</a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-1">
+		</div>
+	</div>
+{% endblock %}

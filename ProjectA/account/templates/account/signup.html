@@ -1,0 +1,189 @@
+{% extends base_template_name %}
+{% load staticfiles %}
+
+{% block style %}
+<script type="text/javascript" src="//www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
+<style type="text/css">
+.text-size18{
+	font-size: 18px;
+	line-height: 18px;
+}
+.set-height700{
+	min-height:700px;
+}
+
+</style>
+<script type="text/javascript">
+var s = new Array();
+var s_b = false
+var a=true;
+
+
+function FAgreement(form)
+{
+	var a=document.getElementById('Agreement').checked;
+	if (!a){
+		alert("請同意用戶協意，以保障雙方的權利。");
+	}else{
+		form.submit();
+	}
+	
+}
+</script>
+{% endblock %}
+
+{% block main %}
+<div class="row set-height700">
+	<div class="col-md-2">
+	</div>
+	<div class="col-md-8">
+		{% if not success %}
+		<h3>
+			有星號(*)為必填項目
+		</h3><br>
+		<form class="form-horizontal" role="form" id="regedit-form" method="post" action="{% url 'account:SignUp' %}">
+			{% csrf_token %}
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label text-size18">
+					帳戶名稱*
+				</label>
+				<div class="col-sm-10">
+					{{ userForm.username }}
+					{{ userForm.username.errors }}
+				</div>
+			</div>
+			<div class="form-group">
+
+				<label for="inputPassword3" class="col-sm-2 control-label text-size18">
+					密碼*
+				</label>
+				<div class="col-sm-10">
+					{{ userForm.password }}
+					{{ userForm.password.errors }}
+				</div>
+			</div>
+
+			<div class="form-group">
+
+				<label for="inputPassword3" class="col-sm-2 control-label text-size18">
+					確認密碼*
+				</label>
+				<div class="col-sm-10">
+					{{ userForm.password2 }}
+					{{ userForm.password2.errors }}
+				</div>
+			</div>
+
+			<div class="form-group">
+
+				<label for="inputPassword3" class="col-sm-2 control-label text-size18">
+					電子郵件*
+				</label>
+				<div class="col-sm-10">
+					{{ userForm.email }}
+					{{ userForm.email.errors }}
+				</div>
+			</div>
+
+			<div class="form-group">
+
+				<label for="inputPassword3" class="col-sm-2 control-label text-size18">
+					姓名
+				</label>
+				<div class="col-sm-10">
+					{{profileform.fullName}}
+				</div>
+			</div>
+
+			<div class="form-group">
+
+				<label for="inputPassword3" class="col-sm-2 control-label text-size18">
+					電話
+				</label>
+				<div class="col-sm-10">
+					{{profileform.phone}}
+				</div>
+			</div>
+
+			<div class="form-group">
+
+				<label for="inputPassword3" class="col-sm-2 control-label text-size18">
+					地址
+				</label>
+				<div class="col-sm-10">
+					{{profileform.address}}
+				</div>
+			</div>
+
+
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<div class="checkbox">
+
+								<label>
+									<input type="checkbox" id="Agreement"/> 用戶協議
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6 text-right">
+					           <div class="form-group">
+
+                <label for="inputPassword3" class="col-sm-2 control-label text-size18">
+                </label><br>
+                <div class="col-sm-10">
+                    {{CForm.captcha}}<br>
+                    {{CForm.captcha.errors}}
+                </div>
+            </div>
+						
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6">
+						<div class="row">
+							<div class="col-md-6">
+
+								<button type="button" class="btn btn-success btn-lg btn-block" onClick="FAgreement(this.form)">
+									註冊
+								</button><br>
+							</div>
+							<div class="col-md-6">
+
+								<button type="reset" class="btn btn-lg btn-block btn-warning">
+									重置
+								</button><br>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6 text-right">
+					</div>
+				</div>
+			</form>
+			{% else %}
+			<div class="row">
+				<div class="col-md-12">
+					<h2>
+						註冊成功
+					</h2>
+					
+					<div>
+						謝謝註冊{{SITE_NAME}}。
+					</div>如果有未填寫的資料可以去會員中心修改。<br /><br />5秒後自動轉到首頁
+					
+					<p>
+						<a class="btn" href="{% url 'Web_Index' %}">回到首頁 »</a>
+						<meta http-equiv="refresh" content="5;url={% url 'Web_Index' %}" />
+					</p>
+				</div>
+			</div>
+			{% endif %}
+		</div>
+		<div class="col-md-2">
+		</div>
+	</div>
+
+
+	{% endblock %}
