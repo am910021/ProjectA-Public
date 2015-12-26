@@ -1,0 +1,184 @@
+{% extends base_template_name %}
+
+
+{% load staticfiles %}
+
+{% block style %}
+
+<style type="text/css">
+.img-full{
+    max-width: 100%;
+    width: auto;
+
+}
+.text-size16{
+    font-size:16px;
+    line-height: 16px;
+}
+
+hr {
+
+border:0; height:2px; background-color:#d4d4d4;
+
+}
+</style>
+
+
+{% endblock %}
+
+{% block main %}
+<!--<ul class="breadcrumb">
+    <li>
+        <a href="{% url 'index:main' %}">{{SITE_NAME}}</a> <span class="divider">/</span>
+    </li>
+    <li>
+        <a href="/product/{{goods_type}}">{{type_name}}</a> <span class="divider">/</span>
+    </li>
+    <li class="active">
+        {{goods_name}}
+    </li>
+</ul>-->
+<div class="row">
+    <div class="col-md-2">
+    </div>
+    {% if find %}
+    <div class="col-md-8">
+    <br>
+    <a href="{% url 'index:main' %}">{{SITE_NAME}}</a> <span class="divider">/</span><a href="/product/{{goods_type}}">{{type_name}}</a> <span class="divider">/</span>{{goods_name}}
+    <hr>
+        <div class="row">
+            <div class="col-md-6">
+                <img alt="Bootstrap Image Preview" src="{{img}}" class="img-rounded img-full thumbnail"/>
+            </div>
+            <div class="col-md-6">
+                <h3 class="text-left">
+                    {{goods_name}}
+                </h3>
+                <h4 class="text-left text-danger">
+                    價格: 
+                    <span class="price">$ {{ product_cost }} </span>
+                </h4>
+                               <br> <p>
+                    {{ goods_intro }}
+                </p>
+                
+                <br><br>
+                                <h5 class="text-left text-info">
+                    產品編號: {{ product_id }}
+                </h5>
+                    <hr>
+                {% if User_login %}
+                <form class="form-horizontal" role="form" action="#" method="post">
+                    {% csrf_token %}
+                        {{ form.type_id }}
+                        {{ form.goods_name }}
+                        {{ form.goods_id }}
+                        {{ form.goods_cost }}
+                    <div class="form-group has-success">
+                        <label for="inputEmail3" class="col-sm-2 control-label text-size16">數量</label>
+                        <div class="col-sm-10">
+                            {{ form.quantity }}{{ form.quantity.errors }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+
+                            <button type="submit" class="btn btn-block btn-success" style="font-size:18px;">
+                                加入購物車
+                            </button>
+                            
+                            {% if is_admin == True %}
+                            
+                             <a href="/admin/item_change/{{ product_id }}/" class="btn btn-block btn-success" style="font-size:18px;">修改</a>
+                            <a href="{% url 'Item_Delete' product_id  %}" class="btn btn-block btn-danger" style="font-size:18px;">下架</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </form>
+                {% else %}
+                <form class="form-horizontal" role="form" action="#" method="post">
+                    {% csrf_token %}
+                    <div class="form-group has-success">
+                        <label for="inputEmail3" class="col-sm-2 control-label text-size16">數量</label>
+                        <div class="col-sm-10">
+                            {{ form.quantity }}{{ form.quantity.errors }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+
+                            <button type="submit" class="btn btn-block btn-success disabled"  disabled="disabled" style="font-size:18px;">
+                                訂購(只開放給會員)
+                            </button>
+                        </div>
+                    </div>
+                </form> 
+
+                
+                {% endif%}
+
+
+
+            </div>
+        </div>
+
+
+
+        <div class="row">
+            <div class="col-md-12">
+			<div class="tabbable" id="tabs-858950" style="min-height:150px;">
+				<ul class="nav nav-tabs">
+					<li class="active">
+						<a href="#panel-962237" data-toggle="tab">使用方法</a>
+					</li>
+					<li>
+						<a href="#panel-324293" data-toggle="tab">成分</a>
+					</li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane active" id="panel-962237">
+						<p>
+							{{ manual }}
+						</p>
+					</div>
+					<div class="tab-pane" id="panel-324293">
+						<p>
+							{{ ingredient }}
+						</p>
+					</div>
+				</div>
+			</div>
+            </div>
+        </div><br>
+        <div class="row">
+            <div class="col-md-12">
+                <h4>
+                    你可能會喜歡...
+                </h4>
+                <p>
+                    {{ goods_intro2 }}
+                </p>
+                <p>
+                    <a class="btn" href="#">原廠網頁 »</a>
+                </p>
+            </div>
+        </div>
+    </div>
+                    {% else %}
+                <div class="col-md-8">
+                <h1>商品不存在。</h1>
+                <br>
+                                			<button type="button" class="btn btn-success"  onclick="history.back()" >回上一頁</button>
+                    <meta http-equiv="refresh" content="10;URL={% url 'Web_Index' %}">
+                
+                </div>
+    
+    
+    {% endif %}
+    
+    
+    <div class="col-md-2">
+    </div>
+</div>
+
+{% endblock %}

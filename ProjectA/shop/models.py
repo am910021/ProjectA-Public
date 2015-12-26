@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime
 
 # Create your models here.
 class Type(models.Model):
@@ -9,22 +10,24 @@ class Type(models.Model):
     def __str__(self):
         return self.name + '(' + self.number + ')'
     
+    def getValue(self):
+        return self.id
+    
 
 class Item(models.Model):
     type = models.OneToOneField(Type)
-    typeName = type.name
     number = models.CharField(max_length=128, blank=True)
     name = models.CharField(max_length=128)
     cost = models.IntegerField()
     image = models.CharField(max_length=128)
     image2 = models.CharField(max_length=128)
     intro = models.TextField()
-    enable = models.CharField(max_length=128)
-    sp = models.CharField(max_length=128)
-    new = models.CharField(max_length=128)
     ingredient = models.TextField()
     manual = models.TextField()
-    time = models.TimeField()
+    enable = models.BooleanField(default=True)
+    sp = models.BooleanField(default=False)
+    new = models.BooleanField(default=True)
+    time = models.DateTimeField()
     
     def __str__(self):
         return self.name + '(' + self.number + ')'

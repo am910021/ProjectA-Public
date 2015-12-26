@@ -74,11 +74,17 @@ class CSignIn(BaseView):
     def post(self,request, *args, **kwargs):
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(username=username, password=password)
-        log = UserProfile.objects.get(username=username)
+
+        try:
+            log = UserProfile.objects.get(username=username)
+        except:
+            log = UserProfile.objects.create(username=username)
+            log.user = User.objects.get(username=username)
+            
         log.ip = get_client_ip(request)
         log.save()
         
+        user = authenticate(username=username, password=password)
         nextPage = request.POST.get('next')
         if not user: # authenticate fail
             kwargs['error'] = '登入失敗'

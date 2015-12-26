@@ -1,7 +1,7 @@
 from django.conf.urls import url
-from main.views import *
+from shop.views import CShop
 
 
 urlpatterns = [
-    url(r'^$', CIndexView.as_view(), name='main'),
+    url(r'^$', CShop.as_view(), name='shop'),
 ]
