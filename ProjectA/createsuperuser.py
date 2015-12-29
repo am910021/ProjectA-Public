@@ -7,7 +7,6 @@ import re
 from pip._vendor.distlib.compat import raw_input
 from account.models import User, UserProfile
 from django.utils import timezone
-from django.contrib.auth import authenticate
 
 class bcolors:
     HEADER = '\033[95m'
