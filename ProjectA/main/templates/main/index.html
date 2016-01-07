@@ -22,6 +22,11 @@ height:450px;
 margin-bottom:20px;
 }
 
+#Picture-turns{
+margin-top:5px;
+
+}
+
 </style>
 {% endblock %}
 {% block main %}
@@ -50,11 +55,42 @@ margin-bottom:20px;
  
 {% endif %}
 
+<div class="container">
+
+    <div class="row">
+
+        <div class="col-md-6 v-align">
+            <img alt="Bootstrap Image Preview" src="{% static 'image/logo1.png' %}"  style="width:100%;height:auto"/>
+        </div>
+        
+        <div class="col-md-4 v-align">
+        
+        <div id="sarch">
+            <form class="" role="search">
+                <input type="text" class="form-control2 form-control2-width" placeholder="商品編號 or 編號">
+                <button type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                </button>
+            </form>
+        </div>
+        
+        </div>
+
+        
+            <div class="col-md-1 v-align">
+            asdasd
+            </div>
+    </div>
+
+
+
+</div>
+
+
 
 <div class="row">
-	<div class="col-md-1"></div>
-	<div class="col-md-10">
-		<div class="thumbnail">
+	<div class="container">
+		<div id="Picture-turns">
 		
             <div class="carousel slide" id="carousel-209253">
                 <ol class="carousel-indicators">
@@ -67,7 +103,7 @@ margin-bottom:20px;
                 </ol>
                 <div class="carousel-inner">
                     <div class="item active">
-                        <img alt="Carousel Bootstrap First" src="http://lorempixel.com/image_output/technics-q-c-1600-500-6.jpg" />
+                        <img alt="Carousel Bootstrap First" src="http://lorempixel.com/image_output/technics-q-c-1600-500-3.jpg" />
                         <div class="carousel-caption">
                             <h4>
                                 First Thumbnail label
@@ -78,7 +114,7 @@ margin-bottom:20px;
                         </div>
                     </div>
                     <div class="item">
-                        <img alt="Carousel Bootstrap Second" src="http://lorempixel.com/image_output/technics-q-c-1600-500-4.jpg" />
+                        <img alt="Carousel Bootstrap Second" src="http://lorempixel.com/image_output/technics-q-c-1600-500-2.jpg" />
                         <div class="carousel-caption">
                             <h4>
                                 Second Thumbnail label
@@ -89,7 +125,7 @@ margin-bottom:20px;
                         </div>
                     </div>
                     <div class="item">
-                        <img alt="Carousel Bootstrap Third" src="http://lorempixel.com/image_output/technics-q-c-1600-500-1.jpg" />
+                        <img alt="Carousel Bootstrap Third" src="http://lorempixel.com/image_output/technics-q-c-1600-500-4.jpg" />
                         <div class="carousel-caption">
                             <h4>
                                 Third Thumbnail label
@@ -104,12 +140,10 @@ margin-bottom:20px;
             
 		</div>
 	</div>
-	<div class="col-md-1"></div>
 </div>
 <br>
 	<div class="row">
-		<div class="col-md-1"></div>
-		<div class="col-md-10">
+		<div class="container">
 			<div class="row">
 				<div class="col-md-4">
 					<div style="border: 1px solid #ddd;border-radius: 4px">
@@ -184,6 +218,5 @@ margin-bottom:20px;
 					<div class="col-md-12"></div>
 				</div>
 			</div>
-			<div class="col-md-1"></div>
 		</div>
 {% endblock %}

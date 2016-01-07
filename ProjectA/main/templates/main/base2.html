@@ -1,0 +1,180 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html><head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <title>{{ page_title}} | {{SITE_NAME}}</title>
+    
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+    <script src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+    <noscript><meta http-equiv="refresh" content="5;URL="></noscript>
+
+<style id="jsbin-css">
+
+/* icon */ .custom-navbar .fa {font-size:25px}
+
+@media (max-width:767px) { 
+  .custom-navbar .navbar-right {
+      float: right;
+      padding-right: 15px;
+  }
+  .custom-navbar .nav.navbar-nav.navbar-right li {
+      float: right;
+  }
+    .custom-navbar .nav.navbar-nav.navbar-right li > a {
+      padding:8px 5px;
+  }
+  .custom-navbar .navbar-toggle {
+      float: right
+  }
+  .custom-navbar .navbar-header {
+      float: left;
+      width: auto!important;
+  }
+  .custom-navbar .navbar-collapse {
+      clear: both;
+      float: none;
+  }
+}
+</style>
+
+
+<style type="text/css">/*
+ * Off Canvas
+ * --------------------------------------------------
+ */
+.navbar-collapse {
+  max-height: 100%;
+}
+@media screen and (max-width: 768px) {
+  .row-offcanvas {
+    position: relative;
+    -webkit-transition: all 0.25s ease-out;
+    -moz-transition: all 0.25s ease-out;
+    transition: all 0.25s ease-out;
+  }
+  .row-offcanvas-right .sidebar-offcanvas {
+    right: -60%;
+  
+    margin-right: 0px;
+    background-color: #f3f3f3;
+  }
+  .row-offcanvas-left .sidebar-offcanvas {
+    left: -50%; 
+  }
+  .row-offcanvas-right.active {
+    right: 60%;  
+  }
+  .row-offcanvas-left.active {
+    left: 50%;  
+  }
+  .sidebar-offcanvas {
+    position: absolute;
+    top: 0;
+    width: 60%;  
+    height: 100%;
+    display: none;
+  
+  }
+}</style>
+<script type="text/javascript">$(document).ready(function() {
+  $('[data-toggle=offcanvas]').click(function() {
+    $('.row-offcanvas').toggleClass('active');
+    $('.showhide').toggle();
+  });
+});</script>
+
+    {% block style %}{% endblock %}
+
+</head>
+<body>
+
+<div class="container-fluid">
+<div class="row row-offcanvas row-offcanvas-right">
+      <div class="visible-sm visible-md visible-lg">
+      <nav class="navbar  navbar-default navbar-fixed-top custom-navbar" role="navigation">
+<div class="container">
+  
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Link</a></li>
+            <li><a href="#">Link</a></li>
+            <li><a href="#">Link</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">Nav header</li>
+                <li><a href="#">Separated link</a></li>
+                <li><a href="#">One more separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+               <li>
+                 <a href="#" class="fa fa-cog"></a>
+               </li>
+               <li>
+                 <a href="#" class="fa fa-home"></a>
+               </li>
+            </ul>
+
+         </div>
+      </nav>
+    </div>
+    
+    <div class=" visible-xs">
+  <nav class="navbar  navbar-default navbar-fixed-top custom-navbar" role="navigation">
+         <div class="container">
+            <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".navbar-collapse"> 
+              <span class="icon-bar"></span> 
+              <span class="icon-bar"></span>
+               <span class="icon-bar"></span>
+                </button>
+            <div class="navbar-header">
+               <a class="navbar-brand" rel="home" href="#" title="Help">
+               Help ?
+               </a>
+            </div>
+            <!-- Non-collapsing right-side icons -->
+            <!-- icon -->
+            <!-- the collapsing menu -->
+
+            <!--/.nav-collapse -->
+         </div>
+         <!--/.container -->
+      </nav>
+
+      <div class="col-xs-6 col-sm-3 sidebar-offcanvas showhide navbar-collapse" id="sidebar" role="navigation" style="display: none;">
+        <div class="sidebar-nav">
+
+            <!-- menu -->
+          
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+              {% block main %}
+      {% endblock %}
+        </div>
+    </div>
+
+
+  </div>
+</div>
+
+
+
+</body></html>

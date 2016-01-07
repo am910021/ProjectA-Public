@@ -7,9 +7,6 @@
 	font-size: 18px;
 	line-height: 18px;
 }
-.set-height700{
-	min-height:700px;
-}
 
 </style>
 
@@ -31,9 +28,14 @@
 							</tr>
 						</thead>
 						<tbody>
+                            <tr>
+                                <td>
+                                    <a href="{% url 'control:brand' %}">品牌</a>
+                                </td>
+                            </tr>
 							<tr>
 								<td>
-									<a href="#">新增分類 & 分類清單</a>
+									<a href="{% url 'control:category' %}">分類</a>
 								</td>
 							</tr>
 							<tr class="active">

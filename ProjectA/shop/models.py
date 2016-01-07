@@ -2,6 +2,25 @@ from django.db import models
 from datetime import datetime
 
 # Create your models here.
+class Brand(models.Model):
+    name = models.CharField(max_length=128)
+    description = models.CharField(max_length=100)
+    image = models.CharField(max_length=128, blank=True)
+    content = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return self.name
+    
+class Category(models.Model):
+    name = models.CharField(max_length=128)
+    image = models.CharField(max_length=128, blank=True)
+    content = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return self.name
+
 class Type(models.Model):
     number = models.CharField(max_length=128, blank=True)
     name = models.CharField(max_length=128)

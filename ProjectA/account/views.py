@@ -74,15 +74,6 @@ class CSignIn(BaseView):
     def post(self,request, *args, **kwargs):
         username = request.POST.get('username')
         password = request.POST.get('password')
-
-        try:
-            log = UserProfile.objects.get(username=username)
-        except:
-            log = UserProfile.objects.create(username=username)
-            log.user = User.objects.get(username=username)
-            
-        log.ip = get_client_ip(request)
-        log.save()
         
         user = authenticate(username=username, password=password)
         nextPage = request.POST.get('next')
@@ -94,6 +85,9 @@ class CSignIn(BaseView):
         if not user.is_active:
             kwargs['error'] = '帳號已停用' 
             return super(CSignIn, self).get(request, *args, **kwargs)
+        log = UserProfile.objects.get(username=username)
+        log.ip = get_client_ip(request)
+        log.save()
         login(request, user)
         messages.add_message(request, 50, request.user.username+'會員登入成功', extra_tags='登入成功')
         #messages.success(request, username+'會員登入成功', extra_tags='登入成功')

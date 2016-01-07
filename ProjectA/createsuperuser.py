@@ -63,7 +63,7 @@ def create():
         print(bcolors.FAIL + "\n\n 取消建立帳號 \n"  + bcolors.ENDC)
 
 def email_valid(email):
-    match = re.search(r'"^[\w\.\+\-]+\@[\w]+\.[a-z]{2,3}$"', email)
+    match = re.search(r'^[\w\.\+\-]+\@[\w]+\.[a-z]{2,3}$', email)
     if match:
         return True
     else:

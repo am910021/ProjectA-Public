@@ -1,0 +1,90 @@
+{% extends base_template_name %}
+{% load control %}
+{% load staticfiles %}
+
+{% block style %}
+<style type="text/css">
+.text-size18{
+	font-size: 18px;
+	line-height: 18px;
+}
+
+</style>
+
+{% endblock %}
+
+{% block main %}
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-8">
+                </div>
+                <div class="col-md-2">
+                    <a href="{% url 'control:admin' %}" class="btn btn-block btn-info">
+                        管理員首頁
+                    </a>
+                </div>
+                <div class="col-md-2">
+                     
+                    <a href="{% url 'control:categoryAdd' %}" class="btn btn-block btn-info">
+                        新增品牌
+                    </a>
+                </div>
+            </div>
+            <br>
+            <table class="table">
+                <thead>
+                    <tr class="success">
+                        <th>
+                            #
+                        </th>
+                        <th>
+                            名稱
+                        </th>
+                        <th>
+                            說明
+                        </th>
+                        <th>
+                            預覽
+                        </th>
+                        <th>
+                            修改
+                        </th>
+                        <th>
+                            狀態
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for i in number %}
+                    <tr class="{{i|setAvtive}}">
+                        <td style="width:4%">
+                            {{i|brandID:brand}}
+                        </td>
+                        <td style="width:10%">
+                            {{i|brandName:brand}}
+                        </td>
+                        <td>
+                        {{i|brandDescription:brand}}
+                        </td>
+                        <td style="width:4%">
+                            <a href="{% url 'control:brandPreview' i|brandID:brand %}" target="_blank">預覽</a>
+                        </td>
+                        </td>
+                        <td style="width:4%">
+                            <a href="{% url 'control:brandEdit' i|brandID:brand %}">修改</a>
+                        </td>
+                        <td style="width:10%">
+                            {{ "too long, don't read"|truncatewords:4}}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-2">
+        </div>
+    </div>
+{% endblock %}
