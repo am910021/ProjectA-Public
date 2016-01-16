@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required 
 from main.views import BaseView, get_client_ip
-from account.forms import UserProfileForm, SignupForm, CaptchaForm, ModifyForm
+from account.forms import UserProfileForm, SignupForm, CaptchaForm, UserForm
 from account.models import UserProfile
 from django.contrib.auth.models import User
 
@@ -47,7 +47,7 @@ class CSignUp(BaseView):
         
         user = userForm.save()
         password = user.password
-        user.set_password(user.password)
+        user.set_password(password)
         user.save()
         userProfile = profileform.save(commit=False)
         userProfile.user = user
@@ -112,30 +112,33 @@ class CProfile(UserView):
     page_title = '個人資料'
     
     def get(self, request, *args, **kwargs):
-        modifyform = ModifyForm()
-        modifyform.readonly('username')
-        modifyform.value(request.user.username)
-        kwargs['modifyForm'] = modifyform
+        user = User.objects.get(username=request.user.username)
+        userform = UserForm(instance=user)
+        profileform = UserProfileForm(instance=user.userprofile)
+         
+        kwargs['userform'] = userform
+        kwargs['profileform'] = profileform
         return super(CProfile, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
-        modifyform = ModifyForm(request.POST)
-        if not modifyform.is_valid():
-            kwargs['modifyForm'] = modifyform
+        user = User.objects.get(username=request.user.username)
+        userform = UserForm(request.POST, instance=user)
+        profileform = UserProfileForm(request.POST, instance=user.userprofile)
+
+        if not (userform.is_valid() and profileform.is_valid()):
+            kwargs['userform'] = userform
+            kwargs['profileform'] = profileform
             return super(CProfile, self).post(request, *args, **kwargs)
         
-        data = modifyform.cleaned_data
-        userProfile = UserProfile.objects.get(username=data.get('username'))
-        userProfile.user.set_password(data.get('password'))
-        userProfile.user.email = data.get('email')
-        userProfile.user.save()
-        userProfile.fullName = data.get('fullName')
-        userProfile.address = data.get('address')
-        userProfile.phone = data.get('phone')
-        userProfile.save()
+        profileform.save()
+        user = userform.save()
+        password = userform.cleaned_data.get('password')
+        if password:
+            user.set_password(password)
+            user.save()
+            log = authenticate(username=user.username, password=password)
+            login(request, log)
+        messages.success(request, '會員資料修改成功')
         
-        user = authenticate(username=data.get('username'), password=data.get('password'))
-        login(request, user)
-        messages.success(request, "帳號修改成功")
         return redirect(reverse('account:profile'))
     

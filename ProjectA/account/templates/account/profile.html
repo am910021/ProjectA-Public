@@ -50,12 +50,12 @@ height:700px;
 					<tr class="warning">
 						<td class="text-right">
                         <p></p>
-						<label for="username" class="control-label text-size18">
-                            {{modifyForm.username.label}}
+						<label for="id_username" class="control-label text-size18">
+                            {{userform.username.label}}
                         </label>
 						</td>
 						<td>
-							{{modifyForm.username}}
+							{{userform.username}}
 						</td>
 						<td>
 							你登入時的帳號名稱
@@ -64,13 +64,13 @@ height:700px;
 					<tr class="info">
                         <td class="text-right">
                         <p></p>
-                        <label for="password" class="control-label text-size18">
-                            {{modifyForm.password.label}}
+                        <label for="id_password" class="control-label text-size18">
+                            {{userform.password.label}}
                         </label>
                         </td>
                         <td>
-                            {{modifyForm.password}}
-                            {{modifyForm.password.errors}}
+                            {{userform.password}}
+                            {{userform.password.errors}}
                         </td>
 						<td>
 							修改密碼（不改請留空）
@@ -79,13 +79,13 @@ height:700px;
                     <tr class="info">
                         <td class="text-right">
                         <p></p>
-                        <label for="password2" class="control-label text-size18">
-                            {{modifyForm.password2.label}}
+                        <label for="id_password2" class="control-label text-size18">
+                            {{userform.password2.label}}
                         </label>
                         </td>
                         <td>
-                            {{modifyForm.password2}}
-                            {{modifyForm.password2.errors}}
+                            {{userform.password2}}
+                            {{userform.password2.errors}}
                         </td>
                         <td>
                             確認修改密碼（不改請留空）
@@ -94,12 +94,12 @@ height:700px;
 					<tr class="active">
                         <td class="text-right">
                         <p></p>
-                        <label for="email" class="control-label text-size18">
-                            {{modifyForm.email.label}}
+                        <label for="id_email" class="control-label text-size18">
+                            {{userform.email.label}}
                         </label>
                         </td>
                         <td>
-                            {{modifyForm.email}}
+                            {{userform.email}}
                         </td>
 						<td>
 							通知用戶的管道
@@ -108,12 +108,12 @@ height:700px;
 					<tr class="active">
                         <td class="text-right">
                         <p></p>
-                        <label for="fullName" class="control-label text-size18">
-                            {{modifyForm.fullName.label}}
+                        <label for="id_fullName" class="control-label text-size18">
+                            {{profileform.fullName.label}}
                         </label>
                         </td>
 						<td>
-							{{modifyForm.fullName}}
+							{{profileform.fullName}}
 						</td>
 						<td>
 							為預設收件人的姓名
@@ -122,12 +122,12 @@ height:700px;
 					<tr class="active">
                         <td class="text-right">
                         <p></p>
-                        <label for="phone" class="control-label text-size18">
-                            {{modifyForm.phone.label}}
+                        <label for="id_phone" class="control-label text-size18">
+                            {{profileform.phone.label}}
                         </label>
                         </td>
 						<td>
-							{{modifyForm.phone}}
+							{{profileform.phone}}
 						</td>
 						<td>
 							為預設收件人的電話號碼
@@ -136,12 +136,12 @@ height:700px;
 					<tr class="active">
                         <td class="text-right">
                         <p></p>
-                        <label for="address" class="control-label text-size18">
-                            {{modifyForm.address.label}}
+                        <label for="id_address" class="control-label text-size18">
+                            {{profileform.address.label}}
                         </label>
                         </td>
 						<td>
-							{{modifyForm.address}}
+							{{profileform.address}}
 						</td>
 						<td>
 							為預設收件人的地址
@@ -161,7 +161,7 @@ height:700px;
 					 {% endfor %}
 					 {% endif %}
 					
-					<button type="submit" class="btn btn-active btn-lg btn-block" >
+					<button type="submit" class="btn btn-default btn-lg btn-block" >
 						修改資料<span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
 					</button>
 				</div>

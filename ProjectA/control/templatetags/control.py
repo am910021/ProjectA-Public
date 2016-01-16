@@ -33,7 +33,7 @@ def getBrand(value, data):
 
 @register.filter(name='getImage')
 def getImage(value, data):
-    html = """<img src="https://dl.dropboxusercontent.com/s/{path}" style="width:60px">"""
+    html = """<img src="https://dl.dropboxusercontent.com/s/{path}" class="list-img">"""
     return html.format(path=data[value].image) if data[value].image!="" else "沒有圖片"
 
 """@register.filter(name='brand')

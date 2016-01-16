@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
+from django.contrib import messages
 from datetime import datetime
 from main.models import Setting
 from main.views import BaseView, admin_required
 from main.dropbox import file_put2, file_delete
-from .forms import BrandForm, CategoryForm, EnableCategory
+from .forms import BrandForm, CategoryForm
 from shop.models import Brand, Category
 
 class AdminRequiredMixin(object):
@@ -35,7 +36,7 @@ class CAdminSignIn(AdminView):
         return redirect('/control/admin/')
     
 class CBrand(AdminView):
-    template_name = 'control/brand.html'
+    template_name = 'control/brand/brand.html'
     page_title = '品牌'
     
     def get(self, request, *args, **kwargs):
@@ -45,27 +46,26 @@ class CBrand(AdminView):
         return super(CBrand, self).get( request, *args, **kwargs)
     
 class CBrandPreview(AdminView):
-    template_name = 'control/brandpreview.html'
+    template_name = 'control/brand/preview.html'
     page_title = '品牌'
     
     def get(self, request, *args, **kwargs):
-        print(kwargs['brandID'])
         brand = Brand.objects.get(id=kwargs['brandID'])
         kwargs['content'] = brand.content
         return super(CBrandPreview, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
-        brand = Brand.objects.all()
-        kwargs['brand'] =brand
-        kwargs['number'] = list(range(len(brand)))
+        brandform = BrandForm(request.POST)
+        brandform.is_valid()
+        kwargs['content'] = brandform.cleaned_data.get('content')
         return super(CBrandPreview, self).post(request, *args, **kwargs)
     
 class CBrandAdd(AdminView):
-    template_name = 'control/brandadd.html'
+    template_name = 'control/brand/add.html'
     page_title = '品牌管理'
     
     def get(self, request, *args, **kwargs):
-        kwargs['form'] = BrandForm
+        kwargs['form'] = BrandForm()
         return super(CBrandAdd, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
@@ -80,7 +80,7 @@ class CBrandAdd(AdminView):
         return redirect(reverse('control:brand'))
     
 class CBrandEdit(AdminView):
-    template_name = 'control/brandedit.html'
+    template_name = 'control/brand/edit.html'
     page_title = '品牌管理'
     
     def get(self, request, *args, **kwargs):
@@ -167,14 +167,53 @@ class CCategoryEdit(AdminView):
         return redirect(reverse('control:category'))
     
 class VConfig(AdminView):
-    template_name = 'control/config.html' # xxxx/xxx.html
+    template_name = 'control/config/config.html' # xxxx/xxx.html
     page_title = '基本設定' # title
 
     def get(self, request, *args, **kwargs):
-        category = Setting.objects.filter(name="category")[0]
-        kwargs['enableCategory'] = EnableCategory(instance=category)
+        category = Setting.objects.get_or_create(name="category")[0]
+        kwargs['isActive'] = category.isActive
         return super(VConfig, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
-        return super(VConfig, self).post(request, *args, **kwargs)
+        category = Setting.objects.get_or_create(name="category")[0]
+        category.isActive = True if request.POST.get('isActive') else False
+        category.save()
+        
+        messages.success(request, '設定成功')
+        return redirect(reverse('control:config'))
+    
+class ConfigEmail(AdminView):
+    template_name = 'control/config/email.html' # xxxx/xxx.html
+    page_title = 'Email 寄信設定' # title
+
+    def get(self, request, *args, **kwargs):
+        gmail = Setting.objects.get_or_create(name="gmailAccount")[0]
+        kwargs['data'] = [gmail.c1, gmail.c2, gmail.isActive]
+        return super(ConfigEmail, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        gmail = Setting.objects.get_or_create(name="gmailAccount")[0]
+        gmail.c1 = request.POST.get('account')
+        gmail.c2 = request.POST.get('password')
+        gmail.isActive = True if request.POST.get('isActive') else False
+        gmail.save()
+        messages.success(request, '設定成功')
+        return redirect(reverse('control:configEmail'))
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     

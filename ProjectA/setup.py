@@ -19,7 +19,7 @@ class bcolors:
 
 def setup():
     Setting.objects.get_or_create(name="category")
-
+    Setting.objects.get_or_create(name="gmailAccount")
 
 
 if __name__ == '__main__':

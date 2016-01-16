@@ -30,20 +30,3 @@ class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = ('name', 'description','isActive', 'brand')
-        
-
-class EnableCategory(forms.ModelForm):
-    CHOICES=[('True','啟用'),
-         ('False','停用')]
-    
-    name = forms.CharField(max_length=15, widget=forms.HiddenInput())
-    isActive = forms.BooleanField()
-    
-    class Meta:
-        model = Setting
-        fields = ('name', 'isActive') 
-
-    
-    
-    
-    

@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from control.views import CAdminIndex, CAdminSignIn, VConfig
+from control.views import CAdminIndex, CAdminSignIn, VConfig, ConfigEmail
 from .views import CBrand, CBrandAdd, CBrandEdit, CBrandPreview
 from .views import CCategory, CCategoryAdd, CCategoryEdit
 
@@ -8,6 +8,8 @@ urlpatterns = [
     url(r'^$', CAdminIndex.as_view(), name='admin'),
     url(r'^admin/login/$', CAdminSignIn.as_view(), name='SignIn'),
     url(r'^config/$', VConfig.as_view(), name='config'),
+    url(r'^config/email/$', ConfigEmail.as_view(), name='configEmail'),
+    
     
     url(r'^brand/$', CBrand.as_view(), name='brand'),
     url(r'^brandadd/$', CBrandAdd.as_view(), name='brandAdd'),
