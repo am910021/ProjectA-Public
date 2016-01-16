@@ -1,5 +1,5 @@
 from main.views import BaseView
-from shop.models import Type, Item
+from shop.models import Item
 from django.contrib.auth.models import User
 from account.models import UserProfile
 #from django.http import HttpResponseRedirect, HttpResponseForbidden,HttpResponse

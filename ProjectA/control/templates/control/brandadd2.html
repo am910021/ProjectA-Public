@@ -15,6 +15,52 @@ tinymce.init({
     ],
     toolbar: "insertfile undo redo | styleselect | forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
 });
+
+$(function() {
+    $( "#dialog-upload" ).dialog({
+      modal: true,
+      buttons: {
+        Ok: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+  });
+  
+$('#form').on('submit', uploadFiles);
+
+//Catch the form submit and upload the files
+function uploadFiles(e)
+{
+    e.preventDefault();
+    var formData = new FormData(this);
+
+      if (!CheckForm())
+          return;
+
+    text.textContent = "上傳中";
+    $.ajax({
+      type: '{% url 'control:brandAdd'%}',
+      url: postUrl,
+      dataType: "json",
+      data: formData,
+      cache: false,
+      contentType: false,
+      processData: false,
+      multiple: true,
+      success: function(json) {
+      console.log(json);
+      if (json.success == true) {
+    	    
+    	  window.location = "{{control:brand}}";
+          }
+      },
+      error: function(data,json) {
+        text.textContent = "上傳失敗";
+      }
+ });
+}
+
 </script>
 
 <style type="text/css">
@@ -28,6 +74,18 @@ tinymce.init({
 {% endblock %}
 
 {% block main %}
+
+<div id="dialog-upload" title="Download complete">
+  <p>
+    <span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
+    Your files have downloaded successfully into the My Downloads folder.
+  </p>
+  <p>
+    Currently using <b>36% of your storage space</b>.
+  </p>
+</div>
+
+
     <div class="row">
         <div class="col-md-12">
             <div class="row">
@@ -53,7 +111,7 @@ tinymce.init({
             </div>
             <br>
             
-                    <form role="form" method="post" action="{% url 'control:brandEdit' brandID %}" enctype="multipart/form-data">
+                    <form id="form" role="form" method="post" action="{% url 'control:brandAdd'%}" enctype="multipart/form-data">
                     {% csrf_token %}
                         <div class="form-group">
                              
@@ -63,7 +121,7 @@ tinymce.init({
                             {{form.name}}
                             <br>
                              <label for="name">啟用品牌-</label>
-                            {{form.isActive}}
+                            {{form.is_active}}
                         </div>
                         <div class="form-group">
                              

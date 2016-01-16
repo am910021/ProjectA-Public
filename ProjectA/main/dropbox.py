@@ -1,4 +1,5 @@
 # Include the Dropbox SDK
+from datetime import datetime
 import dropbox
 
 # Get your app key and secret from the Dropbox developer website
@@ -18,7 +19,8 @@ access_token = token
 #out.close()
 #print(metadata)
 
-def file_put2(file, number, saveName):
+def file_put2(file, number):
+    saveName = str(datetime.strftime(datetime.now(), '%Y%m%d'))
     dbx = dropbox.Dropbox(token)
     size = file.size
     type = file.content_type.split("/")[1]
@@ -31,32 +33,19 @@ def file_put2(file, number, saveName):
     share = dbx.sharing_create_shared_link('/'+name).url.split("/")
     return share[4]+"/"+name
 
+
+
     
 def file_get2(saveName, number, content_type, size):
     dbx = dropbox.Dropbox(token)
     type = content_type.split("/")[1]
     name = saveName+str(number)+"."+type
     file = dbx.files_get('/'+name)
-    print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-    print(file)
 
-def file_put(file, number,saveName):
-    client = dropbox.client.DropboxClient(access_token)
-    size = file.size
-    type = file.content_type.split("/")[1]
-    name = saveName+str(number)+"."+type
-    
-    response = client.put_file('/'+name, file)
-    return size==response['bytes']
 
-def file_get(saveName, number, content_type, size):
-    client = dropbox.client.DropboxClient(access_token)
-    type = content_type.split("/")[1]
-    name = saveName+str(number)+"."+type
-    file, metadata = client.get_file_and_metadata("/"+name)
-    if str(metadata['bytes'])==size:
-        return file
-    else:
-        return False
+def file_delete(name):
+    dbx = dropbox.Dropbox(token)
+    delFile = dbx.files_delete('/'+name)
+    print(delFile)
 
 

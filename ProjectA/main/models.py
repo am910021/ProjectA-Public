@@ -2,8 +2,9 @@ from django.db import models
 
 # Create your models here.
 
-class setting(models.Model):
-    name = models.CharField(max_length=15, unique=True)
+class Setting(models.Model):
+    name = models.CharField(max_length=15, unique=True, blank=False)
+    isActive = models.BooleanField(default=True)
     c1 = models.CharField(max_length=128, blank=True)
     c2 = models.CharField(max_length=128, blank=True)
     c3 = models.CharField(max_length=128, blank=True)

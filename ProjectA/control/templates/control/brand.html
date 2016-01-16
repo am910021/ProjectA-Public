@@ -41,6 +41,9 @@
                             #
                         </th>
                         <th>
+                            縮圖
+                        </th>
+                        <th>
                             名稱
                         </th>
                         <th>
@@ -59,25 +62,28 @@
                 </thead>
                 <tbody>
                 {% for i in number %}
-                    <tr class="{{i|setAvtive}}">
-                        <td style="width:4%">
-                            {{i|brandID:brand}}
+                    <tr class="{{i|setClass}}">
+                        <td style="width:3%;vertical-align: middle;">
+                            {{i|getID:brand}}
                         </td>
-                        <td style="width:10%">
+                        <td style="width:10%;vertical-align: middle;">
+                            {{i|getImage:brand|safe}}
+                        </td>
+                        <td style="width:10%;vertical-align: middle;">
                             {{i|brandName:brand}}
                         </td>
-                        <td>
+                        <td style=";vertical-align: middle;">
                         {{i|brandDescription:brand}}
                         </td>
-                        <td style="width:4%">
-                            <a href="{% url 'control:brandPreview' i|brandID:brand %}" target="_blank">預覽</a>
+                        <td style="width:4%;vertical-align: middle;">
+                            <a href="{% url 'control:brandPreview' i|getID:brand %}" target="_blank">預覽</a>
                         </td>
                         </td>
-                        <td style="width:4%">
-                            <a href="{% url 'control:brandEdit' i|brandID:brand %}">修改</a>
+                        <td style="width:4%;vertical-align: middle;">
+                            <a href="{% url 'control:brandEdit' i|getID:brand %}">修改</a>
                         </td>
-                        <td style="width:10%">
-                            {{ "too long, don't read"|truncatewords:4}}
+                        <td style="width:4%;vertical-align: middle;">
+                            <!-- {{ "too long, don't read"|truncatewords:4}} --> {{i|getStatus:brand|safe}}
                         </td>
                     </tr>
                 {% endfor %}
