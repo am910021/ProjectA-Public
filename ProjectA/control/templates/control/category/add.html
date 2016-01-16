@@ -42,10 +42,11 @@
                     {% csrf_token %}
                         <div class="form-group">
                             <label for="brand">
-                                父品牌
-                            </label>
-                            {{form.brand.errors}}
+                                父品牌 
+                            </label> 
                             {{form.brand}}
+                            <a href="{% url 'control:brandAdd' %}" target="_blank" class="btn btn-xs btn-default">新增品牌</a>
+                            {{form.brand.errors}}
                         </div>
                     
                         <div class="form-group">

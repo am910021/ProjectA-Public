@@ -2,6 +2,7 @@ from django.conf.urls import url
 from control.views import CAdminIndex, CAdminSignIn, VConfig, ConfigEmail
 from .views import CBrand, CBrandAdd, CBrandEdit, CBrandPreview
 from .views import CCategory, CCategoryAdd, CCategoryEdit
+from .views import Item, ItemAdd, ItemEdit
 
 
 urlpatterns = [
@@ -19,4 +20,8 @@ urlpatterns = [
     url(r'^category/$', CCategory.as_view(), name='category'),
     url(r'^categoryadd/$', CCategoryAdd.as_view(), name='categoryAdd'),
     url(r'^categoryedit/(?P<categoryID>[0-9]+)/$', CCategoryEdit.as_view(), name='categoryEdit'),
+    
+    url(r'^item/$', Item.as_view(), name='item'),
+    url(r'^item/add/$', ItemAdd.as_view(), name='itemAdd'),
+    url(r'^item/edit/(?P<brandID>[0-9]+)/$', ItemEdit.as_view(), name='itemEdit'),
 ]

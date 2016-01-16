@@ -24,8 +24,8 @@
                 <div class="col-md-8">
                 </div>
                 <div class="col-md-2">
-                    <a href="{% url 'control:brandAdd' %}" class="btn btn-block btn-info">
-                        新增品牌
+                    <a href="{% url 'control:itemAdd' %}" class="btn btn-block btn-info">
+                        新增商品
                     </a>
                 </div>
                 <div class="col-md-2">
@@ -49,15 +49,24 @@
                             名稱
                         </th>
                         <th>
+                            價錢
+                        </th>
+                        <th>
                             說明
                         </th>
-                        <th>
+                        <th style="width:4%;vertical-align: middle;">
+                            品牌
+                        </th>
+                        <th style="width:4%;vertical-align: middle;">
+                            類別
+                        </th>
+                        <th style="width:4%;vertical-align: middle;">
                             預覽
                         </th>
-                        <th>
+                        <th style="width:4%;vertical-align: middle;">
                             修改
                         </th>
-                        <th>
+                        <th style="width:4%;vertical-align: middle;">
                             狀態
                         </th>
                     </tr>
@@ -65,29 +74,38 @@
                 <tbody>
                 {% for i in number %}
                     <tr class="{{i|setClass}}">
-                        <td style="width:3%;vertical-align: middle;">
-                            {{i|getID:brand}}
+                        <td>
+                            {{i|getID:item}}
                         </td>
-                        <td style="width:10%;vertical-align: middle;">
-                            {{i|getImage:brand|safe}}
+                        <td>
+                            {{i|getImage:item|safe}}
                         </td>
-                        <td style="width:10%;vertical-align: middle;">
-                            {{i|getName:brand}}
+                        <td>
+                            {{i|getName:item}}
                         </td>
-                        <td style=";vertical-align: middle;">
-                        {{i|getDescription:brand}}
+                        <td>
+                            {{i|getCost:item}}
                         </td>
-                        <td style="width:4%;vertical-align: middle;">
-                            <a href="{% url 'control:brandPreview' i|getID:brand %}" target="_blank">預覽</a>
+                        <td>
+                            {{i|getIntro:item}}
                         </td>
+                        <td>
+                            {{i|getBrand:item}}
                         </td>
-                        <td style="width:4%;vertical-align: middle;">
-                            <a href="{% url 'control:brandEdit' i|getID:brand %}">修改</a>
+                        <td>
+                            {{i|getCategory:item}}
                         </td>
-                        <td style="width:4%;vertical-align: middle;">
-                            <!-- {{ "too long, don't read"|truncatewords:4}} --> {{i|getStatus:brand|safe}}
+                        <td>
+                            <a href="{% url 'control:itemPreview' i|getID:item %}" target="_blank">預覽</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'control:itemEdit' i|getID:item %}">修改</a>
+                        </td>
+                        <td>
+                            {{i|getStatus:item}}
                         </td>
                     </tr>
+
                 {% endfor %}
                 </tbody>
             </table>

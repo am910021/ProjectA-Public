@@ -109,7 +109,7 @@ class CBrandEdit(AdminView):
         return redirect(reverse('control:brand'))
     
 class CCategory(AdminView):
-    template_name = 'control/category.html'
+    template_name = 'control/category/category.html'
     page_title = '分類'
     
     def get(self, request, *args, **kwargs):
@@ -119,7 +119,7 @@ class CCategory(AdminView):
         return super(CCategory, self).get(request, *args, **kwargs)
     
 class CCategoryAdd(AdminView):
-    template_name = 'control/categoryadd.html'
+    template_name = 'control/category/add.html'
     page_title = '分類'
     
     def get(self, request, *args, **kwargs):
@@ -138,7 +138,7 @@ class CCategoryAdd(AdminView):
         return redirect(reverse('control:category'))
     
 class CCategoryEdit(AdminView):
-    template_name = 'control/categoryedit.html'
+    template_name = 'control/category/edit.html'
     page_title = '分類'
     
     def get(self, request, *args, **kwargs):
@@ -165,6 +165,37 @@ class CCategoryEdit(AdminView):
             category.image = file_put2(request.FILES['image'], category.id)
             category.save()
         return redirect(reverse('control:category'))
+    
+class Item(AdminView):
+    template_name = 'control/item/item.html' # xxxx/xxx.html
+    page_title = '商品' # title
+
+    def get(self, request, *args, **kwargs):
+        return super(Item, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return super(Item, self).post(request, *args, **kwargs)
+    
+class ItemAdd(AdminView):
+    template_name = 'control/item/add.html' # xxxx/xxx.html
+    page_title = '新增商品' # title
+
+    def get(self, request, *args, **kwargs):
+        return super(ItemAdd, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return super(ItemAdd, self).post(request, *args, **kwargs)
+    
+class ItemEdit(AdminView):
+    template_name = 'control/item/edit.html' # xxxx/xxx.html
+    page_title = '編輯商品' # title
+
+    def get(self, request, *args, **kwargs):
+        return super(ItemEdit, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return super(ItemEdit, self).post(request, *args, **kwargs)
+    
     
 class VConfig(AdminView):
     template_name = 'control/config/config.html' # xxxx/xxx.html

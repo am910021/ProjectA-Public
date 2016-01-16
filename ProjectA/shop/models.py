@@ -30,7 +30,9 @@ class Item(models.Model):
     cost = models.IntegerField()
     image = models.CharField(max_length=128)
     image2 = models.CharField(max_length=128)
-    intro = models.TextField()
+    
+    explanation = models.TextField()
+    intro  = models.TextField()
     ingredient = models.TextField()
     manual = models.TextField()
     isActive = models.BooleanField(default=True)

@@ -23,24 +23,24 @@
 						<thead>
 							<tr>
 								<th>
-									商品管理
+									商品管理區
 								</th>
 							</tr>
 						</thead>
 						<tbody>
                             <tr>
                                 <td>
-                                    <a href="{% url 'control:brand' %}">品牌</a>
+                                    <a href="{% url 'control:brand' %}">品牌管理</a>
                                 </td>
                             </tr>
 							<tr>
 								<td>
-									<a href="{% url 'control:category' %}">分類</a>
+									<a href="{% url 'control:category' %}">分類管理</a>
 								</td>
 							</tr>
 							<tr class="active">
 								<td>
-									<a href="#">商品上架</a>
+									<a href="{% url 'control:item' %}">商品管理</a>
 								</td>
 							</tr>
 						</tbody>
