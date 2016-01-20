@@ -1,0 +1,186 @@
+{% extends base_template_name %}
+{% load staticfiles %}
+
+{% block style %}
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.js"></script> 
+<script src="{% static 'tinymce/tinymce.min.js' %}"></script>
+
+<script type="text/javascript">
+tinymce.init({
+    language : "zh_TW", // change language here
+    selector: "textarea",
+    height: 200,
+    plugins: [
+        "advlist autolink lists link image charmap print preview anchor",
+        "searchreplace visualblocks code fullscreen",
+        "insertdatetime media table contextmenu paste textcolor"
+    ],
+    toolbar: "insertfile undo redo | styleselect | forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+});
+
+</script>
+
+<style type="text/css">
+.text-size18{
+    font-size: 18px;
+    line-height: 18px;
+}
+
+</style>
+
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-8">
+                </div>
+                <div class="col-md-2">
+                    <a href="{% url 'control:item' %}" class="btn btn-block btn-info">
+                        上一頁（商品管理）
+                    </a>
+                </div>
+                <div class="col-md-2">
+                    <a href="{% url 'control:admin' %}" class="btn btn-block btn-info">
+                        管理員首頁
+                    </a>
+                </div>
+            </div>
+            <br>
+        
+            <form class="form-horizontal" role="form" method="post" action="{% url 'control:itemAdd' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="id_category" class="col-sm-2 control-label">
+                        商品類別
+                    </label>
+                    <div class="col-sm-2">
+                        {{itemform.category}}
+                        {{itemform.category.errors}}
+                        <a href="{% url 'control:categoryAdd' %}" target="_blank" class="btn btn-xs btn-default">新增類別</a>
+                    </div>
+                    
+                    <label for="id_isActive" class="col-sm-1 control-label">
+                        {{itemform.isActive.label}}
+                    </label>
+                    <div class="col-sm-1">
+                        {{itemform.isActive}}
+                        {{itemform.isActive.errors}}
+                    </div>
+                    
+                    <label for="id_sp" class="col-sm-1 control-label">
+                        {{itemform.sp.label}}
+                    </label>
+                    <div class="col-sm-1">
+                        {{itemform.sp}}
+                        {{itemform.sp.errors}}
+                    </div>
+                    
+                    <label for="id_new" class="col-sm-2 control-label">
+                        {{itemform.new.label}}
+                    </label>
+                    <div class="col-sm-1">
+                        {{itemform.new}}
+                        {{itemform.new.errors}}
+                    </div>
+                    <div class="col-sm-1"></div>
+                </div>
+            
+                <div class="form-group">
+                    <label for="id_name" class="col-sm-2 control-label">
+                        {{itemform.name.label}}
+                    </label>
+                    <div class="col-sm-10">
+                        {{itemform.name}}
+                        {{itemform.name.errors}}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_cost" class="col-sm-2 control-label">
+                        {{itemform.cost.label}}
+                    </label>
+                    <div class="col-sm-2">
+                        {{itemform.cost}}
+                        {{itemform.cost.errors}}
+                    </div>
+                    <div class="col-sm-8">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_intro" class="col-sm-2 control-label">
+                        {{itemform.intro.label}}
+                    </label>
+                    <div class="col-sm-10">
+                        {{itemform.intro}}
+                        {{itemform.intro.errors}}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-4">
+	                    <label for="id_image" class="control-label">
+	                        {{itemform.image.label}}
+	                    </label>
+	                    {{itemform.image}}
+	                    {{itemform.image.errors}}
+                    </div>
+                    <div class="col-sm-4">
+                        <label for="id_image2" class="control-label">
+                            {{itemform.image2.label}}
+                        </label>
+                        {{itemform.image2}}
+                        {{itemform.image2.errors}}
+                    </div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="id_introduction" class="col-sm-2 control-label">
+                        {{itemform.introduction.label}}
+                    </label>
+                    <div class="col-sm-10">
+                        {{itemform.introduction}}
+                        {{itemform.introduction.errors}}
+                    </div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="id_ingredient" class="col-sm-2 control-label">
+                        {{itemform.ingredient.label}}
+                    </label>
+                    <div class="col-sm-10">
+                        {{itemform.ingredient}}
+                        {{itemform.ingredient.errors}}
+                    </div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="id_manual" class="col-sm-2 control-label">
+                        {{itemform.manual.label}}
+                    </label>
+                    <div class="col-sm-10">
+                        {{itemform.manual}}
+                        {{itemform.manual.errors}}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="col-md-2"></div>
+	                <div class="col-md-2">
+	                    <button type="submit" class="btn btn-lg btn-default btn-block">
+	                        送出
+	                    </button>
+	                </div>
+	                <div class="col-md-8">
+	                </div>
+                </div>
+                
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,11 +1,5 @@
 import os
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ProjectA.settings')
-import django
-django.setup()
-import getpass
-import re
-from pip._vendor.distlib.compat import raw_input
-from main.models import Setting
+import sys
 
 class bcolors:
     HEADER = '\033[95m'
@@ -16,12 +10,38 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+    
+def setupDB():
+    sys.argv.append("migrate")
+    from django.core.management import execute_from_command_line
+    execute_from_command_line(sys.argv)
+
 
 def setup():
-    Setting.objects.get_or_create(name="category")
-    Setting.objects.get_or_create(name="gmailAccount")
+    import django
+    django.setup()
+    from main.models import Setting
+    from shop.models import Brand, Category, Item
+    try:
+        Setting.objects.get_or_create(name="category")
+        Setting.objects.get_or_create(name="gmailAccount")
+        brand = Brand.objects.get_or_create(id=1, name="未分類",
+                                    description="未分類",
+                                    content="未分類", isActive=True)[0]
+        Category.objects.get_or_create(id=1, name="未分類",
+                                    description="未分類",
+                                    isActive=True, brand=brand)
+        print(bcolors.OKBLUE + "\n 設定成功。 \n \n" + bcolors.ENDC)
+    except Exception as e:
+        s = str(e)
+        print(bcolors.FAIL + "\n\n取消設定。 \n"  + bcolors.ENDC)
+        print(e)
+        if """does not exist""" in s:
+            print(bcolors.FAIL + "資料庫有問題，請檢查。 \n"  + bcolors.ENDC)
 
 
 if __name__ == '__main__':
-    print(bcolors.OKBLUE + "\n 啟動基本設定 \n \n" + bcolors.ENDC)
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ProjectA.settings')
+    setupDB()
+    print(bcolors.OKBLUE + "\n 啟動基本設定" + bcolors.ENDC)
     setup()

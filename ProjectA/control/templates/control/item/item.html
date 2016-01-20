@@ -21,6 +21,13 @@
         <div class="col-md-12">
         
             <div class="row">
+            {% if messages %}
+            {% for message in messages %}
+            <p class="bg-info h4 text-info">{{message}}</p>
+            <br>
+            {% endfor %}
+            {% endif %}
+            
                 <div class="col-md-8">
                 </div>
                 <div class="col-md-2">
@@ -39,16 +46,16 @@
             <table class="table">
                 <thead>
                     <tr class="success">
-                        <th>
+                        <th style="width:2%;vertical-align: middle;">
                             #
                         </th>
-                        <th>
+                        <th style="width:10%;vertical-align: middle;">
                             縮圖
                         </th>
-                        <th>
+                        <th style="width:10%;vertical-align: middle;">
                             名稱
                         </th>
-                        <th>
+                        <th style="width:10%;vertical-align: middle;">
                             價錢
                         </th>
                         <th>
@@ -90,7 +97,7 @@
                             {{i|getIntro:item}}
                         </td>
                         <td>
-                            {{i|getBrand:item}}
+                            {{i|getItemBrand:item}}
                         </td>
                         <td>
                             {{i|getCategory:item}}
@@ -102,7 +109,7 @@
                             <a href="{% url 'control:itemEdit' i|getID:item %}">修改</a>
                         </td>
                         <td>
-                            {{i|getStatus:item}}
+                            {{i|getStatus:item|safe}}
                         </td>
                     </tr>
 

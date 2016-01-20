@@ -48,6 +48,10 @@ def getBrand(value, data):
 def getCategory(value, data):
     return data[value].category.name
 
+@register.filter(name='getItemBrand')
+def getItemBrand(value, data):
+    return data[value].category.brand.name
+
 """@register.filter(name='brand')
 def brand(value,db):
     return db[value].name"""

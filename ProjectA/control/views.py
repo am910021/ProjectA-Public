@@ -5,37 +5,41 @@ from datetime import datetime
 from main.models import Setting
 from main.views import BaseView, admin_required
 from main.dropbox import file_put2, file_delete
-from .forms import BrandForm, CategoryForm
-from shop.models import Brand, Category
+from .forms import BrandForm, CategoryForm, ItemForm
+from shop.models import Brand, Category, Item
 
 class AdminRequiredMixin(object):
     @classmethod
     def as_view(cls):
         return admin_required(super(AdminRequiredMixin, cls).as_view())
     
-class AdminView(AdminRequiredMixin,BaseView):
+class AdminBase(AdminRequiredMixin,BaseView):
     def __init__(self, *args, **kwargs):
-        super(AdminView, self).__init__(*args, **kwargs)
+        super(AdminBase, self).__init__(*args, **kwargs)
         
     def get(self, request, *args, **kwargs):
         kwargs['path'] = request.path.split("/")[1:]
-        return super(AdminView, self).get(request, *args, **kwargs)
+        return super(AdminBase, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        return super(AdminView, self).get(request, *args, **kwargs)
+        return super(AdminBase, self).get(request, *args, **kwargs)
 
-class CAdminIndex(AdminView):
+class CAdminIndex(AdminBase):
     template_name = 'control/index.html'
     page_title = '管理者'
     
     def get(self, request, *args, **kwargs):
         return super(CAdminIndex, self).get(request, *args, **kwargs)
     
-class CAdminSignIn(AdminView):
+def redirectAdminIndex(request):
+    return redirect(reverse('control:admin'))
+    
+    
+class CAdminSignIn(AdminBase):
     def get(self, request, *args, **kwargs):
         return redirect('/control/admin/')
     
-class CBrand(AdminView):
+class CBrand(AdminBase):
     template_name = 'control/brand/brand.html'
     page_title = '品牌'
     
@@ -45,7 +49,7 @@ class CBrand(AdminView):
         kwargs['number'] = list(range(len(brand)))
         return super(CBrand, self).get( request, *args, **kwargs)
     
-class CBrandPreview(AdminView):
+class CBrandPreview(AdminBase):
     template_name = 'control/brand/preview.html'
     page_title = '品牌'
     
@@ -60,7 +64,7 @@ class CBrandPreview(AdminView):
         kwargs['content'] = brandform.cleaned_data.get('content')
         return super(CBrandPreview, self).post(request, *args, **kwargs)
     
-class CBrandAdd(AdminView):
+class CBrandAdd(AdminBase):
     template_name = 'control/brand/add.html'
     page_title = '品牌管理'
     
@@ -79,7 +83,7 @@ class CBrandAdd(AdminView):
             brand.save()
         return redirect(reverse('control:brand'))
     
-class CBrandEdit(AdminView):
+class CBrandEdit(AdminBase):
     template_name = 'control/brand/edit.html'
     page_title = '品牌管理'
     
@@ -108,7 +112,7 @@ class CBrandEdit(AdminView):
             brand.save()
         return redirect(reverse('control:brand'))
     
-class CCategory(AdminView):
+class CCategory(AdminBase):
     template_name = 'control/category/category.html'
     page_title = '分類'
     
@@ -118,7 +122,7 @@ class CCategory(AdminView):
         kwargs['number'] = list(range(len(category)))
         return super(CCategory, self).get(request, *args, **kwargs)
     
-class CCategoryAdd(AdminView):
+class CCategoryAdd(AdminBase):
     template_name = 'control/category/add.html'
     page_title = '分類'
     
@@ -137,7 +141,7 @@ class CCategoryAdd(AdminView):
             category.save()
         return redirect(reverse('control:category'))
     
-class CCategoryEdit(AdminView):
+class CCategoryEdit(AdminBase):
     template_name = 'control/category/edit.html'
     page_title = '分類'
     
@@ -166,38 +170,82 @@ class CCategoryEdit(AdminView):
             category.save()
         return redirect(reverse('control:category'))
     
-class Item(AdminView):
+class ItemManage(AdminBase):
     template_name = 'control/item/item.html' # xxxx/xxx.html
-    page_title = '商品' # title
+    page_title = '商品管理' # title
 
     def get(self, request, *args, **kwargs):
-        return super(Item, self).get(request, *args, **kwargs)
+        item = Item.objects.all()
+        kwargs['item'] = item
+        kwargs['number'] = list(range(len(item)))
+        return super(ItemManage, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
-        return super(Item, self).post(request, *args, **kwargs)
+        return super(ItemManage, self).post(request, *args, **kwargs)
     
-class ItemAdd(AdminView):
+class ItemAdd(AdminBase):
     template_name = 'control/item/add.html' # xxxx/xxx.html
     page_title = '新增商品' # title
 
     def get(self, request, *args, **kwargs):
+        kwargs['itemform'] = ItemForm()
         return super(ItemAdd, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
-        return super(ItemAdd, self).post(request, *args, **kwargs)
+        form = ItemForm(request.POST)
+        
+        if not form.is_valid():
+            kwargs['itemform'] = form
+            return super(ItemAdd, self).post(request, *args, **kwargs)
+        form.save()
+        messages.success(request, '商品：'+request.POST.get('name')+"上架成功")
+        
+        return redirect(reverse('control:item'))
+        #return super(ItemAdd, self).post(request, *args, **kwargs)
     
-class ItemEdit(AdminView):
+class ItemEdit(AdminBase):
     template_name = 'control/item/edit.html' # xxxx/xxx.html
     page_title = '編輯商品' # title
 
     def get(self, request, *args, **kwargs):
+        if "itemID" in kwargs:
+            try:
+                item = Item.objects.get(id=kwargs['itemID'])
+                form = ItemForm(instance=item)
+                kwargs['form'] = form
+            except Exception as e:
+                print(e)
+                return redirect(reverse('control:itemAdd'))
         return super(ItemEdit, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
-        return super(ItemEdit, self).post(request, *args, **kwargs)
+        item = Item.objects.get(id=kwargs['itemID'])
+        form = ItemForm(request.POST, instance=item)
+        if not form.is_valid():
+            kwargs['form'] = form
+            return super(ItemEdit, self).post(request, *args, **kwargs)
+        form.save()
+        messages.success(request, '商品：'+request.POST.get('name')+"已更新成功")        
+        return redirect(reverse('control:item'))
+    
+class ItemPreview(AdminBase):
+    template_name = 'control/item/preview.html' # xxxx/xxx.html
+    page_title = '商品預覽' # title
+
+    def get(self, request, *args, **kwargs):
+        if "itemID" in kwargs:
+            try:
+                item = Item.objects.get(id=kwargs['itemID'])
+                kwargs['item'] = item
+            except Exception as e:
+                return
+        return super(ItemPreview, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return super(ItemPreview, self).post(request, *args, **kwargs)
     
     
-class VConfig(AdminView):
+class VConfig(AdminBase):
     template_name = 'control/config/config.html' # xxxx/xxx.html
     page_title = '基本設定' # title
 
@@ -214,7 +262,7 @@ class VConfig(AdminView):
         messages.success(request, '設定成功')
         return redirect(reverse('control:config'))
     
-class ConfigEmail(AdminView):
+class ConfigEmail(AdminBase):
     template_name = 'control/config/email.html' # xxxx/xxx.html
     page_title = 'Email 寄信設定' # title
 
@@ -231,14 +279,7 @@ class ConfigEmail(AdminView):
         gmail.save()
         messages.success(request, '設定成功')
         return redirect(reverse('control:configEmail'))
-    
-    
-    
-    
-    
-    
-    
-    
+
     
     
     

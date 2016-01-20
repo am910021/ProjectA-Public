@@ -1,8 +1,9 @@
 from django.conf.urls import url
-from control.views import CAdminIndex, CAdminSignIn, VConfig, ConfigEmail
+from django.views.generic.base import RedirectView
+from control.views import CAdminIndex, redirectAdminIndex, CAdminSignIn, VConfig, ConfigEmail
 from .views import CBrand, CBrandAdd, CBrandEdit, CBrandPreview
 from .views import CCategory, CCategoryAdd, CCategoryEdit
-from .views import Item, ItemAdd, ItemEdit
+from .views import ItemManage, ItemAdd, ItemEdit, ItemPreview
 
 
 urlpatterns = [
@@ -21,7 +22,10 @@ urlpatterns = [
     url(r'^categoryadd/$', CCategoryAdd.as_view(), name='categoryAdd'),
     url(r'^categoryedit/(?P<categoryID>[0-9]+)/$', CCategoryEdit.as_view(), name='categoryEdit'),
     
-    url(r'^item/$', Item.as_view(), name='item'),
+    url(r'^item/$', ItemManage.as_view(), name='item'),
     url(r'^item/add/$', ItemAdd.as_view(), name='itemAdd'),
-    url(r'^item/edit/(?P<brandID>[0-9]+)/$', ItemEdit.as_view(), name='itemEdit'),
+    url(r'^item/edit/(?P<itemID>[0-9]+)/$', ItemEdit.as_view(), name='itemEdit'),
+    url(r'^item/preview/(?P<itemID>[0-9]+)/$', ItemPreview.as_view(), name='itemPreview'),
+
+    url(r'^.*$', redirectAdminIndex),
 ]
