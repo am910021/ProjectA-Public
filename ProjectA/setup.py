@@ -25,10 +25,10 @@ def setup():
     try:
         Setting.objects.get_or_create(name="category")
         Setting.objects.get_or_create(name="gmailAccount")
-        brand = Brand.objects.get_or_create(id=1, name="未分類",
+        brand = Brand.objects.create(name="未分類",
                                     description="未分類",
-                                    content="未分類", isActive=True)[0]
-        Category.objects.get_or_create(id=1, name="未分類",
+                                    content="未分類", isActive=True)
+        Category.objects.create(name="未分類",
                                     description="未分類",
                                     isActive=True, brand=brand)
         print(bcolors.OKBLUE + "\n 設定成功。 \n \n" + bcolors.ENDC)

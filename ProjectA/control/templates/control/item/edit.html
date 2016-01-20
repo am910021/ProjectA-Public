@@ -50,7 +50,7 @@ tinymce.init({
             </div>
             <br>
         
-            <form class="form-horizontal" role="form" method="post" action="{% url 'control:itemEdit' itemID %}">
+            <form class="form-horizontal" role="form" enctype="multipart/form-data" method="post" action="{% url 'control:itemEdit' itemID %}">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="id_category" class="col-sm-2 control-label">
@@ -95,6 +95,18 @@ tinymce.init({
                     <div class="col-sm-10">
                         {{form.name}}
                         {{form.name.errors}}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_inventory" class="col-sm-2 control-label">
+                        {{form.inventory.label}}
+                    </label>
+                    <div class="col-sm-2">
+                        {{form.inventory}}
+                        {{form.inventory.errors}}
+                    </div>
+                    <div class="col-sm-8">
                     </div>
                 </div>
                 

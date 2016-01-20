@@ -19,19 +19,24 @@ access_token = token
 #out.close()
 #print(metadata)
 
-def file_put2(file, number):
+def file_put2(file, number, dir=""):
     saveName = str(datetime.strftime(datetime.now(), '%Y%m%d'))
     dbx = dropbox.Dropbox(token)
     size = file.size
     type = file.content_type.split("/")[1]
     name = saveName+str(number)+"."+type
+    if dir!="":
+        path = '/'+dir+'/'+name
+    else:
+        path = '/'+name
     
-    response = dbx.files_upload(file, '/'+name)
+    response = dbx.files_upload(file, path)
+        
     if response.size!=size:
         return False
     
-    share = dbx.sharing_create_shared_link('/'+name).url.split("/")
-    return share[4]+"/"+name
+    share = dbx.sharing_create_shared_link(path).url.split("/")
+    return share[4]+'/'+name
 
 
 

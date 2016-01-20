@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.views.generic import TemplateView
 from django.conf import settings
+from shop.models import Brand
 
 def admin_required(fun):
     def auth(request, *args, **kwargs):
@@ -31,7 +32,7 @@ class BaseView(TemplateView):
         # Settings context data for base template
         context['SITE_NAME'] = settings.SITE_NAME
         context['base_template_name'] = self.base_template_name
-        context['list'] = ""
+        context['brandMenu'] = Brand.objects.all()
         if hasattr(self, 'page_title'):
             context['page_title'] = self.page_title
 

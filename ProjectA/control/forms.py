@@ -36,11 +36,13 @@ class ItemForm(forms.ModelForm):
     name.widget.attrs.update({'class':'form-control'})
     cost = forms.IntegerField(label='商品價格')
     cost.widget.attrs.update({'class':'form-control'})
-    cost.initial=0
+    inventory  = forms.IntegerField(label='商品庫存')
+    inventory.widget.attrs.update({'class':'form-control'})
+    inventory.initial = 10
     image = forms.ImageField(required=False, label='商品圖片')
     image2 = forms.ImageField(required=False, label='促銷, 新商品訊息圖片')
     
-    intro  = forms.CharField( max_length=128, label='簡介')
+    intro  = forms.CharField( max_length=600, label='簡介')
     intro.widget.attrs.update({'class':'form-control'})
     introduction = forms.CharField( widget=forms.Textarea, label='介紹')
     ingredient = forms.CharField( widget=forms.Textarea, label='成份')

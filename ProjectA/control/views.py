@@ -79,7 +79,7 @@ class CBrandAdd(AdminBase):
             return super(CBrandAdd, self).post(self, request, *args, **kwargs)
         brand = form.save()
         if 'image' in request.FILES:
-            brand.image = file_put2(request.FILES['image'], brand.id)
+            brand.image = file_put2(request.FILES['image'], brand.id, 'brand')
             brand.save()
         return redirect(reverse('control:brand'))
     
@@ -107,8 +107,11 @@ class CBrandEdit(AdminBase):
             return super(CBrandEdit, self).post(self, request, *args, **kwargs)
         brand = form.save()
         if 'image' in request.FILES:
-            file_delete(brand.image.split("/")[1])
-            brand.image = file_put2(request.FILES['image'], brand.id)
+            if brand.image!="":
+                file_delete(brand.image.split("/")[1])
+            
+            
+            brand.image = file_put2(request.FILES['image'], brand.id, 'brand')
             brand.save()
         return redirect(reverse('control:brand'))
     
@@ -137,7 +140,7 @@ class CCategoryAdd(AdminBase):
             return super(CCategoryAdd, self).get(request, *args, **kwargs)
         category = form.save()
         if 'image' in request.FILES:
-            category.image = file_put2(request.FILES['image'], category.id)
+            category.image = file_put2(request.FILES['image'], category.id, 'category')
             category.save()
         return redirect(reverse('control:category'))
     
@@ -166,7 +169,7 @@ class CCategoryEdit(AdminBase):
         category = form.save()
         if 'image' in request.FILES:
             file_delete(category.image.split("/")[1])
-            category.image = file_put2(request.FILES['image'], category.id)
+            category.image = file_put2(request.FILES['image'], category.id, 'category')
             category.save()
         return redirect(reverse('control:category'))
     
@@ -188,16 +191,24 @@ class ItemAdd(AdminBase):
     page_title = '新增商品' # title
 
     def get(self, request, *args, **kwargs):
-        kwargs['itemform'] = ItemForm()
+        kwargs['form'] = ItemForm()
         return super(ItemAdd, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
         form = ItemForm(request.POST)
         
         if not form.is_valid():
-            kwargs['itemform'] = form
+            kwargs['form'] = form
             return super(ItemAdd, self).post(request, *args, **kwargs)
-        form.save()
+        item = form.save()
+        if 'image' in request.FILES:
+            item.image = file_put2(request.FILES['image'], item.id, 'item')
+        if 'image2' in request.FILES:
+            item.image = file_put2(request.FILES['image2'], item.id, 'item2')
+        item.save()
+            
+        
+        
         messages.success(request, '商品：'+request.POST.get('name')+"上架成功")
         
         return redirect(reverse('control:item'))
@@ -224,7 +235,12 @@ class ItemEdit(AdminBase):
         if not form.is_valid():
             kwargs['form'] = form
             return super(ItemEdit, self).post(request, *args, **kwargs)
-        form.save()
+        item = form.save()
+        if 'image' in request.FILES:
+            item.image = file_put2(request.FILES['image'], item.id, "item")
+        if 'image2' in request.FILES:
+            item.image = file_put2(request.FILES['image2'], item.id, "item2")
+        item.save()
         messages.success(request, '商品：'+request.POST.get('name')+"已更新成功")        
         return redirect(reverse('control:item'))
     

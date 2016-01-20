@@ -50,61 +50,73 @@ tinymce.init({
             </div>
             <br>
         
-            <form class="form-horizontal" role="form" method="post" action="{% url 'control:itemAdd' %}">
+            <form class="form-horizontal" role="form" enctype="multipart/form-data" method="post" action="{% url 'control:itemAdd' %}">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="id_category" class="col-sm-2 control-label">
                         商品類別
                     </label>
                     <div class="col-sm-2">
-                        {{itemform.category}}
-                        {{itemform.category.errors}}
+                        {{form.category}}
+                        {{form.category.errors}}
                         <a href="{% url 'control:categoryAdd' %}" target="_blank" class="btn btn-xs btn-default">新增類別</a>
                     </div>
                     
                     <label for="id_isActive" class="col-sm-1 control-label">
-                        {{itemform.isActive.label}}
+                        {{form.isActive.label}}
                     </label>
                     <div class="col-sm-1">
-                        {{itemform.isActive}}
-                        {{itemform.isActive.errors}}
+                        {{form.isActive}}
+                        {{form.isActive.errors}}
                     </div>
                     
                     <label for="id_sp" class="col-sm-1 control-label">
-                        {{itemform.sp.label}}
+                        {{form.sp.label}}
                     </label>
                     <div class="col-sm-1">
-                        {{itemform.sp}}
-                        {{itemform.sp.errors}}
+                        {{form.sp}}
+                        {{form.sp.errors}}
                     </div>
                     
                     <label for="id_new" class="col-sm-2 control-label">
-                        {{itemform.new.label}}
+                        {{form.new.label}}
                     </label>
                     <div class="col-sm-1">
-                        {{itemform.new}}
-                        {{itemform.new.errors}}
+                        {{form.new}}
+                        {{form.new.errors}}
                     </div>
                     <div class="col-sm-1"></div>
                 </div>
             
                 <div class="form-group">
                     <label for="id_name" class="col-sm-2 control-label">
-                        {{itemform.name.label}}
+                        {{form.name.label}}
                     </label>
                     <div class="col-sm-10">
-                        {{itemform.name}}
-                        {{itemform.name.errors}}
+                        {{form.name}}
+                        {{form.name.errors}}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_inventory" class="col-sm-2 control-label">
+                        {{form.inventory.label}}
+                    </label>
+                    <div class="col-sm-2">
+                        {{form.inventory}}
+                        {{form.inventory.errors}}
+                    </div>
+                    <div class="col-sm-8">
                     </div>
                 </div>
                 
                 <div class="form-group">
                     <label for="id_cost" class="col-sm-2 control-label">
-                        {{itemform.cost.label}}
+                        {{form.cost.label}}
                     </label>
                     <div class="col-sm-2">
-                        {{itemform.cost}}
-                        {{itemform.cost.errors}}
+                        {{form.cost}}
+                        {{form.cost.errors}}
                     </div>
                     <div class="col-sm-8">
                     </div>
@@ -112,11 +124,11 @@ tinymce.init({
                 
                 <div class="form-group">
                     <label for="id_intro" class="col-sm-2 control-label">
-                        {{itemform.intro.label}}
+                        {{form.intro.label}}
                     </label>
                     <div class="col-sm-10">
-                        {{itemform.intro}}
-                        {{itemform.intro.errors}}
+                        {{form.intro}}
+                        {{form.intro.errors}}
                     </div>
                 </div>
                 
@@ -124,47 +136,47 @@ tinymce.init({
                     <div class="col-sm-2"></div>
                     <div class="col-sm-4">
 	                    <label for="id_image" class="control-label">
-	                        {{itemform.image.label}}
+	                        {{form.image.label}}
 	                    </label>
-	                    {{itemform.image}}
-	                    {{itemform.image.errors}}
+	                    {{form.image}}
+	                    {{form.image.errors}}
                     </div>
                     <div class="col-sm-4">
                         <label for="id_image2" class="control-label">
-                            {{itemform.image2.label}}
+                            {{form.image2.label}}
                         </label>
-                        {{itemform.image2}}
-                        {{itemform.image2.errors}}
+                        {{form.image2}}
+                        {{form.image2.errors}}
                     </div>
                 </div>
                 <br>
                 <div class="form-group">
                     <label for="id_introduction" class="col-sm-2 control-label">
-                        {{itemform.introduction.label}}
+                        {{form.introduction.label}}
                     </label>
                     <div class="col-sm-10">
-                        {{itemform.introduction}}
-                        {{itemform.introduction.errors}}
+                        {{form.introduction}}
+                        {{form.introduction.errors}}
                     </div>
                 </div>
                 <br>
                 <div class="form-group">
                     <label for="id_ingredient" class="col-sm-2 control-label">
-                        {{itemform.ingredient.label}}
+                        {{form.ingredient.label}}
                     </label>
                     <div class="col-sm-10">
-                        {{itemform.ingredient}}
-                        {{itemform.ingredient.errors}}
+                        {{form.ingredient}}
+                        {{form.ingredient.errors}}
                     </div>
                 </div>
                 <br>
                 <div class="form-group">
                     <label for="id_manual" class="col-sm-2 control-label">
-                        {{itemform.manual.label}}
+                        {{form.manual.label}}
                     </label>
                     <div class="col-sm-10">
-                        {{itemform.manual}}
-                        {{itemform.manual.errors}}
+                        {{form.manual}}
+                        {{form.manual.errors}}
                     </div>
                 </div>
                 

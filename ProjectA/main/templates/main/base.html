@@ -169,10 +169,11 @@ border-color:#A2A0A0;
                 <li class="dropdown li-text16">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown">　商品　<strong class="caret"></strong></a>
                   <ul class="dropdown-menu">
-                    <li>
-                      <a><a href="{{Product_List|safe}}">全部分類</a></a>
-                    </li>
-                    {{list|safe}}
+                    {% for i in brandMenu %}
+	                    <li>
+	                      <a href="{% url 'shop:brand' i.id %}">{{i.name}}</a>
+	                    </li>
+                    {% endfor %}
                   </ul>
                 </li>
                 
