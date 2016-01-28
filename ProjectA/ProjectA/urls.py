@@ -18,9 +18,8 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 urlpatterns = [
+    url(r'^control/admin/', admin.site.urls), 
     url(r'^control/', include('control.urls', namespace='control')),
-    url(r'^control/admin/', admin.site.urls, name='superadmin'),
-    
     url(r'^main/', include('main.urls', namespace='main')),
     url(r'^account/', include('account.urls', namespace='account')),
     url(r'^shop/', include('shop.urls', namespace='shop')),

@@ -3,10 +3,12 @@ from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required 
+from django.contrib.auth.models import User
+from django.http import JsonResponse
 from main.views import BaseView, get_client_ip
 from account.forms import UserProfileForm, SignupForm, CaptchaForm, UserForm
-from account.models import UserProfile
-from django.contrib.auth.models import User
+from account.models import UserProfile, MyCart
+from shop.models import Item
 
 class LoginRequiredMixin(object):
     @classmethod
@@ -100,12 +102,12 @@ class  CSignOut(UserView):
         #messages.success(request, '歡迎再度光臨', extra_tags='登出成功')
         return redirect(reverse('main:main'))
     
-class CMy(UserView):
-    template_name = 'account/myaccount.html'
+class CenterView(UserView):
+    template_name = 'account/accountcenter.html'
     page_title = '個人資料'
     
     def get(self, request, *args, **kwargs):
-        return UserView.get(self, request, *args, **kwargs)
+        return super(CenterView, self).get(request, *args, **kwargs)
     
 class CProfile(UserView):
     template_name = 'account/profile.html'
@@ -142,3 +144,33 @@ class CProfile(UserView):
         
         return redirect(reverse('account:profile'))
     
+class MyCartView(UserView):
+    template_name = 'account/mycart.html' # xxxx/xxx.html
+    page_title = '購物車' # title
+
+    def get(self, request, *args, **kwargs):
+        
+        return super(MyCartView, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        qty = int(request.POST.get('qty'))
+        itemID= request.POST.get('itemID')
+        item = Item.objects.get(id=itemID)
+        success = False
+        try:
+            mycart = MyCart.objects.get(itemID=item)
+            mycart.Qty+=qty
+            mycart.save()
+            success = True
+        except Exception as e:
+            MyCart.objects.create(itemID=item,Qty=qty, user=request.user)
+            success = True
+            print(e)
+        response = {}
+        response["success"] = success
+        response["qty"] = qty
+        response["itemName"] = item.name
+        return JsonResponse(response)
+    
+    def getPostData(self):
+        return

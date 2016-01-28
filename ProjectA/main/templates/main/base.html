@@ -40,15 +40,7 @@
       line-height:16px;
       font-weight: bold;
       }
-      
-.asdasdasd{/*讓文字在div中居中*/　
-position:static !important;　
-position:relative; 　
-top:-50%; /*IE向上-50%*/　
-left:-50%; /*IE向左-50%*/　
-border: 2px solid #0099CC;
-}
-      
+        
       
 .main {
     margin-top: 55px;
@@ -182,7 +174,7 @@ border-color:#A2A0A0;
               <ul class="nav navbar-nav navbar-right">
                 {% if user.is_authenticated %}
                 <li class="li-text16">
-                  <a href="{% url 'account:myaccount' %}">{{ request.user.username }} 會員中心</a>
+                  <a href="{% url 'account:center' %}">{{ request.user.username }} 會員中心</a>
                 </li >
                 <li class="li-text16">
                   <a href="{{Web_MyCart|safe}}"><spen class="glyphicon glyphicon-shopping-cart"></spen>購物車({{user_oder|safe}})</a>

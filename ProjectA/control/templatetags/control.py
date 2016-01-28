@@ -28,6 +28,11 @@ def getImage(value, data):
     html = """<img src="https://dl.dropboxusercontent.com/s/{path}" class="list-img">"""
     return html.format(path=data[value].image) if data[value].image!="" else "沒有圖片"
 
+@register.filter(name='getImageUrl')
+def getImageUrl(path):
+    url = """https://dl.dropboxusercontent.com/s/{path}"""
+    return url.format(path=path if path!="" else "#")
+
 @register.filter(name='getName')
 def getName(value, data):
     return data[value].name

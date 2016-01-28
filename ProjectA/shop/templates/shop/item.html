@@ -1,0 +1,195 @@
+{% extends base_template_name %}
+{% load control %}
+{% load staticfiles %}
+
+{% block style %}
+<style>
+hr {
+border:0; height:2px; background-color:#d4d4d4;
+}
+
+.img-full{
+    max-width: 100%;
+    width: auto;
+
+}
+</style>
+
+<script type="text/javascript" src="http://malsup.github.com/jquery.form.js"></script>
+    <script> 
+    function showRequest(formData, jqForm, options) {
+        //debugger;
+        //var queryString = $.param(formData);
+        //console.log('About to submit: \n' + queryString + '\n');
+        return true;
+    }
+    $('#addmycart').ajaxForm({
+        dataType: 'json',
+        beforeSubmit: showRequest,
+        success : function(json) {
+        	if(json.success == true){
+        		document.getElementById("message").innerHTML = "商品："+json.itemName+" 成功加入購物車。";
+        		$( "#dialog" ).dialog( "open" );
+        	}
+        	console.log(json);
+        },
+        error : function(xhr,errmsg,err) {
+            alert("不好意思，網站發生錯誤，請在試一次。\n 如多次無法解決請通知客服。 ")
+            //alert(xhr.status + ": " + xhr.responseText);
+        }
+
+    });
+</script> 
+{% endblock %}
+
+{% block main %}
+
+  <script>
+  $(function() {
+        $( "#dialog" ).dialog({
+          modal: true,
+          autoOpen: false,
+          buttons: {
+            Ok: function() {
+              $( this ).dialog( "close" );
+            }
+          }
+        });
+      });
+  
+  </script>
+
+
+   <div id="dialog" title="成功加入購物車">
+  <p id="message"></p>
+  <p>按ok關閉視窗</p>
+</div>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-10">
+            <ul class="breadcrumb">
+                <li>
+                    <a href="{% url 'main:main' %}">{{SITE_NAME}}</a> <span class="divider">/</span>
+                </li>
+                <li>
+                    <a href="{% url 'shop:brand' item.category.brand.id %}">{{item.category.brand.name}}</a> <span class="divider">/</span>
+                </li>
+                <li>
+                    <a href="{% url 'shop:category' item.category.id %}">{{item.category.name}}</a> <span class="divider">/</span>
+                </li>
+                <li class="active">
+                    {{item.name}}
+                </li>
+            </ul>
+            <div class="row">
+                <div class="col-md-6">
+                    <img alt="{{image.name}}" src="{{item.image|getImageUrl}}" class="img-rounded img-full thumbnail"/>
+                </div>
+                <div class="col-md-6">
+	                <span class="h3">
+	                   {{item.name}}
+	                </span>
+	                <br>
+	                <br>
+                    <p>
+                        {{item.intro}}
+                    </p>
+                    <br>
+                    <span class="h5 text-left text-info">
+                        系統編號：{{item.id}}
+                    </span>
+                    <hr>
+                    <form id="addmycart" class="form-horizontal" role="form" method="post" action="{% url 'account:mycart' %}")>
+                    {% csrf_token %}
+	                    <span class="h4 text-left text-danger">
+	                       價格$   {{item.cost}}
+	                    </span>
+	                    <br>
+	                    <br>
+                        <div class="form-group">
+                             
+                             <div class="col-sm-2 text-right">
+                                <label>庫存</label>
+                             </div>
+                            <div class="col-sm-10">
+                                {% if item.inventory > 5 %}
+                                    有庫存
+                                {% else %}
+                                    {{item.inventory}}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group has-success">
+                             
+                            <label for="id_qty" class="col-sm-2 control-label">
+                                數量
+                            </label>
+                            <div class="col-sm-10">
+                                <input class="form-control" id="id_qty" name="qty" type="number" value="1" max="10">
+                                <input id="id_itemID" name="itemID" type="hidden" value="{{item.id}}" readonly>
+                            </div>
+                        </div>
+                                                
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                 
+	                            <button type="submit" class="btn btn-block btn-success" style="font-size:18px;">
+	                                加入購物車
+	                            </button>
+                            </div>
+                            <br><br>
+                            <div class="col-sm-offset-2 col-sm-10">
+                                {% if user.is_superuser %}
+                                <a href="{% url 'control:itemEdit' itemID %}"  target="_blank" class="btn btn-danger btn-block" style="font-size:18px;">修改商品</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-12">
+                    <span class="h2 text-info">
+                        商品介紹
+                    </span>
+                    <br>
+                    <br>
+                    {{item.introduction|safe}}
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="tabbable" id="tabs-888050">
+                        <ul class="nav nav-tabs">
+                            <li class="active">
+                                <a href="#panel-605476" data-toggle="tab">商品手冊</a>
+                            </li>
+                            <li>
+                                <a href="#panel-845878" data-toggle="tab">商品成份</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active thumbnail" id="panel-605476">
+                                <br>
+                                {{item.ingredient|safe}}
+                            </div>
+                            <div class="tab-pane thumbnail" id="panel-845878">
+                                <br>
+                                {{item.manual|safe}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1">
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -168,7 +168,9 @@ class CCategoryEdit(AdminBase):
             return super(CCategoryEdit, self).post(self, request, *args, **kwargs)
         category = form.save()
         if 'image' in request.FILES:
-            file_delete(category.image.split("/")[1])
+            if category.image!="":
+                file_delete(category.image.split("/")[1])
+                
             category.image = file_put2(request.FILES['image'], category.id, 'category')
             category.save()
         return redirect(reverse('control:category'))

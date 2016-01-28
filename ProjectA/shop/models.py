@@ -46,6 +46,7 @@ class Item(models.Model):
         super(Item, self).save(*args, **kwargs)
     
     def __str__(self):
-        return self.name + '(' + self.number + ')'
+        shownumber = self.number if self.number!="" else "未設定編號"
+        return self.name + ' (' + shownumber + ')'
     
 
