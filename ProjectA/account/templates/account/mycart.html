@@ -1,8 +1,16 @@
 {% extends base_template_name %}
-{% load control %}
+{% load account %}
 {% load staticfiles %}
 
 {% block style %}
+
+<script type="text/javascript">
+function removeItem(input){
+    form = document.getElementById("removeIDForm");
+    document.getElementById("removeInput").value=input;
+    form.submit();
+}
+</script>
 
 {% endblock %}
 
@@ -10,6 +18,12 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
+      
+            <form id="removeIDForm" method="post" action="{% url 'account:removeItem' %}">
+                {% csrf_token %}
+                <input id="removeInput" name="removeID" type="hidden" value="" readonly>
+            </form>
+            
             <div class="row">
                 <div class="col-md-8">
                 </div>
@@ -23,108 +37,83 @@
                     </a>
                 </div>
             </div>
-            <br>
+            
+            {% if messages %}
+            {% for message in messages %}
+            <div class="bg-info h4 text-info">{{message}}</div>
+            {% endfor %}
+            {% endif %}
+            
             <h2>我的購物車</h2><br>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>
-                            #
-                        </th>
-                        <th>
-                            Product
-                        </th>
-                        <th>
-                            Payment Taken
-                        </th>
-                        <th>
-                            Status
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            1
-                        </td>
-                        <td>
-                            TB - Monthly
-                        </td>
-                        <td>
-                            01/04/2012
-                        </td>
-                        <td>
-                            Default
-                        </td>
-                    </tr>
-                    <tr class="active">
-                        <td>
-                            1
-                        </td>
-                        <td>
-                            TB - Monthly
-                        </td>
-                        <td>
-                            01/04/2012
-                        </td>
-                        <td>
-                            Approved
-                        </td>
-                    </tr>
-                    <tr class="success">
-                        <td>
-                            2
-                        </td>
-                        <td>
-                            TB - Monthly
-                        </td>
-                        <td>
-                            02/04/2012
-                        </td>
-                        <td>
-                            Declined
-                        </td>
-                    </tr>
-                    <tr class="warning">
-                        <td>
-                            3
-                        </td>
-                        <td>
-                            TB - Monthly
-                        </td>
-                        <td>
-                            03/04/2012
-                        </td>
-                        <td>
-                            Pending
-                        </td>
-                    </tr>
-                    <tr class="danger">
-                        <td>
-                            4
-                        </td>
-                        <td>
-                            TB - Monthly
-                        </td>
-                        <td>
-                            04/04/2012
-                        </td>
-                        <td>
-                            Call in to confirm
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="row">
-                <div class="col-md-2">
-                     
-                    <button type="button" class="btn btn-success btn-lg btn-block">
-                        Default
-                    </button>
-                </div>
-                <div class="col-md-10">
-                </div>
-            </div>
+                {% csrf_token %}
+                <input name="byMycart" id="byMycart" type="hidden" value="1">
+	            <table class="table">
+	                <thead>
+	                    <tr>
+	                        <th>
+	                            #
+	                        </th>
+	                        <th>
+	                           商品名稱
+	                        </th>
+	                        <th>
+	                            商品單價
+	                        </th>
+	                        <th>
+	                            數量
+	                        </th>
+	                        <th>
+	                            小計
+	                        </th>
+                            <th>
+                                庫存
+                            </th>
+                            <th>
+                                加入日期
+                            </th>
+	                        <th>
+	                            移除
+	                        </th>
+	                    </tr>
+	                </thead>
+	                <tbody>
+	                {% for i in number %}
+	                    <tr class="{{i|setClass}}">
+	                        <td>
+	                            {{i|setNumber}}
+	                        </td>
+	                        <td>
+	                           {{i|getName:mycart}}
+	                        </td>
+	                        <td>
+	                            {{i|getCost:mycart}}
+	                        </td>
+	                        <td>
+	                            {{i|getQty:mycart}}
+	                        </td>
+	                        <td>
+	                            {{i|getSubtotal:mycart}}
+	                        </td>
+                            <td>
+                                {{i|getInventory:mycart|safe}}
+                            </td>
+                            <td>
+                                {{i|getDate:mycart}}
+                            </td>
+	                        <td>
+	                            <button type="button" onClick="removeItem({{i|getID:mycart}})" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-trash"></span></button>
+	                        </td>
+	                    </tr>
+	                 {% endfor %}
+	                </tbody>
+	            </table>
+	            <div class="row">
+	                <div class="col-md-2">
+	                     <a href="{% url 'account:checkout' %}" class="btn btn-success btn-lg btn-block">結帳</a>                    
+	                </div>
+	                <div class="col-md-10">
+	                </div>
+	            </div>
         </div>
     </div>
 </div>

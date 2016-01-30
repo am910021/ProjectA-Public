@@ -17,6 +17,9 @@ border:0; height:2px; background-color:#d4d4d4;
 
 <script type="text/javascript" src="http://malsup.github.com/jquery.form.js"></script>
     <script> 
+    
+    var mycartNum = {{mycartNum}};
+    
     function showRequest(formData, jqForm, options) {
         //debugger;
         //var queryString = $.param(formData);
@@ -28,6 +31,8 @@ border:0; height:2px; background-color:#d4d4d4;
         beforeSubmit: showRequest,
         success : function(json) {
         	if(json.success == true){
+                mycartNum++;
+                document.getElementById("mycartNum").innerHTML = mycartNum
         		document.getElementById("message").innerHTML = "商品："+json.itemName+" 成功加入購物車。";
         		$( "#dialog" ).dialog( "open" );
         	}
@@ -103,7 +108,7 @@ border:0; height:2px; background-color:#d4d4d4;
                         系統編號：{{item.id}}
                     </span>
                     <hr>
-                    <form id="addmycart" class="form-horizontal" role="form" method="post" action="{% url 'account:mycart' %}")>
+                    <form id="addmycart" class="form-horizontal" role="form" method="post" action="{% url 'account:mycart' %}">
                     {% csrf_token %}
 	                    <span class="h4 text-left text-danger">
 	                       價格$   {{item.cost}}

@@ -17,13 +17,6 @@ class AdminBase(AdminRequiredMixin,BaseView):
     def __init__(self, *args, **kwargs):
         super(AdminBase, self).__init__(*args, **kwargs)
         
-    def get(self, request, *args, **kwargs):
-        kwargs['path'] = request.path.split("/")[1:]
-        return super(AdminBase, self).get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return super(AdminBase, self).get(request, *args, **kwargs)
-
 class CAdminIndex(AdminBase):
     template_name = 'control/index.html'
     page_title = '管理者'

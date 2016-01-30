@@ -141,7 +141,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -152,5 +152,5 @@ STATIC_URL = '/static/'
 if DEBUG==False: # Running on Heroku
     STATIC_ROOT = 'staticfiles'
 
-LOGIN_URL = '/account/signin' 
+LOGIN_URL = '/account/signin/' 
 

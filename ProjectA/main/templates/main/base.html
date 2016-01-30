@@ -41,12 +41,6 @@
       font-weight: bold;
       }
         
-      
-.main {
-    margin-top: 55px;
-        min-height: 700px;
-  margin-bottom: 80px;
-  }
 
 .form-control2-width {
     width:80%;
@@ -78,6 +72,11 @@
 }
 
 
+.main {
+    margin-top: 55px;
+        min-height: 700px;
+  margin-bottom: 80px;
+  }
 
 @media (min-width: 1080px) {
 .main {
@@ -177,7 +176,9 @@ border-color:#A2A0A0;
                   <a href="{% url 'account:center' %}">{{ request.user.username }} 會員中心</a>
                 </li >
                 <li class="li-text16">
-                  <a href="{{Web_MyCart|safe}}"><spen class="glyphicon glyphicon-shopping-cart"></spen>購物車({{user_oder|safe}})</a>
+                  <a href="{% url 'account:mycart' %}">
+                    <spen class="glyphicon glyphicon-shopping-cart"></spen>購物車(<span id="mycartNum">{{mycartNum}}</span>)
+                    </a>
                 </li>
                 <li class="li-text16">
                   <a href="{% url 'account:signout' %}" style="margin-right:0px;">登出</a>

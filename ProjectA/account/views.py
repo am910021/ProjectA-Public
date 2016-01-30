@@ -1,3 +1,5 @@
+import time, datetime
+from django.utils import timezone
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.contrib import messages
@@ -15,12 +17,9 @@ class LoginRequiredMixin(object):
     def as_view(cls):
         return login_required(super(LoginRequiredMixin, cls).as_view())
     
-class UserView(LoginRequiredMixin,BaseView):
+class UserBase(LoginRequiredMixin,BaseView):
     def __init__(self, *args, **kwargs):
-        super(UserView, self).__init__(*args, **kwargs)
-    
-    def post(self, request, *args, **kwargs):
-        return super(UserView, self).get(request, *args, **kwargs)
+        super(UserBase, self).__init__(*args, **kwargs)
 
 class CSignUp(BaseView):
     template_name = 'account/signup.html'
@@ -95,21 +94,21 @@ class CSignIn(BaseView):
         #messages.success(request, username+'會員登入成功', extra_tags='登入成功')
         return redirect(nextPage if nextPage else reverse('main:main'))
 
-class  CSignOut(UserView):
+class  CSignOut(UserBase):
     def get(self, request, *args, **kwargs):
         logout(request)
         messages.add_message(request, 50, '歡迎再度光臨', extra_tags='登出成功')
         #messages.success(request, '歡迎再度光臨', extra_tags='登出成功')
         return redirect(reverse('main:main'))
     
-class CenterView(UserView):
+class CenterView(UserBase):
     template_name = 'account/accountcenter.html'
     page_title = '個人資料'
     
     def get(self, request, *args, **kwargs):
         return super(CenterView, self).get(request, *args, **kwargs)
     
-class CProfile(UserView):
+class CProfile(UserBase):
     template_name = 'account/profile.html'
     page_title = '個人資料'
     
@@ -144,11 +143,14 @@ class CProfile(UserView):
         
         return redirect(reverse('account:profile'))
     
-class MyCartView(UserView):
+class MyCartView(UserBase):
     template_name = 'account/mycart.html' # xxxx/xxx.html
     page_title = '購物車' # title
 
     def get(self, request, *args, **kwargs):
+        mycart = MyCart.objects.filter(user=request.user)
+        kwargs['mycart'] =mycart
+        kwargs['number'] = list(range(len(mycart)))
         
         return super(MyCartView, self).get(request, *args, **kwargs)
     
@@ -159,11 +161,11 @@ class MyCartView(UserView):
         success = False
         try:
             mycart = MyCart.objects.get(itemID=item)
-            mycart.Qty+=qty
+            mycart.qty+=qty
             mycart.save()
             success = True
         except Exception as e:
-            MyCart.objects.create(itemID=item,Qty=qty, user=request.user)
+            MyCart.objects.create(itemID=item, qty=qty, user=request.user, date=timezone.now())
             success = True
             print(e)
         response = {}
@@ -172,5 +174,41 @@ class MyCartView(UserView):
         response["itemName"] = item.name
         return JsonResponse(response)
     
-    def getPostData(self):
+def removeItem(request):
+    if request.method=='GET':
+        return redirect(reverse('account:mycart'))
+    
+    removeID= request.POST.get('removeID')
+    try:
+        item = MyCart.objects.get(id=removeID)
+        messages.success(request, '商品： '+ item.itemID.name +' 移除成功。')
+        item.delete()
+    except Exception as e:
+        messages.error(request, '移除失敗。')
+        print(e)
+    return redirect(reverse('account:mycart'))
+    
+    
+class CheckOutView(UserBase):
+    template_name = 'account/checkout.html' # xxxx/xxx.html
+    page_title = '結帳' # title
+
+    def get(self, request, *args, **kwargs):
+        item = MyCart.objects.filter(user=request.user)
+        kwargs["number"] = list(range(len(item)))
+        kwargs["item"] = item
+        kwargs["timeout"] = time
+        
+        return super(CheckOutView, self).post(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+            
+        return super(CheckOutView, self).post(request, *args, **kwargs)
+    
+    def getPost(self, *args, **kwargs):
         return
+    
+    def checkOut(self, *args, **kwargs):
+        return
+    
+    

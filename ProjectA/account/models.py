@@ -44,7 +44,8 @@ class Order(models.Model):
 class MyCart(models.Model):
     user = models.ForeignKey(User)
     itemID = models.ForeignKey(Item)
-    Qty = models.IntegerField()
+    qty = models.IntegerField()
+    date = models.DateTimeField()
     def __str__(self):
         return self.itemID.name + " ("+ self.user.username +")"
     

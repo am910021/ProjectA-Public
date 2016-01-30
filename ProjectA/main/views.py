@@ -3,6 +3,7 @@ from django.core.urlresolvers import reverse
 from django.views.generic import TemplateView
 from django.conf import settings
 from shop.models import Brand
+from account.models import MyCart
 
 def admin_required(fun):
     def auth(request, *args, **kwargs):
@@ -37,6 +38,17 @@ class BaseView(TemplateView):
             context['page_title'] = self.page_title
 
         return context
+    
+    def get(self, request, *args, **kwargs):
+        if request.user.username!="":
+            kwargs['mycartNum']=len(MyCart.objects.filter(user=request.user))
+        return super(BaseView, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        if request.user.username!="":
+            kwargs['mycartNum']=len(MyCart.objects.filter(user=request.user))
+        return super(BaseView, self).get(request, *args, **kwargs)
+
 
 class CIndexView(BaseView):
     template_name = 'main/index.html'
@@ -45,3 +57,5 @@ class CIndexView(BaseView):
     def get(self,request):
         
         return super(CIndexView, self).get(request)
+    
+    

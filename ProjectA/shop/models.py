@@ -29,8 +29,8 @@ class Item(models.Model):
     name = models.CharField(max_length=128)
     cost = models.IntegerField()
     inventory = models.IntegerField()
-    image = models.CharField(max_length=128)
-    image2 = models.CharField(max_length=128)
+    image = models.CharField(max_length=128, blank=True)
+    image2 = models.CharField(max_length=128, blank=True)
     
     intro  = models.TextField(blank=True)
     introduction = models.TextField(blank=True)
