@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'main/css.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  
+<style>
+
+      body{
+      font-family: "微軟正黑體";
+      background-image:url( {% static 'background/background.jpg' %} );
+      background-color:#FFFFff;
+      }
+      .navbar-nav > li {
+      font-size: 16px;
+      }
+      .dropdown-menu a{
+      font-size: 16px;
+      }
+      .navbar-brand{
+      font-size: 30px;
+      }
+      .dropdown-toggle{
+      font-size: 16px;
+      }
+
+@media screen and (min-width: 268px) and (max-width: 767px) {
+.menu{
+    margin-top:50px;
+	border-bottom-width:0px;
+}
+}
+
+@media screen and (min-width: 768px) {
+.menu{
+    margin-top:0px;
+}
+}
+
+#bottom{
+width:100%;
+height: 80px;
+text-align:center;
+padding-top: 20px;
+border-top-style: solid;
+border-width: 2px;
+border-color:#A2A0A0;
+//background-color: #CECECE;
+}
+
+.main {
+    margin-top: 55px;
+        min-height: 700px;
+  margin-bottom: 80px;
+  }
+
+@media (min-width: 1080px) {
+.main {
+    margin-top: 55px;
+    min-height: 700px;
+      margin-bottom: 80px;
+  }
+  
+}
+</style>
+</head>
+<body>
+    <nav role="navigation" class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        
+        <!-- Title -->
+        <div class="navbar-header pull-left">
+          <a href="/" class="navbar-brand">GNOMIS</a>
+        </div>
+        
+        <!-- 'Sticky' (non-collapsing) right-side menu item(s) -->
+        <div class="navbar-header pull-right">
+          <ul class="nav pull-left">
+            <!-- This works well for static text, like a username -->
+            <li class="navbar-text pull-left">User Name</li>
+            <!-- Add any additional bootstrap header items.  This is a drop-down from an icon -->
+            <li class="dropdown pull-right">
+              <a href="#" data-toggle="dropdown" style="color:#777; margin-top: 5px;" class="dropdown-toggle"><span class="glyphicon glyphicon-user"></span><b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a href="/users/id" title="Profile">Profile</a>
+                </li>
+                <li>
+                  <a href="/logout" title="Logout">Logout </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+
+          <!-- Required bootstrap placeholder for the collapsed menu -->
+          <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+        </div>
+
+        <!-- The Collapsing items            navbar-left or navbar-right -->
+        <div class="collapse navbar-collapse navbar-left menu">
+          <!--                      pull-right keeps the drop-down in line -->
+          <ul class="nav navbar-nav pull-left" style="margin-bottom:0px;">
+            <li><a href="/news">News</a></li>
+                <li class="dropdown li-text16">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"  style="padding-left:0px;">　商品　<strong class="caret"></strong></a>
+                  <ul class="dropdown-menu">
+	                    <li>
+	                      <a href="{% url 'shop:brand' i.id %}">{{i.name}}</a>
+	                    </li>
+	                    <li>
+	                      <a href="{% url 'shop:brand' i.id %}">{{i.name}}</a>
+	                    </li>
+                  </ul>
+                </li>
+          </ul>
+        </div>
+
+        <!-- Additional navbar items -->
+        <div class="collapse navbar-collapse navbar-right" style="border-top-width:0px;">
+          <!--                      pull-right keeps the drop-down in line -->
+          <ul class="nav navbar-nav pull-left" style="margin-top:0px;">
+            <li><a href="/locator">Locator123123</a></li>
+            <li><a href="/extras">Extras</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+  
+
+      <div class="main">
+      {% block main %}
+      {% endblock %}
+      </div>
+
+      
+      <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+          <!--<div class="navbar navbar-fixed-bottom navbar-default ">
+            <h6 class="text-center">
+              Copyright © 2015 Yuri, All Rights Reserved.
+            </h6>
+            {% if is_admin %}
+            <h6 class="text-center">
+              <span><a href="{{Admin_Index|safe}}">Administrator</a></span>
+            </h6>
+            {% endif %}
+          </div>-->
+          <div id="bottom">
+          <h6 class="text-center">
+              Copyright © 2015 Yuri, All Rights Reserved.
+            </h6>
+
+            
+            <h6 class="text-center">
+              <span><a href="{% url 'control:admin' %}">Administrator</a></span>
+            </h6>
+
+            
+
+          </div>
+        </div>
+            <div class="col-md-1"></div>
+      </div>
+</body>
+</html>

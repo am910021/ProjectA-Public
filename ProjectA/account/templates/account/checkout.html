@@ -1,0 +1,266 @@
+    {% extends base_template_name %}
+    {% load account %}
+    {% load staticfiles %}
+
+    {% block style %}
+    <style type="text/css">
+    .text-size18{
+        font-size: 18px;
+        line-height: 18px;
+    }
+    .set-height700{
+        min-height:700px;
+    }
+    </style>
+    <script type="text/javascript">
+    function Agreement_function()
+    {
+        document.getElementById("Agreement-div").remove();
+        document.getElementById("Shopping-data").style.display = 'block';
+    }
+    </script>{% load account %}
+    
+    <script type='text/javascript' src='https://code.jquery.com/jquery-1.8.2.js'></script>
+
+    {% endblock %}
+
+    {% block main %}
+    <div class="container-fluid">
+        <div class="row set-height700">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-8" id="Agreement-div">
+                <h3>
+                    訂購協議
+                </h3>
+                <ul>
+                    <li>
+                        Lorem ipsum dolor sit amet
+                    </li>
+                    <li>
+                        Consectetur adipiscing elit
+                    </li>
+                    <li>
+                        Integer molestie lorem at massa
+                    </li>
+                    <li>
+                        Facilisis in pretium nisl aliquet
+                    </li>
+                    <li>
+                        Nulla volutpat aliquam velit
+                    </li>
+                    <li>
+                        Faucibus porta lacus fringilla vel
+                    </li>
+                    <li>
+                        Aenean sit amet erat nunc
+                    </li>
+                    <li>
+                        Eget porttitor lorem
+                    </li>
+                </ul>
+                <div class="row">
+                    <div class="col-md-3">
+
+                        <button type="button" class="btn btn-lg btn-success" id="Agreement" onClick="Agreement_function()">
+                            同意
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-lg btn-danger" id="Agreement">
+                            不同意
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8"  style="display:none" id="Shopping-data">
+                <h2>再次確認</h2>
+                <br><br>
+                <h4>這是您的訂單</h4>
+
+                <form method="post" action="{% url 'account:checkout' %}">
+                {% csrf_token %}
+	                <table class="table">
+	                    <thead>
+	                        <tr class="active">
+	                            <th>
+	                                #
+	                            </th>
+	                            <th>
+	                                商品名稱
+	                            </th>
+	                            <th>
+	                                商品單價
+	                            </th>
+	                            <th>
+	                                數量
+	                            </th>
+	                            <th>
+	                                小計
+	                            </th>
+                                <th>
+                                    庫存
+                                </th>
+	                            <th>
+	                                訂購日期
+	                            </th>
+	                        </tr>
+	                    </thead>
+	                    <tbody>
+	                        {% for i in number %}
+	                        <tr class="{{i|setClass}}">
+	                            <td>
+	                                {{i}}
+	                            </td>
+	                            <td>
+	                                {{i|getName:item}}
+	                            </td>
+	                            <td>
+	                                {{i|getCost:item}}
+	                            </td>
+	                            <td>
+	                                {{i|getQty:item}}
+	                            </td>
+	                            <td>
+	                                {{i|getSubtotal:item}}
+	                            </td>
+                                <td>
+                                    {{i|getInventory:item|safe}}
+                                </td>
+	                            <td>
+	                                {{i|getDate:item}}
+	                            </td>
+	                        </tr>
+	                        {% endfor %}
+	                    </tbody>
+	                </table>
+                    <div class="row">
+	                    <div class="col-md-3">
+	                        <input class="btn btn-lg btn-success" type="submit" value="確認結帳">
+	                    </div>
+	                    <div class="col-md-3">
+	                        <a href="{% url 'account:mycart' %}" class="btn btn-lg btn-danger">回購物車</a>
+	                    </div>
+	                    <div class="col-md-6">
+	                    </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-8" id="Check-success" style="display:none">
+                                            <h2>
+                結帳成功
+            </h2>
+            <p>
+                你以結帳成功，以下是你這次結帳的商品。
+            </p>
+                            <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                #
+                            </th>
+                            <th>
+                                產品名稱
+                            </th>
+                            <th>
+                                數量
+                            </th>
+                            <th>
+                                產品單價
+                            </th>
+                            <th>
+                                小計
+                            </th>
+                            <th>
+                                訂購日期
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                {{table|safe}}
+                    </tbody>
+                </table><br><br>
+                
+                <div>
+                <h3>請到此付款 Pay2Go</h3>
+<form name="pay2go" style="text-align:center;" method="post" action="https://capi.pay2go.com/MPG/mpg_gateway">
+        <input type="hidden" name="MerchantID" id="MerchantID" value="">
+        <input type="hidden" name="RespondType" id="RespondType" value="">
+        <input type="hidden" name="CheckValue" id="CheckValue" size="50" value="">
+        <input type="hidden" name="TimeStamp" id="TimeStamp" value="">
+        <input type="hidden" name="Version" id="Version" value="">
+        <input type="hidden" name="MerchantOrderNo" id="MerchantOrderNo" value="">
+        <input type="hidden" name="Amt" id="Amt" value="">
+        <input type="hidden" name="ItemDesc" id="ItemDesc" value="">
+        <input type="hidden" name="ExpireDate" id="ExpireDate" value="">
+        <input type="hidden" name="ReturnURL" id="ReturnURL" value="">
+        <input type="hidden" name="NotifyURL" id="NotifyURL" value="">
+        <input type="hidden" name="CustomerURL" id="CustomerURL" value="">
+        <input type="hidden" name="Email" id="Email" value="">
+        <input type="hidden" name="LoginType" id="LoginType" value="">
+        <input type="hidden" name="CREDIT" id="CREDIT" value="">
+    <p>
+               您的訂單編號：<font color="red"><div id="div_orderno"></div></font> 已經成功下單。<br>
+               您的訂單金額：<font color="red"><div id="div_orderamt"></div></font> 。<br> 
+    </p>
+        <input type="submit" name="submit" value="前往繳費" class="exclusive_large">
+</form>
+    
+                
+                
+                
+                </div>
+                <h4>產品使用提醒&說明</h4>
+                                <ul>
+                    <li>
+                        Lorem ipsum dolor sit amet
+                    </li>
+                    <li>
+                        Consectetur adipiscing elit
+                    </li>
+                    <li>
+                        Integer molestie lorem at massa
+                    </li>
+                    <li>
+                        Facilisis in pretium nisl aliquet
+                    </li>
+                    <li>
+                        Nulla volutpat aliquam velit
+                    </li>
+                    <li>
+                        Faucibus porta lacus fringilla vel
+                    </li>
+                    <li>
+                        Aenean sit amet erat nunc
+                    </li>
+                    <li>
+                        Eget porttitor lorem
+                    </li>
+                </ul>
+            <p>
+                <a class="btn" href="">回首頁 »</a>
+            </p>
+            </div>
+            
+            <!--
+            <div class="col-md-8">
+                            <h2>
+                結帳失敗
+            </h2>
+            <p>
+                結帳失敗，您的購物車是空的，沒有可以結帳的商品。
+            </p>
+            <p>
+                <a class="btn" href="">回首頁 »</a>
+            </p>
+            </div>
+            -->
+            
+            <div class="col-md-2">
+            </div>
+        </div>
+    </div>
+    {% endblock %}
