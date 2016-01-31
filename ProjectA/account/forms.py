@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from account.models import UserProfile, GroupOrder
+from account.models import Profile, GroupOrder
 from captcha import fields
 
 class SignupForm(forms.ModelForm):
@@ -54,7 +54,7 @@ class UserForm(forms.ModelForm):
             raise forms.ValidationError('密碼不相符')
         return password2
 
-class UserProfileForm(forms.ModelForm):
+class ProfileForm(forms.ModelForm):
     fullName = forms.CharField(max_length=128, label='姓名', required=False)
     fullName.widget.attrs.update({'class':'form-control'}) 
     phone = forms.CharField(max_length=15, label='電話', required=False)
@@ -63,7 +63,7 @@ class UserProfileForm(forms.ModelForm):
     address.widget.attrs.update({'class':'form-control'}) 
     
     class Meta:
-        model = UserProfile
+        model = Profile
         fields = ('fullName', 'phone', 'address')
         
 class CheckOutForm(forms.Form):

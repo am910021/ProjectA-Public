@@ -5,7 +5,7 @@ django.setup()
 import getpass
 import re
 from pip._vendor.distlib.compat import raw_input
-from account.models import User, UserProfile
+from account.models import User, Profile
 from django.utils import timezone
 
 class bcolors:
@@ -54,7 +54,7 @@ def create():
         admin.date_joined = timezone.now()
         admin.save()
         
-        userProflie = UserProfile()
+        userProflie = Profile()
         userProflie.username = username
         userProflie.user = admin
         userProflie.save()

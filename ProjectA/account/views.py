@@ -11,8 +11,8 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse
 from main.views import BaseView, get_client_ip
 from main.sendEmail import sendGmailSmtp
-from account.forms import UserProfileForm, SignupForm, CaptchaForm, UserForm, CheckOutForm, ResetPwd
-from account.models import UserProfile, MyCart, Order, GroupOrder
+from account.forms import ProfileForm, SignupForm, CaptchaForm, UserForm, CheckOutForm, ResetPwd
+from account.models import Profile, MyCart, Order, GroupOrder
 from shop.models import Item
 from pay2go.views import BuyData 
 from pyaes.aescipher import AESCipher
@@ -39,14 +39,14 @@ class CSignUp(BaseView):
             #messages.success(request, request.user.username+'會員登入成功', extra_tags='登入成功')
             return redirect(reverse('main:main'))
         kwargs['userForm'] = SignupForm()
-        kwargs['profileform'] = UserProfileForm()
+        kwargs['profileform'] = ProfileForm()
         kwargs['CForm'] = CaptchaForm()
         
         return super(CSignUp, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
         userForm = SignupForm(request.POST)
-        profileform = UserProfileForm(request.POST)
+        profileform = ProfileForm(request.POST)
         CForm = CaptchaForm(request.POST)
         if not (CForm.is_valid() and userForm.is_valid() and profileform.is_valid()):
             kwargs['userForm'] = userForm
@@ -94,7 +94,7 @@ class CSignIn(BaseView):
         if not user.is_active:
             kwargs['error'] = '帳號已停用' 
             return super(CSignIn, self).get(request, *args, **kwargs)
-        log = UserProfile.objects.get(username=username)
+        log = Profile.objects.get(username=username)
         log.ip = get_client_ip(request)
         log.save()
         login(request, user)
@@ -127,8 +127,8 @@ class ForgetView(BaseView):
             user = User.objects.get(username=request.POST.get("username"))
             if user.email==request.POST.get("email"):
                 resetCode = self.createCode(12)
-                user.userprofile.resetCode=resetCode
-                user.userprofile.save()
+                user.profile.resetCode=resetCode
+                user.profile.save()
                 response['dataError']=False
                 response['success']= self.sendMail(request, user,resetCode)
         except Exception as e:
@@ -207,7 +207,7 @@ class ForgetReset(BaseView):
         
         try:
             user = User.objects.get(id=data[0])
-            if (user.username!=data[1] and user.email!=data[2] and user.userprofile.resetCode!=data[3]):
+            if (user.username!=data[1] and user.email!=data[2] and user.profile.resetCode!=data[3]):
                 kwargs['getError'] = True
             kwargs['form'] = ResetPwd()
         except Exception as e:
@@ -226,11 +226,11 @@ class ForgetReset(BaseView):
         code = request.POST.get('code')
         try:
             user = User.objects.get(username=username)
-            if user.userprofile.resetCode!=code:
+            if user.profile.resetCode!=code:
                 kwargs['postError'] = True
                 return super(ForgetReset, self).post(request, *args, **kwargs)
-            user.userprofile.resetCode=""
-            user.userprofile.save()
+            user.profile.resetCode=""
+            user.profile.save()
             user.set_password(password)
             user.save()
             kwargs['success'] = True
@@ -254,7 +254,7 @@ class CProfile(UserBase):
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username=request.user.username)
         userform = UserForm(instance=user)
-        profileform = UserProfileForm(instance=user.userprofile)
+        profileform = ProfileForm(instance=user.profile)
          
         kwargs['userform'] = userform
         kwargs['profileform'] = profileform
@@ -263,19 +263,19 @@ class CProfile(UserBase):
     def post(self, request, *args, **kwargs):
         user = User.objects.get(username=request.user.username)
         userform = UserForm(request.POST, instance=user)
-        profileform = UserProfileForm(request.POST, instance=user.userprofile)
+        profileform = ProfileForm(request.POST, instance=user.profile)
 
         if request.POST.get('email')!=user.email:
-            user.userprofile.isVerified=False
-            user.userprofile.save()
+            user.profile.isVerified=False
+            user.profile.save()
 
         if not (userform.is_valid() and profileform.is_valid()):
             kwargs['userform'] = userform
             kwargs['profileform'] = profileform
             return super(CProfile, self).post(request, *args, **kwargs)
         if userform.cleaned_data.get('email')!=user.email:
-            user.userprofile.is_verified=False
-            user.userprofile.save()
+            user.profile.isVerified=False
+            user.profile.save()
         
         profileform.save()
         userform.save()
@@ -340,8 +340,8 @@ class VerificationEemail(BaseView):
             return False
         if user.email!=data[2]:
             return False
-        user.userprofile.isVerified = True
-        user.userprofile.save()
+        user.profile.isVerified = True
+        user.profile.save()
         logout(request)
         return True
 

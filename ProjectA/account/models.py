@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from shop.models import Item
 # Create your models here.
 
-class UserProfile(models.Model):
+class Profile(models.Model):
     user = models.OneToOneField(User)
     username = models.CharField(max_length=30, unique=True)
     fullName = models.CharField(max_length=128, blank=True)
@@ -34,7 +34,7 @@ class GroupOrder(models.Model):
     date = models.DateTimeField()
     
     def __str__(self):
-        return str(self.id) + " (" + self.user.userprofile.fullName + ")"
+        return str(self.id) + " (" + self.user.profile.fullName + ")"
     
 class Order(models.Model):
     group = models.ForeignKey(GroupOrder)

@@ -104,7 +104,7 @@ height:700px;
                         </td>
 						<td>
 							通知用戶的管道
-                            {% if not user.userprofile.isVerified %}
+                            {% if not user.profile.isVerified %}
                             <span>   </span><a href="{% url 'account:verify' %}" class="text-danger">立即驗證</a>
                             {% else %}
                             <span class="text-success">已驗證</span>
@@ -157,7 +157,7 @@ height:700px;
 			
 			<div class="row">
 				<div class="col-md-4">
-					 <span>最後修改日期：{{user.userprofile.changeDate|getFormatDate}}</span>
+					 <span>最後修改日期：{{user.profile.changeDate|getFormatDate}}</span>
 					 <!--<a href="#" class="btn btn-active btn-lg btn-block">
 					 修改資料 <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></a>
 					 -->

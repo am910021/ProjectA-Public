@@ -1,7 +1,7 @@
 from main.views import BaseView
 from shop.models import Item, Brand, Category
 from django.contrib.auth.models import User
-from account.models import UserProfile
+from account.models import Profile
 #from django.http import HttpResponseRedirect, HttpResponseForbidden,HttpResponse
 
 class CShop(BaseView):
