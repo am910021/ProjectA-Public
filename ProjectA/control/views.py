@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.contrib import messages
-from datetime import datetime
+import datetime
 from main.models import Setting
 from main.views import BaseView, admin_required
 from main.dropbox import file_put2, file_delete
 from .forms import BrandForm, CategoryForm, ItemForm
 from shop.models import Brand, Category, Item
+from django.utils import timezone
 
 class AdminRequiredMixin(object):
     @classmethod
@@ -291,7 +292,26 @@ class ConfigEmail(AdminBase):
         messages.success(request, '設定成功')
         return redirect(reverse('control:configEmail'))
 
+class ConfigPay2Go(AdminBase):
+    template_name = 'control/config/pay2go.html' # xxxx/xxx.html
+    page_title = 'Pay2GO 設定' # title
+
+    def get(self, request, *args, **kwargs):
+        pay2go = Setting.objects.get(name="pay2go")
+        kwargs['data'] = [pay2go.c1, pay2go.c2, pay2go.c3, pay2go.c4, pay2go.isActive]
+        return super(ConfigPay2Go, self).get(request, *args, **kwargs)
     
+    def post(self, request, *args, **kwargs):
+        form = request.POST
+        pay2go = Setting.objects.get(name="pay2go")
+        pay2go.c1= form.get('memberID')
+        pay2go.c2= form.get('hashKEY')
+        pay2go.c3= form.get('hashIV')
+        pay2go.c4= datetime.datetime.strftime(timezone.now()+ datetime.timedelta(hours=1), '%Y-%m-%d %H:%M:%S')
+        pay2go.isActive= True if form.get('isActive') else False
+        pay2go.save()
+        messages.success(request, '設定成功')
+        return redirect(reverse('control:configPay2go'))
     
     
     

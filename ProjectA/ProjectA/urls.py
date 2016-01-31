@@ -23,5 +23,6 @@ urlpatterns = [
     url(r'^main/', include('main.urls', namespace='main')),
     url(r'^account/', include('account.urls', namespace='account')),
     url(r'^shop/', include('shop.urls', namespace='shop')),
+    url(r'^pay2go/', include('pay2go.urls', namespace='pay2go')),
     url(r'^.*', include('main.urls', namespace='index')),
 ]

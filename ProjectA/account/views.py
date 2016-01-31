@@ -1,4 +1,6 @@
-import time, datetime
+# -*- coding: utf-8 -*-
+import datetime, time
+import random
 from django.utils import timezone
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
@@ -8,9 +10,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from main.views import BaseView, get_client_ip
-from account.forms import UserProfileForm, SignupForm, CaptchaForm, UserForm
-from account.models import UserProfile, MyCart
+from main.sendEmail import sendGmailSmtp
+from account.forms import UserProfileForm, SignupForm, CaptchaForm, UserForm, CheckOutForm, ResetPwd
+from account.models import UserProfile, MyCart, Order, GroupOrder
 from shop.models import Item
+from pay2go.views import BuyData 
+from pyaes.aescipher import AESCipher
+import code
 
 class LoginRequiredMixin(object):
     @classmethod
@@ -20,6 +26,8 @@ class LoginRequiredMixin(object):
 class UserBase(LoginRequiredMixin,BaseView):
     def __init__(self, *args, **kwargs):
         super(UserBase, self).__init__(*args, **kwargs)
+        
+    
 
 class CSignUp(BaseView):
     template_name = 'account/signup.html'
@@ -101,8 +109,139 @@ class  CSignOut(UserBase):
         #messages.success(request, '歡迎再度光臨', extra_tags='登出成功')
         return redirect(reverse('main:main'))
     
+class ForgetView(BaseView):
+    template_name = 'account/forget.html' # xxxx/xxx.html
+    page_title = '忘記密嗎'
+
+    def get(self, request, *args, **kwargs):
+        return super(ForgetView, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        response = {'dataError':True, 'success':False}
+        if not ("username" in request.POST and "email" in request.POST):
+            response['formNull'] = True
+            return super(ForgetView, self).post(request, *args, **kwargs)
+        try:
+            kwargs['username'] = request.POST.get("username")
+            kwargs['email'] = request.POST.get("email")
+            user = User.objects.get(username=request.POST.get("username"))
+            if user.email==request.POST.get("email"):
+                resetCode = self.createCode(12)
+                user.userprofile.resetCode=resetCode
+                user.userprofile.save()
+                response['dataError']=False
+                response['success']= self.sendMail(request, user,resetCode)
+        except Exception as e:
+            print(e)
+    
+        return JsonResponse(response)
+    
+    def sendMail(self,request, user, resetCode):
+        
+        timeout = datetime.datetime.strftime(timezone.now()+ datetime.timedelta(hours=24), '%Y-%m-%d-%H-%M-%S')
+        cipher = AESCipher()
+        code = cipher.encrypt(str(user.id)+"~|@|~"+user.username+"~|@|~"+user.email+"~|@|~"+resetCode+
+                              "~|@|~"+timeout )
+        
+        url = "http://"+self.getHost(request)+reverse('account:forgetReset', args=(code,))
+        email = user.email
+        html="""
+            <!DOCTYPE html>
+            <html>
+            <body>
+            <span>這是您的重置碼（分大小寫）：</span><span style="background-color:#eee">{code}</span><br>
+            以下是重置您密碼的網址：<br>
+            <a href="{url}" target="_blank">點此重置您密碼</a>
+            </body>
+            </html>
+        """.format(url=url, name=user.username, code = resetCode)
+        text = "這是您的重置碼(分大小寫)：\n {code} \n 以下是重置您密碼的網址：\n{url}".format(url=url, code = resetCode)
+        return sendGmailSmtp(email, "密碼重置", html , text) # 收件人, 標題, 內容
+    
+    def createCode(self, num):
+        n,l,u=0,0,0
+        s=""
+        i=0
+        m = num//3
+        while(True):
+            r=random.randint(1,3)
+            if r==1 and (n<m or i>0):
+                n+=1
+                s+=chr(random.randint(48,57))
+            if r==2 and (l<m or i>0):
+                l+=1
+                s+=chr(random.randint(97,122))
+            if r==3 and (u<m or i>0):
+                u+=1
+                s+=chr(random.randint(65,90))
+            if n+l+u>=m*3:
+                i+=1
+            if n+l+u>=num:
+                break
+        return s
+    
+class ForgetReset(BaseView):
+    template_name = 'account/reset.html' # xxxx/xxx.html
+    page_title = '重置密碼' # title
+
+    def get(self, request, *args, **kwargs):
+        if not "base64string" in kwargs:
+            kwargs['getError'] = True
+            return super(ForgetReset, self).get(request, *args, **kwargs)
+        
+        aes = AESCipher()
+        data=None
+        try:
+            data = aes.decrypt(kwargs['base64string']).split("~|@|~")
+        except Exception as e:
+            print(e)
+            kwargs['getError'] = True
+            return super(ForgetReset, self).get(request, *args, **kwargs)
+        
+        timeout = time.mktime(time.strptime(data[4], '%Y-%m-%d-%H-%M-%S'))
+        now = time.mktime(timezone.now().timetuple())
+        
+        if  now>timeout:
+            kwargs['timeout'] = "重置資料已超時，請重新按 忘記密碼。"
+            return super(ForgetReset, self).get(request, *args, **kwargs)
+        
+        try:
+            user = User.objects.get(id=data[0])
+            if (user.username!=data[1] and user.email!=data[2] and user.userprofile.resetCode!=data[3]):
+                kwargs['getError'] = True
+            kwargs['form'] = ResetPwd()
+        except Exception as e:
+            print(e)
+
+        
+        return super(ForgetReset, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        form = ResetPwd(request.POST)
+        kwargs['form']=form
+        if not form.is_valid():
+            return super(ForgetReset, self).post(request, *args, **kwargs)
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        code = request.POST.get('code')
+        try:
+            user = User.objects.get(username=username)
+            if user.userprofile.resetCode!=code:
+                kwargs['postError'] = True
+                return super(ForgetReset, self).post(request, *args, **kwargs)
+            user.userprofile.resetCode=""
+            user.userprofile.save()
+            user.set_password(password)
+            user.save()
+            kwargs['success'] = True
+        except Exception as e:
+            print(e)
+            kwargs['postError'] = True
+        return super(ForgetReset, self).post(request, *args, **kwargs)
+        
+    
 class CenterView(UserBase):
-    template_name = 'account/accountcenter.html'
+    template_name = 'account/center.html'
     page_title = '個人資料'
     
     def get(self, request, *args, **kwargs):
@@ -126,13 +265,20 @@ class CProfile(UserBase):
         userform = UserForm(request.POST, instance=user)
         profileform = UserProfileForm(request.POST, instance=user.userprofile)
 
+        if request.POST.get('email')!=user.email:
+            user.userprofile.isVerified=False
+            user.userprofile.save()
+
         if not (userform.is_valid() and profileform.is_valid()):
             kwargs['userform'] = userform
             kwargs['profileform'] = profileform
             return super(CProfile, self).post(request, *args, **kwargs)
+        if userform.cleaned_data.get('email')!=user.email:
+            user.userprofile.is_verified=False
+            user.userprofile.save()
         
         profileform.save()
-        user = userform.save()
+        userform.save()
         password = userform.cleaned_data.get('password')
         if password:
             user.set_password(password)
@@ -142,7 +288,64 @@ class CProfile(UserBase):
         messages.success(request, '會員資料修改成功')
         
         return redirect(reverse('account:profile'))
+
+class Verification(UserBase):
+    template_name = 'account/verification.html' # xxxx/xxx.html
+    page_title = '驗證區' # title
+
+    def get(self, request, *args, **kwargs):
+        kwargs['get'] = True
+        return super(Verification, self).get(request, *args, **kwargs)
     
+    def post(self, request, *args, **kwargs):
+        cipher = AESCipher()
+        code = cipher.encrypt(str(request.user.id)+"~|@|~"+request.user.username+"~|@|~"+request.user.email)
+        url = "http://"+self.getHost(request)+reverse('account:verifyEmail', args=(code,))
+        email = request.user.email
+        html="""
+            <!DOCTYPE html>
+            <html>
+            <body>
+            <h3>會員 {name}:</h3>
+            <p>謝謝您的註冊。</p>
+            
+            以下是您的驗證網址：
+            <a href="{url}">點此驗證</a>
+            </body>
+            </html>
+        """.format(url=url, name=request.user.username)
+        text = "以下是你的驗證網址：\n {url}".format(url=url)
+        response = {}
+        response['success'] = sendGmailSmtp(email, "Email 驗證", html , text) # 收件人, 標題, 內容
+        return JsonResponse(response)
+
+
+class VerificationEemail(BaseView):
+    template_name = "account/verification.html"
+    page_title = '電子郵件驗證'
+    
+    def get(self,request, *args, **kwargs):
+        if not "base64string" in kwargs:
+            kwargs['passed'] = False
+            return super(VerificationEemail, self).get(request, *args, **kwargs)
+        kwargs['passed'] = self.checkUser(request, *args, **kwargs)
+        return super(VerificationEemail, self).get(request, *args, **kwargs)
+        
+    def checkUser(self,request, *args, **kwargs):
+        base64 = kwargs['base64string']
+        aes = AESCipher()
+        data = aes.decrypt(base64).split("~|@|~")
+        user = User.objects.get(id=data[0])
+        if user.username!=data[1]:
+            return False
+        if user.email!=data[2]:
+            return False
+        user.userprofile.isVerified = True
+        user.userprofile.save()
+        logout(request)
+        return True
+
+
 class MyCartView(UserBase):
     template_name = 'account/mycart.html' # xxxx/xxx.html
     page_title = '購物車' # title
@@ -151,7 +354,6 @@ class MyCartView(UserBase):
         mycart = MyCart.objects.filter(user=request.user)
         kwargs['mycart'] =mycart
         kwargs['number'] = list(range(len(mycart)))
-        
         return super(MyCartView, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
@@ -170,7 +372,7 @@ class MyCartView(UserBase):
             print(e)
         response = {}
         response["success"] = success
-        response["qty"] = qty
+        response["qty"] = len(MyCart.objects.all())
         response["itemName"] = item.name
         return JsonResponse(response)
     
@@ -188,27 +390,128 @@ def removeItem(request):
         print(e)
     return redirect(reverse('account:mycart'))
     
-    
-class CheckOutView(UserBase):
-    template_name = 'account/checkout.html' # xxxx/xxx.html
-    page_title = '結帳' # title
+class Agreement(UserBase):
+    template_name = 'account/checkout/agreement.html'
+    page_title = "結帳-合約"
 
     def get(self, request, *args, **kwargs):
-        item = MyCart.objects.filter(user=request.user)
-        kwargs["number"] = list(range(len(item)))
-        kwargs["item"] = item
-        kwargs["timeout"] = time
-        
-        return super(CheckOutView, self).post(request, *args, **kwargs)
+        return super(Agreement, self).get(request, *args, **kwargs)
+    
+class CheckOut(UserBase):
+    template_name = 'account/checkout/info.html' # xxxx/xxx.html
+    page_title = '結帳-資訊' # title
+
+    def get(self, request, *args, **kwargs):
+        return redirect(reverse('account:mycart'))
     
     def post(self, request, *args, **kwargs):
+        if "byAgreement" in request.POST:
+            kwargs['form'] = CheckOutForm()
+            return super(CheckOut, self).get(request, *args, **kwargs)
+        if "reSet" in request.POST:
+            kwargs['form'] = CheckOutForm()
+            return super(CheckOut, self).get(request, *args, **kwargs)
+        if "changeForm" in request.POST:
+            kwargs['form'] = CheckOutForm(request.POST)
+            return super(CheckOut, self).get(request, *args, **kwargs)
+        if "byInfo" in request.POST:
+            return self.checkInfo(request, *args, **kwargs)
+        if "byData" in request.POST:
+            return self.checkdata(request, *args, **kwargs)
+        
+        return super(CheckOut, self).post(request, *args, **kwargs)
+    
+    
+    def checkInfo(self, request, *args, **kwargs):
+        kwargs['form'] = CheckOutForm(request.POST)
+        if not kwargs['form'].is_valid():
+            return super(CheckOut, self).post(request, *args, **kwargs)
+        self.template_name = 'account/checkout/data.html' # xxxx/xxx.html
+        self.page_title = '結帳-確認' # title
+        kwargs['form'].setReadOnly()
+        mycart = MyCart.objects.filter(user=request.user)
+        kwargs['mycart'] =mycart
+        kwargs['number'] = list(range(len(mycart)))
+        kwargs["timeout"] = datetime.datetime.strftime(timezone.now()+ datetime.timedelta(hours=1), '%Y-%m-%d-%H-%M-%S')
+        return super(CheckOut, self).post(request, *args, **kwargs)
+    
+    def checkdata(self, request, *args, **kwargs):
+        timeout =  time.mktime(time.strptime(request.POST.get('timeout'), '%Y-%m-%d-%H-%M-%S'))
+        now = time.mktime(timezone.now().timetuple())
+        if now > timeout:
+            messages.error(request, '本次結帳時間超時，請重新整理頁面。')
+            return redirect(reverse('account:agreement'))
+        
+        
+        form = request.POST
+        group = GroupOrder.objects.create(user=request.user,date=timezone.now())
+        group.payerName = form.get('payerName')
+        group.payerAddress = form.get('payerAddress')
+        group.payerPhone = form.get('payerPhone')
+        group.recipientName = form.get('recipientName')
+        group.recipientAddress = form.get('recipientAddress')
+        group.recipientPhone = form.get('recipientPhone')
+        group.save()
+        totalamount = 0
+        mycart  = MyCart.objects.all()
+        for i in mycart:
+            subtotal = i.itemID.cost * i.qty
+            Order.objects.create(group=group, itemID=i.itemID, itemNmae=i.itemID.name,itemPrice=subtotal, qty=i.qty)
+            totalamount+=subtotal
+            i.itemID.inventory = i.itemID.inventory-i.qty
+            i.itemID.save()
+            #i.delete()
+        
+        group.totalAmount=totalamount
+        group.save()
+        return redirect(reverse('account:checkoutComplete', args=(group.id, )))
+        
+        
+        self.template_name = 'account/checkout/success.html' # xxxx/xxx.html
+        self.page_title = '結帳-完成' # title
+        order = Order.objects.filter(group=group)
+        kwargs['order'] = order
+        kwargs['group'] = group
+        kwargs['totalamount'] = totalamount
+        kwargs['number'] = list(range(len(order)))
+        
+        return super(CheckOut, self).post(request, *args, **kwargs)
+    
+    
+class CheckoutComplete(UserBase):
+    template_name = 'account/checkout/success.html' # xxxx/xxx.html
+    page_title = "結帳-錯誤"
+    
+    def get(self, request, *args, **kwargs):
+        kwargs['nofind'] = True
+        if "groupID" in kwargs:
+            group = None
+            try:
+                group = GroupOrder.objects.get(id=kwargs['groupID'])
+            except Exception as e:
+                return super(CheckoutComplete, self).get(request, *args, **kwargs)
+
+            if group.user!=request.user:
+                return super(CheckoutComplete, self).get(request, *args, **kwargs)
+
+            order = Order.objects.filter(group=group)
+            kwargs['group'] = group
+            kwargs['order'] = order
+            kwargs['number'] = list(range(len(order)))
+            kwargs['nofind'] = False
+            self.page_title = '結帳-完成'
             
-        return super(CheckOutView, self).post(request, *args, **kwargs)
+            #MerchantOrderNo = "TESTNUMBER" + str(group.id)
+            #Amt = group.totalAmount
+            #Email = form.cleaned_data['email']
+            #ItemDesc = "測試物品"
+            #data = BuyData(MerchantOrderNo, Amt, Email, ItemDesc)
+            #return render(request, template, {"BuyData":data})
+            
+            
+        return super(CheckoutComplete, self).get(request, *args, **kwargs)
     
-    def getPost(self, *args, **kwargs):
-        return
-    
-    def checkOut(self, *args, **kwargs):
-        return
+    def post(self, request, *args, **kwargs):
+        return redirect(reverse('account:center'))
     
     

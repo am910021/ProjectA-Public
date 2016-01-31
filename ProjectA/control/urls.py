@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from django.views.generic.base import RedirectView
-from control.views import CAdminIndex, redirectAdminIndex, CAdminSignIn, VConfig, ConfigEmail
+from control.views import CAdminIndex, redirectAdminIndex, CAdminSignIn, VConfig, ConfigEmail, ConfigPay2Go
 from .views import CBrand, CBrandAdd, CBrandEdit, CBrandPreview
 from .views import CCategory, CCategoryAdd, CCategoryEdit
 from .views import ItemManage, ItemAdd, ItemEdit, ItemPreview
@@ -11,7 +11,7 @@ urlpatterns = [
     url(r'^admin/login/$', CAdminSignIn.as_view(), name='SignIn'),
     url(r'^config/$', VConfig.as_view(), name='config'),
     url(r'^config/email/$', ConfigEmail.as_view(), name='configEmail'),
-    
+    url(r'^config/pay2go/$', ConfigPay2Go.as_view(), name='configPay2go'),
     
     url(r'^brand/$', CBrand.as_view(), name='brand'),
     url(r'^brandadd/$', CBrandAdd.as_view(), name='brandAdd'),

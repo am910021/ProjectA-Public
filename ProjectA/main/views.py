@@ -49,6 +49,9 @@ class BaseView(TemplateView):
             kwargs['mycartNum']=len(MyCart.objects.filter(user=request.user))
         return super(BaseView, self).get(request, *args, **kwargs)
 
+    def getHost(self, request):
+        return request.META['HTTP_HOST']
+
 
 class CIndexView(BaseView):
     template_name = 'main/index.html'

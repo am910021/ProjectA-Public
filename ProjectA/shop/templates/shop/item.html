@@ -18,8 +18,6 @@ border:0; height:2px; background-color:#d4d4d4;
 <script type="text/javascript" src="http://malsup.github.com/jquery.form.js"></script>
     <script> 
     
-    var mycartNum = {{mycartNum}};
-    
     function showRequest(formData, jqForm, options) {
         //debugger;
         //var queryString = $.param(formData);
@@ -31,8 +29,7 @@ border:0; height:2px; background-color:#d4d4d4;
         beforeSubmit: showRequest,
         success : function(json) {
         	if(json.success == true){
-                mycartNum++;
-                document.getElementById("mycartNum").innerHTML = mycartNum
+                document.getElementById("mycartNum").innerHTML = json.qty;
         		document.getElementById("message").innerHTML = "商品："+json.itemName+" 成功加入購物車。";
         		$( "#dialog" ).dialog( "open" );
         	}

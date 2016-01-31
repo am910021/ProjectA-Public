@@ -1,4 +1,5 @@
     {% extends base_template_name %}
+    {% load account %}
     {% load staticfiles %}
 
     {% block style %}
@@ -20,55 +21,7 @@
     </script>
     
     <script type='text/javascript' src='https://code.jquery.com/jquery-1.8.2.js'></script>
-    <script type='text/javascript'> 
-    $(document).ready(function(e) {
-        $('#form1').on('submit', (function(e) {
-          e.preventDefault();
-          var formData = new FormData(this);
-    
-          $.ajax({
-            type: 'post',
-            url: "",
-            dataType: "json",
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            success: function(json) {
-                console.log(json);
-              if (json.success == true) {
-                  document.getElementById("Shopping-data").remove();
-                  document.getElementById("Check-success").style.display = 'block';
-                  
-                  
-                  document.getElementById("MerchantID").value=json.MerchantID;
-                  document.getElementById("RespondType").value=json.RespondType;
-                  document.getElementById("CheckValue").value=json.CheckValue;
-                  document.getElementById("TimeStamp").value=json.TimeStamp;
-                  document.getElementById("Version").value=json.Version;
-                  document.getElementById("MerchantOrderNo").value=json.MerchantOrderNo;
-                  document.getElementById("Amt").value=json.Amt;
-                  document.getElementById("ItemDesc").value=json.ItemDesc;
-                  document.getElementById("ExpireDate").value=json.ExpireDate;
-                  document.getElementById("ReturnURL").value=json.ReturnURL;
-                  document.getElementById("NotifyURL").value=json.NotifyURL;
-                  document.getElementById("CustomerURL").value=json.CustomerURL;
-                  document.getElementById("Email").value=json.Email;
-                  document.getElementById("LoginType").value=json.LoginType;
-                  document.getElementById("CREDIT").value=json.CREDIT;
-                  document.getElementById("div_orderno").innerHTML = json.MerchantOrderNo;
-                  document.getElementById("div_orderamt").innerHTML = json.Amt;
-                  
-              }
-            },
-            error: function(data,json) {
-              console.log(data);
-            }
-          });
-        }));
-      });
-      </script>
-      
+
     {% endblock %}
 
     {% block main %}
@@ -77,6 +30,11 @@
             <div class="col-md-2">
             </div>
             <div class="col-md-8" id="Agreement-div">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="bg-info h4 text-danger">{{message}}</div>
+            {% endfor %}
+            {% endif %}
                 <h3>
                     訂購協議
                 </h3>
@@ -128,50 +86,75 @@
                 <br><br>
                 <h4>這是您的訂單</h4>
 
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>
-                                #
-                            </th>
-                            <th>
-                                產品名稱
-                            </th>
-                            <th>
-                                數量
-                            </th>
-                            <th>
-                                產品單價
-                            </th>
-                            <th>
-                                小計
-                            </th>
-                            <th>
-                                訂購日期
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                {{table|safe}}
-                    </tbody>
-                </table>
+                <form method="post" action="{% url 'account:checkout' %}">
+                {% csrf_token %}
+                <input name="timeout" type="text" value="{{timeout}}">
+                <!-- <input name="timeout" type="hidden" value="{{timeout}}"> -->
+	                <table class="table">
+	                    <thead>
+	                        <tr class="active">
+	                            <th>
+	                                #
+	                            </th>
+	                            <th>
+	                                商品名稱
+	                            </th>
+	                            <th>
+	                                商品單價
+	                            </th>
+	                            <th>
+	                                數量
+	                            </th>
+	                            <th>
+	                                小計
+	                            </th>
+                                <th>
+                                    庫存
+                                </th>
+	                            <th>
+	                                訂購日期
+	                            </th>
+	                        </tr>
+	                    </thead>
+	                    <tbody>
+	                        {% for i in number %}
+	                        <tr class="{{i|setClass}}">
+	                            <td>
+	                                {{i}}
+	                            </td>
+	                            <td>
+	                                {{i|getName:item}}
+	                            </td>
+	                            <td>
+	                                {{i|getCost:item}}
+	                            </td>
+	                            <td>
+	                                {{i|getQty:item}}
+	                            </td>
+	                            <td>
+	                                {{i|getSubtotal:item}}
+	                            </td>
+                                <td>
+                                    {{i|getInventory:item|safe}}
+                                </td>
+	                            <td>
+	                                {{i|getDate:item}}
+	                            </td>
+	                        </tr>
+	                        {% endfor %}
+	                    </tbody>
+	                </table>
                     <div class="row">
-                    <form id="form1">
-                    {% csrf_token %}
-                    {{tempform|safe}}
-                    {{userform|safe}}
-                    <input name="order_cost" readonly="readonly" type="hidden" value="{{order_cost}}">
-                    <div class="col-md-3">
-
-                        <input class="btn btn-lg btn-success" type="submit" value="確認結帳">
+	                    <div class="col-md-3">
+	                        <input class="btn btn-lg btn-success" type="submit" value="確認結帳">
+	                    </div>
+	                    <div class="col-md-3">
+	                        <a href="{% url 'account:mycart' %}" class="btn btn-lg btn-danger">回購物車</a>
+	                    </div>
+	                    <div class="col-md-6">
+	                    </div>
                     </div>
-                    <div class="col-md-3">
-                    </div>
-                    <div class="col-md-6">
-                    </div>
-                    </form>
-                    
-                </div>
+                </form>
             </div>
             <div class="col-md-8" id="Check-success" style="display:none">
                                             <h2>

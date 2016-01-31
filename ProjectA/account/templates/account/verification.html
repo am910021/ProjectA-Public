@@ -1,0 +1,156 @@
+{% extends base_template_name %}
+{% load staticfiles %}
+{% block style %}
+    
+<style>
+hr {
+    border:0; height:1px; background-color:#d4d4d4;
+    color:#d4d4d4   /* IE6 */
+}</style>
+
+<script type="text/javascript">
+var count = 0;
+
+function sendEmail() {
+    var span = document.getElementById("sentStatus")
+    span.innerHTML = "請等候5～10秒";
+    span.className= "text-success";
+    
+    $.ajax({
+        url: "{% url 'account:verify' %}",
+        type: "POST",
+        dataType: "json",
+        data: {
+            sendEmail: true,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function(json) {
+            if (json.success = true) {
+            	span.innerHTML = "信件已寄出";
+            	span.className= "text-success";
+            } else {
+            	span.innerHTML = "信件無法寄出，請重新嘗試。";
+            	span.className= "text-danger";
+                count++;
+                if (count>=5){
+                    span.innerHTML = "發生錯誤，請通知管理員。";
+                    span.className= "text-danger";
+                }
+            };
+
+        },
+        error: function(xhr, errmsg, err) {
+        	count++
+        	span.innerHTML = "發生錯誤，請通知管理員。";
+        	span.className= "text-danger";
+        }
+    });
+    return false;
+};
+</script>
+{% endblock %}
+
+{% block main %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-8">
+                </div>
+                <div class="col-md-2">
+
+                </div>
+                <div class="col-md-2">
+                     
+                    <a href="{% url 'account:center' %}" class="btn btn-block btn-info">
+                       回會員中心
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    
+    {% if passed %}
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-8">
+            <h3 class="text-success">
+                Email 驗證成功，請重新登入。
+            </h3>
+       
+        </div>
+        <div class="col-md-2">
+        </div>
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-8">
+            <h3 class="text-danger">
+                Email 驗證失敗，請重新登入。
+            </h3>
+       
+        </div>
+        <div class="col-md-2">
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if get %}
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-8">
+            <h3>
+                Email 驗證區
+            </h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width:10%">
+                            
+                        </th>
+                        <th>
+                            資料
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            Email
+                        </td>
+                        <td>
+                            {{user.email}}<span>     </span><a href="{% url 'account:profile' %}">修改資料</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            驗證狀態
+                        </td>
+                        <td>
+                            {% if not user.userprofile.isVerified %}
+                            <div>
+                                <span class="text-danger">未驗證</span>
+                                <span>---</span>
+                                {% csrf_token %}
+                                <button type="button" onclick="sendEmail()" >立即驗證</button>
+                            </div>
+                            {% else %}
+                                <span class="text-success">已驗證</span>
+                            {% endif %}
+                            <span id="sentStatus"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-2">
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -13,3 +13,6 @@ class Setting(models.Model):
     c6 = models.CharField(max_length=128, blank=True)
     c7 = models.CharField(max_length=128, blank=True)
     c8 = models.CharField(max_length=128, blank=True)
+    
+    def __str__(self):
+        return self.name

@@ -1,0 +1,221 @@
+{% extends base_template_name %}
+{% load account %}
+{% load staticfiles %}
+
+{% block style %}
+{% endblock %}
+
+{% block main %}
+<div class="container-fluid">
+    <div class="row">
+    {% if nofind %}
+        <h2>找不到資料</h2>
+    {% else %}
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-8">
+            <h2 class="text-info">
+                結帳完成-等待付款
+            </h2>
+            <br>
+            <h4>結帳的商品</h4>
+                <table class="table">
+                    <thead>
+                        <tr class="active">
+                            <th>
+                                #
+                            </th>
+                            <th>
+                               商品名稱
+                            </th>
+                            <th>
+                                商品單價
+                            </th>
+                            <th>
+                                數量
+                            </th>
+                            <th>
+                                小計
+                            </th>
+                            <th>
+                                庫存
+                            </th>
+                            <th>
+                                加入日期
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in number %}
+                        <tr class="{{i|setClass}}">
+                            <td>
+                                {{i|setNumber}}
+                            </td>
+                            <td>
+                               {{i|getName:order}}
+                            </td>
+                            <td>
+                                {{i|getCost:order|setMoney}}
+                            </td>
+                            <td>
+                                {{i|getQty:order}}
+                            </td>
+                            <td>
+                                {{i|getSubtotal:order|setMoney}}
+                            </td>
+                            <td>
+                                {{i|getInventory:order|safe}}
+                            </td>
+                            <td>
+                                
+                            </td>
+                        </tr>
+                     {% endfor %}
+                        <tr class="success">
+                            <td>
+                                
+                            </td>
+                            <td>
+                               
+                            </td>
+                            <td>
+                                
+                            </td>
+                            <td>
+                                nofind
+                            </td>
+                            <td>
+                                
+                            </td>
+                            <td>
+                                總錢額：
+                            </td>
+                            <td>
+                                {{group.totalAmount|setMoney}}
+                                
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            
+            <h4>付款人資料</h4>
+            
+                 <table class="table">
+                    <thead>
+                        <tr class="active">
+                            <th style="width:10%">
+                                #
+                            </th>
+                            <th>
+                               資料
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="">
+                            <td>
+                                姓名
+                            </td>
+                            <td>
+                               {{group.payerName}}
+                            </td>
+                        </tr>
+                        <tr class="">
+                            <td>
+                                電話
+                            </td>
+                            <td>
+                               {{group.payerPhone}}
+                            </td>
+                        </tr>
+                        <tr class="">
+                            <td>
+                                地址
+                            </td>
+                            <td>
+                               {{group.payerAddress}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+         
+            <h4>收貨人資料</h4>
+                 <table class="table">
+                    <thead>
+                        <tr class="active">
+                            <th style="width:10%">
+                                #
+                            </th>
+                            <th>
+                               資料
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="">
+                            <td>
+                                姓名
+                            </td>
+                            <td>
+                               {{group.recipientName}}
+                            </td>
+                        </tr>
+                        <tr class="">
+                            <td>
+                                電話
+                            </td>
+                            <td>
+                               {{group.recipientPhone}}
+                            </td>
+                        </tr>
+                        <tr class="">
+                            <td>
+                                地址
+                            </td>
+                            <td>
+                               {{group.recipientAddress}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+        </div>
+        <div class="col-md-2">
+        </div>
+	    <div class="row">
+	        <div class="col-md-3">
+				{% if BuyData.enable %}
+				<form name="pay2go" style="text-align:center;" method="post" action="https://capi.pay2go.com/MPG/mpg_gateway">
+				        <input type="hidden" name="MerchantID" value="{{BuyData.MerchantID}}">
+				        <input type="hidden" name="RespondType" value="{{BuyData.RespondType}}">
+				        <input type="hidden" name="CheckValue" size="50" value="{{BuyData.CheckValue}}">
+				        <input type="hidden" name="TimeStamp" value="{{BuyData.TimeStamp}}">
+				        <input type="hidden" name="Version" value="{{BuyData.Version}}">
+				        <input type="hidden" name="MerchantOrderNo" value="{{BuyData.MerchantOrderNo}}">
+				        <input type="hidden" name="Amt" value="{{BuyData.Amt}}">
+				        <input type="hidden" name="ItemDesc" value="{{BuyData.ItemDesc}}">
+				        <input type="hidden" name="ExpireDate" value="{{BuyData.ExpireDate}}">
+				        <input type="hidden" name="ReturnURL" value="{{BuyData.ReturnURL}}">
+				        <input type="hidden" name="NotifyURL" value="{{BuyData.NotifyURL}}">
+				        <input type="hidden" name="CustomerURL" value="{{BuyData.CustomerURL}}">
+				        <input type="hidden" name="Email" value="{{BuyData.Email}}">
+				        <input type="hidden" name="LoginType" value="{{BuyData.LoginType}}">
+				        <input type="hidden" name="CREDIT" value="{{BuyData.CREDIT}}">
+				    <p>
+				               您的訂單編號：<font color="red">{{BuyData.MerchantOrderNo}}</font> 已經成功下單。<br>
+				               您的訂單金額：<font color="red">{{BuyData.Amt}}</font> 。<br> 
+				    </p>
+				        <input type="submit" name="submit" value="付款" class="exclusive_large">
+				</form>
+				{% else %}
+				<span>支付系統未啟用，請通知管理者．</span>
+				{% endif %}
+	        </div>
+	        <div class="col-md-3">
+	        </div>
+	        <div class="col-md-6">
+	        </div>
+	    </div>
+    {% endif %}
+    </div>
+</div>
+    {% endblock %}

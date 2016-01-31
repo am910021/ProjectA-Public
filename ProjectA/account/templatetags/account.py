@@ -1,3 +1,4 @@
+import locale
 from datetime import datetime
 from django import template
 register = template.Library()
@@ -42,4 +43,16 @@ def getInventory(value, data):
     if data[value].qty<=data[value].itemID.inventory:
         return """<span class="text-success">有</span>"""
     return """<span class="text-warning">不足</span>"""
+
+@register.filter(name='getTotalAmount')
+def getTotalAmount(data):
+    total = 0
+    for i in data:
+        total+= i.qty*i.itemID.cost
+    return total
+
+@register.filter(name='getFormatDate')
+def getFormatDate(date):
+    return str(datetime.strftime(date, '%Y-%m-%d %H:%M:%S'))
+
 

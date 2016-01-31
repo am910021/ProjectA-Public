@@ -1,0 +1,259 @@
+{% extends base_template_name %}
+{% load account %}
+{% load staticfiles %}
+{% block style %}
+    
+<style>
+hr {
+    border:0; height:1px; background-color:#d4d4d4;
+    color:#d4d4d4   /* IE6 */
+}   
+</style>
+<script type="text/javascript">
+function ditto() {
+    if (document.getElementById('Ditto').checked) {
+        var payerName = document.getElementById('id_payerName');
+        var payerAddress = document.getElementById('id_payerAddress');
+        var payerPhone   = document.getElementById('id_payerPhone');
+        var recipientName = document.getElementById('id_recipientName');
+        var recipientAddress = document.getElementById('id_recipientAddress');
+        var recipientPhone = document.getElementById('id_recipientPhone');
+        recipientName.value = payerName.value;
+        recipientAddress.value = payerAddress.value;
+        recipientPhone.value = payerPhone.value;
+    }
+    else {
+        document.getElementById('id_recipientName').value="";
+        document.getElementById('id_recipientAddress').value="";
+        document.getElementById('id_recipientPhone').value="";
+    }
+}
+
+function changeForm(){
+    form = document.getElementById("form");
+    var input = document.createElement("input");
+    input.type = "hidden";
+    input.name = "changeForm";
+    form.appendChild(input);
+    
+    form.submit();
+}
+</script>
+    <!--     
+    payerName
+    payerAddress
+    payerPhone
+    recipientName
+    recipientAddress
+    recipientPhone
+     -->
+{% endblock %}
+
+{% block main %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-8">
+                </div>
+                <div class="col-md-2">
+
+                </div>
+                <div class="col-md-2">
+                     
+                    <a href="{% url 'account:center' %}" class="btn btn-block btn-info">
+                       回會員中心
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+                {% if messages %}
+            {% for message in messages %}
+            <div class="bg-info h4 text-danger">{{message}}</div>
+            {% endfor %}
+            {% endif %}
+    <div class="row" id="Shopping-data">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-8">
+            <form id="form" class="form-horizontal" method="post" action="{% url 'account:checkout' %}">
+                {% csrf_token %}
+                <input name="timeout" type="hidden" value="{{timeout}}">
+                <input name="byData" type="hidden">
+                <h2>請確認以下資料</h2>
+                <br>
+                <h4>結帳的商品</h4>
+                
+                <table class="table">
+                    <thead>
+                        <tr class="active">
+                            <th>
+                                #
+                            </th>
+                            <th>
+                               商品名稱
+                            </th>
+                            <th>
+                                商品單價
+                            </th>
+                            <th>
+                                數量
+                            </th>
+                            <th>
+                                小計
+                            </th>
+                            <th>
+                                庫存
+                            </th>
+                            <th>
+                                加入日期
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in number %}
+                        <tr class="{{i|setClass}}">
+                            <td>
+                                {{i|setNumber}}
+                            </td>
+                            <td>
+                               {{i|getName:mycart}}
+                            </td>
+                            <td>
+                                {{i|getCost:mycart|setMoney}}
+                            </td>
+                            <td>
+                                {{i|getQty:mycart}}
+                            </td>
+                            <td>
+                                {{i|getSubtotal:mycart|setMoney}}
+                            </td>
+                            <td>
+                                {{i|getInventory:mycart|safe}}
+                            </td>
+                            <td>
+                                {{i|getDate:mycart}}
+                            </td>
+                        </tr>
+                     {% endfor %}
+                        <tr class="success">
+                            <td>
+                                
+                            </td>
+                            <td>
+                               
+                            </td>
+                            <td>
+                                
+                            </td>
+                            <td>
+                                
+                            </td>
+                            <td>
+                                
+                            </td>
+                            <td>
+                                總錢額：
+                            </td>
+                            <td>
+                                {{mycart|getTotalAmount|setMoney}}
+                                
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+        
+                
+                
+                
+                
+                <hr style="color:black;">
+                <h4>付款人資訊</h4>
+                <div class="form-group">
+                    <label for="id_payerName" class="col-sm-2 control-label">
+                        姓名
+                    </label>
+                    <div class="col-sm-4">
+                        {{form.payerName}}
+                        {{form.payerName.errors}}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="id_payerPhone" class="col-sm-2 control-label">
+                        電話
+                    </label>
+                    <div class="col-sm-4">
+                        {{form.payerPhone}}
+                        {{form.payerPhone.errors}}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="id_payerAddress" class="col-sm-2 control-label">
+                        地址
+                    </label>
+                    <div class="col-sm-10">
+                        {{form.payerAddress}}
+                        {{form.payerAddress.errors}}
+                    </div>
+                </div>
+                <hr style="color:black;">
+                <h4>收貨人資訊</h4>
+                <div class="form-group">
+                    <label for="id_recipientName" class="col-sm-2 control-label">
+                        收貨人姓名
+                    </label>
+                    <div class="col-sm-4">
+                        {{form.recipientName}}
+                        {{form.recipientName.errors}}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="id_recipientPhone" class="col-sm-2 control-label">
+                        收貨人電話
+                    </label>
+                    <div class="col-sm-4">
+                        {{form.recipientPhone}}
+                        {{form.recipientPhone.errors}}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="id_recipientAddress" class="col-sm-2 control-label">
+                        收貨人地址
+                    </label>
+                    <div class="col-sm-10">
+                        {{form.recipientAddress}}
+                        {{form.recipientAddress.errors}}
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-success btn-lg btn-block">
+                            確定結帳
+                        </button>
+                        <br>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-warning btn-lg btn-block" onClick="changeForm()">
+                            修改資料
+                        </button>
+                        <br>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'account:mycart' %}" class="btn btn-danger btn-lg btn-block">回購物車</a>
+                        <br>
+                    </div>
+                    
+                    <div class="col-md-3">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-2">
+        </div>
+    </div>
+    
+</div>
+    {% endblock %}

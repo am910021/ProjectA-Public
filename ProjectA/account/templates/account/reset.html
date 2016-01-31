@@ -1,0 +1,94 @@
+{% extends base_template_name %}
+{% load staticfiles %}
+{% block style %}
+    
+<style>
+hr {
+    border:0; height:1px; background-color:#d4d4d4;
+    color:#d4d4d4   /* IE6 */
+}</style>
+{% endblock %}
+
+{% block main %}
+<div class="container-fluid">
+{% if getError %}
+    <div class="row">
+        <div class="col-md-offset-2 col-md-8">
+        <h2>資料錯誤</h2>
+        </div>
+    </div>
+{% elif timeout %}
+    <div class="row">
+        <div class="col-md-offset-2 col-md-8">
+        <h2>資料重置時間超時</h2>
+        </div>
+    </div>
+{% elif success %}
+    <div class="row">
+        <div class="col-md-offset-2 col-md-8">
+        <h2>密碼設置成功，請用新密碼登入</h2>
+        </div>
+    </div>
+{% else %}
+    <div class="row">
+        <div class="col-md-offset-2 col-md-8">
+        <h2>重置您的密碼</h2>
+            <form class="form-horizontal" role="form" method="post" action="{% url 'account:forgetReset' 0 %}">
+               {%csrf_token%}
+                <div class="form-group">
+                     
+                    <label for="id_username" class="col-sm-2 control-label">
+                        帳號
+                    </label>
+                    <div class="col-sm-2">
+                        {{form.username}}
+                    </div>
+                </div>
+                <div class="form-group">
+                     
+                    <label for="id_password" class="col-sm-2 control-label">
+                        密碼
+                    </label>
+                    <div class="col-sm-2">
+                        {{form.password}}
+                        {{form.password.errors}}
+                    </div>
+                </div>
+                <div class="form-group">
+                     
+                    <label for="id_password2" class="col-sm-2 control-label">
+                        確認密碼
+                    </label>
+                    <div class="col-sm-2">
+                        {{form.password2}}
+                        {{form.password2.errors}}
+                    </div>
+                </div>
+                <div class="form-group">
+                     
+                    <label for="id_code" class="col-sm-2 control-label">
+                        重置碼(分大小)
+                    </label>
+                    <div class="col-sm-2">
+                        {{form.code}}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                          <span class="text-danger">{% if postError %}輸入的資料錯誤{% endif %}</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                         
+                        <button type="submit" class="btn btn-default">
+                           送出
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endif %}
+</div>
+{% endblock %}

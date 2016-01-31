@@ -70,3 +70,5 @@ class ItemForm(forms.ModelForm):
         if cost<=0:
             raise forms.ValidationError('價錢過低。')
         return cost
+
+        
