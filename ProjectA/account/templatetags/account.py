@@ -38,6 +38,11 @@ def getSubtotal(value, data):
 def getDate(value, data):
     return str(datetime.strftime(data[value].date, '%Y-%m-%d %H:%M:%S'))
 
+@register.filter(name='setMoney')
+def setMoney(data):
+    money = str(data)
+    return "{:,.0f}".format(locale.atoi(money))
+
 @register.filter(name='getInventory')
 def getInventory(value, data):
     if data[value].qty<=data[value].itemID.inventory:
