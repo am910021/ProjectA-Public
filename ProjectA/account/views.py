@@ -6,28 +6,14 @@ from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required 
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-from main.views import BaseView, get_client_ip
+from main.views import BaseView, UserBase, get_client_ip
 from main.sendEmail import sendGmailSmtp
 from account.forms import ProfileForm, SignupForm, CaptchaForm, UserForm, CheckOutForm, ResetPwd
 from account.models import Profile, MyCart, Order, GroupOrder
 from shop.models import Item
-from pay2go.views import BuyData 
 from pyaes.aescipher import AESCipher
-import code
-
-class LoginRequiredMixin(object):
-    @classmethod
-    def as_view(cls):
-        return login_required(super(LoginRequiredMixin, cls).as_view())
-    
-class UserBase(LoginRequiredMixin,BaseView):
-    def __init__(self, *args, **kwargs):
-        super(UserBase, self).__init__(*args, **kwargs)
-        
-    
 
 class CSignUp(BaseView):
     template_name = 'account/signup.html'
@@ -460,7 +446,7 @@ class CheckOut(UserBase):
             totalamount+=subtotal
             i.itemID.inventory = i.itemID.inventory-i.qty
             i.itemID.save()
-            #i.delete()
+            i.delete()
         
         group.totalAmount=totalamount
         group.save()

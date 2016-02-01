@@ -1,41 +1,119 @@
-<!doctype html>
+{% extends base_template_name %}
+{% load account %}
 {% load staticfiles %}
-<html>
-<head>
-<title>test</title>
-<meta charset=utf-8>
-</head>
-<body>
-<h2>Pay2Go Function Test</h2>
-<br>
-<a href={% url 'main:main' %}>home</a>
-<br>
-<br>
-{% if BuyData.enable %}
-<form name="pay2go" style="text-align:center;" method="post" action="https://capi.pay2go.com/MPG/mpg_gateway">
-        <input type="hidden" name="MerchantID" value="{{BuyData.MerchantID}}">
-        <input type="hidden" name="RespondType" value="{{BuyData.RespondType}}">
-        <input type="hidden" name="CheckValue" size="50" value="{{BuyData.CheckValue}}">
-        <input type="hidden" name="TimeStamp" value="{{BuyData.TimeStamp}}">
-        <input type="hidden" name="Version" value="{{BuyData.Version}}">
-        <input type="hidden" name="MerchantOrderNo" value="{{BuyData.MerchantOrderNo}}">
-        <input type="hidden" name="Amt" value="{{BuyData.Amt}}">
-        <input type="hidden" name="ItemDesc" value="{{BuyData.ItemDesc}}">
-        <input type="hidden" name="ExpireDate" value="{{BuyData.ExpireDate}}">
-        <input type="hidden" name="ReturnURL" value="{{BuyData.ReturnURL}}">
-        <input type="hidden" name="NotifyURL" value="{{BuyData.NotifyURL}}">
-        <input type="hidden" name="CustomerURL" value="{{BuyData.CustomerURL}}">
-        <input type="hidden" name="Email" value="{{BuyData.Email}}">
-        <input type="hidden" name="LoginType" value="{{BuyData.LoginType}}">
-        <input type="hidden" name="CREDIT" value="{{BuyData.CREDIT}}">
-    <p>
-               您的訂單編號：<font color="red">{{BuyData.MerchantOrderNo}}</font> 已經成功下單。<br>
-               您的訂單金額：<font color="red">{{BuyData.Amt}}</font> 。<br> 
-    </p>
-        <input type="submit" name="submit" value="前往繳費" class="exclusive_large">
-</form>
-{% else %}
-<span>支付系統未啟用，請通知管理者．</span>
-{% endif %}
-</body>
-</html>
+{% block style %}
+    
+<style>
+hr {
+    border:0; height:1px; background-color:#d4d4d4;
+    color:#d4d4d4   /*setMoney IE6 */
+}   
+</style>
+<script type="text/javascript">
+function ditto() {
+    if (document.getElementById('Ditto').checked) {
+        var payerName = document.getElementById('id_payerName');
+        var payerAddress = document.getElementById('id_payerAddress');
+        var payerPhone   = document.getElementById('id_payerPhone');
+        var recipientName = document.getElementById('id_recipientName');
+        var recipientAddress = document.getElementById('id_recipientAddress');
+        var recipientPhone = document.getElementById('id_recipientPhone');
+        recipientName.value = payerName.value;
+        recipientAddress.value = payerAddress.value;
+        recipientPhone.value = payerPhone.value;
+    }
+    else {
+        document.getElementById('id_recipientName').value="";
+        document.getElementById('id_recipientAddress').value="";
+        document.getElementById('id_recipientPhone').value="";
+    }
+}
+
+function changeForm(){
+    form = document.getElementById("form");
+    var input = document.createElement("input");
+    input.type = "hidden";
+    input.name = "changeForm";
+    form.appendChild(input);
+    
+    form.submit();
+}
+</script>
+    <!--     
+    payerName
+    payerAddress
+    payerPhone
+    recipientName
+    recipientAddress
+    recipientPhone
+     -->
+{% endblock %}
+
+{% block main %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-8">
+                </div>
+                <div class="col-md-2">
+
+                </div>
+                <div class="col-md-2">
+                     
+                    <a href="{% url 'account:center' %}" class="btn btn-block btn-info">
+                       回會員中心
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    
+    {% if dataError %}
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-8">
+            <h2 class="text-danger">查無此資料</h2>
+        </div>
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-8">
+		{% if BuyData.enable %}
+		<form name="pay2go" style="text-align:center;" method="post" action="https://capi.pay2go.com/MPG/mpg_gateway">
+		        <input type="hidden" name="MerchantID" value="{{BuyData.MerchantID}}">
+		        <input type="hidden" name="RespondType" value="{{BuyData.RespondType}}">
+		        <input type="hidden" name="CheckValue" size="50" value="{{BuyData.CheckValue}}">
+		        <input type="hidden" name="TimeStamp" value="{{BuyData.TimeStamp}}">
+		        <input type="hidden" name="Version" value="{{BuyData.Version}}">
+		        <input type="hidden" name="MerchantOrderNo" value="{{BuyData.MerchantOrderNo}}">
+		        <input type="hidden" name="Amt" value="{{BuyData.Amt}}">
+		        <input type="hidden" name="ItemDesc" value="{{BuyData.ItemDesc}}">
+		        <input type="hidden" name="ExpireDate" value="{{BuyData.ExpireDate}}">
+		        <input type="hidden" name="ReturnURL" value="{{BuyData.ReturnURL}}">
+		        <input type="hidden" name="NotifyURL" value="{{BuyData.NotifyURL}}">
+		        <input type="hidden" name="CustomerURL" value="{{BuyData.CustomerURL}}">
+		        <input type="hidden" name="Email" value="{{BuyData.Email}}">
+		        <input type="hidden" name="LoginType" value="{{BuyData.LoginType}}">
+		        <input type="hidden" name="CREDIT" value="{{BuyData.CREDIT}}">
+		    <p>
+		               您的訂單編號：<font color="red">{{BuyData.MerchantOrderNo}}</font> 已經成功下單。<br>
+		               您的訂單金額：<font color="red">{{BuyData.Amt}}</font> 。<br> 
+		    </p>
+		        <input type="submit" name="submit" value="前往繳費" class="exclusive_large">
+		</form>
+		{% else %}
+		<span>支付系統未啟用，請通知管理者．</span>
+		{% endif %}
+        </div>
+    </div>
+    
+    
+    {% endif %}
+
+</div>
+    {% endblock %}

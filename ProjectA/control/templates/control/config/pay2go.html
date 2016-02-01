@@ -34,7 +34,7 @@
                 <div class="form-group">
                      
                     <label for="id_memberID" class="col-sm-2 control-label">
-                        商店編號
+                        MemberID
                     </label>
                     <div class="col-sm-10">
                         <input class="form-control" id="id_memberID" maxlength="128" name="memberID" type="text" {% if data.0 %}value="{{data.0}}"{% endif %}>
@@ -61,11 +61,20 @@
                 </div>
                 <div class="form-group">
                      
+                    <label for="id_isTest" class="col-sm-2 control-label">
+                        測試商店
+                    </label>
+                    <div class="col-sm-10">
+                        <input id="id_isTest" name="isTest" type="checkbox" {% if data.3 == "True" %}checked="checked"{% endif %}>
+                    </div>
+                </div>
+                <div class="form-group">
+                     
                     <label for="id_isActive" class="col-sm-2 control-label">
                         啟用Pay2go
                     </label>
                     <div class="col-sm-10">
-                        <input id="id_isActive" name="isActive" type="checkbox" {% if data.4 == True %}checked="checked"{% endif %}>
+                        <input id="id_isActive" name="isActive" type="checkbox" {% if data.5 == True %}checked="checked"{% endif %}>
                     </div>
                 </div>
                 <div class="form-group">
@@ -74,9 +83,10 @@
                         最後修改日期
                     </label>
                     <div class="col-sm-10">
-                        {{data.3}}
+                        {{data.4}}
                     </div>
                 </div>
+                <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
                          
                         <button type="submit" class="btn btn-default">

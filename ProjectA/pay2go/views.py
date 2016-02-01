@@ -1,20 +1,27 @@
-# -*- coding: utf-8 -*-
-from django.shortcuts import render, HttpResponse,redirect
-from .forms import BuyForm, NotifyUrlResponse, CustomerUrlResponse
+from datetime import datetime, timedelta
 import hashlib
+from django.shortcuts import render, HttpResponse,redirect
 from django.core.urlresolvers import reverse
 from django.views.decorators.csrf import csrf_exempt
-from datetime import datetime, timedelta
 from main.models import Setting
+from main.views import BaseView, UserBase
+from account.models import GroupOrder
+from .forms import BuyForm, NotifyUrlResponse, CustomerUrlResponse
+from .models import CustomerUrlDB, NotifyUrlDB
 
 class setting:
     def __init__(self):
-        set = Setting.objects.get_or_create(name="pay2go")
+        set = Setting.objects.get(name="pay2go")
         self.memberID = set.c1
         self.hashKEY = set.c2
         self.hashIV = set.c3
-        self.enable = set.c4
+        self.isTest = True if set.c3=="True" else False
+        self.isActive = set.isActive
         self.date = set.c5
+
+def timeFormat(time):
+    return str(datetime.strftime(time, '%Y%m%d'))
+
 
 def time():
     return datetime.now()+ timedelta(hours=8)
@@ -36,7 +43,7 @@ def CheckCode(MerchantID, Amt, MerchantOrderNo, TradeNo):
     db = setting()
     CheckValue = "HashIV=" + db.hashIV
     CheckValue+= "&Amt=" + str(Amt)
-    CheckValue+= "&MerchantID=" + MerchantID
+    CheckValue+= "&MerchantID=" + MerchantOrderNo
     CheckValue+= "&MerchantOrderNo=" + MerchantOrderNo
     CheckValue+= "&TradeNo=" + TradeNo
     CheckValue+= "&HashKey=" + db.hashKEY
@@ -54,6 +61,40 @@ def CustomerURL(request):
     #data = getDATA(request.POST)
     return HttpResponse()
 
+
+
+class Pay2go(UserBase):
+    template_name = 'pay2go/pay2go.html' # xxxx/xxx.html
+    page_title = '付款' # title
+
+    def get(self, request, *args, **kwargs):
+        kwargs['dataError'] = True
+        if not 'groupID' in kwargs:
+            return super(Pay2go, self).get(request, *args, **kwargs)
+        
+        
+        group = GroupOrder.objects.get(id=kwargs['groupID'])
+        orderID = timeFormat(group.date)+str(group.id)
+        pay = CustomerUrlDB.objects.filter(MerchantOrderNo=orderID)
+
+        if len(pay)>0:
+                return super(Pay2go, self).get(request, *args, **kwargs)
+            
+        MerchantOrderNo = "TESTNUMBER" + orderID
+        Amt = str(group.totalAmount)
+        Email = request.user.email
+        ItemDesc = "123"
+        data = BuyData(MerchantOrderNo, Amt, Email, ItemDesc, self.getHost(request))
+        kwargs['BuyData'] = data
+        kwargs['dataError'] = False
+
+        
+        
+        return super(Pay2go, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return super(Pay2go, self).post(request, *args, **kwargs)
+
 def pay2go(request):
     template = 'pay2go/pay2go.html'
     
@@ -70,12 +111,12 @@ def pay2go(request):
     Amt = form.cleaned_data['cost']
     Email = form.cleaned_data['email']
     ItemDesc = "測試物品"
-    data = BuyData(MerchantOrderNo, Amt, Email, ItemDesc)
+    data = BuyData(MerchantOrderNo, Amt, Email, ItemDesc, "")
     return render(request, template, {"BuyData":data})
     
     
 class BuyData:
-    def __init__(self, MerchantOrderNo, Amt, Email, ItemDesc):
+    def __init__(self, MerchantOrderNo, Amt, Email, ItemDesc, url):
         self.getDB()
         TimeStamp = datetime.strftime(time(), '%Y%m%d')
 
@@ -101,7 +142,7 @@ class BuyData:
         self.memberID = db.memberID
         self.hashKEY = db.hashKEY
         self.hashIV = db.hashIV
-        self.enable = db.getEnable()
+        self.enable = db.isActive
         
     def CreateCheckCode(self, Amt, MerchantOrderNo, TimeStamp):
         CheckValue = "HashKey=" + self.hashKEY
@@ -111,6 +152,7 @@ class BuyData:
         CheckValue+= "&TimeStamp=" + TimeStamp
         CheckValue+= "&Version=" + self.Version
         CheckValue+= "&HashIV=" + self.hashIV
+        CheckValue=CheckValue.encode('utf-8')
         hash_object = hashlib.sha256(CheckValue)
         hex_dig = hash_object.hexdigest()
         return hex_dig.upper()

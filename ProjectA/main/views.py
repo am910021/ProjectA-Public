@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.views.generic import TemplateView
+from django.contrib.auth.decorators import login_required 
 from django.conf import settings
 from shop.models import Brand
 from account.models import MyCart
@@ -51,6 +52,15 @@ class BaseView(TemplateView):
 
     def getHost(self, request):
         return request.META['HTTP_HOST']
+    
+class LoginRequiredMixin(object):
+    @classmethod
+    def as_view(cls):
+        return login_required(super(LoginRequiredMixin, cls).as_view())
+    
+class UserBase(LoginRequiredMixin,BaseView):
+    def __init__(self, *args, **kwargs):
+        super(UserBase, self).__init__(*args, **kwargs)
 
 
 class CIndexView(BaseView):

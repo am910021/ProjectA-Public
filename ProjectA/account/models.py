@@ -32,6 +32,7 @@ class GroupOrder(models.Model):
     recipientPhone = models.CharField(max_length=128, blank=True)
     recipientStatus = models.IntegerField(default=0)
     date = models.DateTimeField()
+    num = models.IntegerField(default=0)
     
     def __str__(self):
         return str(self.id) + " (" + self.user.profile.fullName + ")"
