@@ -54,6 +54,8 @@ class CSignUp(BaseView):
         userProfile.username = user.username
         userProfile.ip = get_client_ip(request)
         userProfile.save()
+        user.profile.regDate = timezone.now()
+        user.profile.save()
         log = authenticate(username=user.username, password=password)
         login(request, log)
         messages.add_message(request, 50, request.user.username+'會員 謝謝您的註冊', extra_tags='註冊成功')
