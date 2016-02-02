@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta
 import hashlib
-from django.shortcuts import render, HttpResponse,redirect
+from django.shortcuts import HttpResponse,redirect
 from django.core.urlresolvers import reverse
 from django.views.decorators.csrf import csrf_exempt
 from main.models import Setting
-from main.views import BaseView, UserBase
+from main.views import UserBase
 from account.models import GroupOrder
-from .forms import BuyForm, NotifyUrlResponse, CustomerUrlResponse
+from .forms import NotifyUrlResponse, CustomerUrlResponse
 from .models import CustomerUrlDB, NotifyUrlDB
 
 class setting:
@@ -17,7 +17,6 @@ class setting:
         self.hashIV = set.c3
         self.isTest = True if set.c4=="True" else False
         self.isActive = set.isActive
-        print(self.isActive)
         if self.memberID=="" or self.hashIV=="" or self.hashKEY=="":
             self.isActive = False
         
@@ -68,19 +67,6 @@ def CustomerURL(request):
                 form.save()
     return HttpResponse()
 
-
-class Test(UserBase):
-    def get(self, request, *args, **kwargs):
-        if kwargs['method']=="1":
-            self.template_name = 'pay2go/test.html' # xxxx/xxx.html
-            self.page_title = 'Customer' # title
-            kwargs['form'] = CustomerUrlResponse()
-        else:
-            self.template_name = 'pay2go/test2.html' # xxxx/xxx.html
-            self.page_title = 'Notify' # title
-            kwargs['form'] = NotifyUrlResponse()
-        return super(Test, self).get(request, *args, **kwargs)
-
 class Pay2go(UserBase):
     template_name = 'pay2go/pay2go.html' # xxxx/xxx.html
     page_title = '付款' # title
@@ -89,14 +75,11 @@ class Pay2go(UserBase):
         kwargs['dataError'] = True
         if not 'groupID' in kwargs:
             return super(Pay2go, self).get(request, *args, **kwargs)
-        
         group = GroupOrder.objects.get(id=kwargs['groupID'])
         orderID = timeFormat(group.date)+str(group.id)
         pay = CustomerUrlDB.objects.filter(MerchantOrderNo=orderID)
-
         if len(pay)>0:
                 return super(Pay2go, self).get(request, *args, **kwargs)
-            
         MerchantOrderNo = "TESTNUMBER" + orderID
         Amt = str(group.totalAmount)
         Email = request.user.email
@@ -104,7 +87,6 @@ class Pay2go(UserBase):
         data = BuyData(MerchantOrderNo, Amt, Email, ItemDesc, self.getHost(request))
         kwargs['BuyData'] = data
         kwargs['dataError'] = False
-
         return super(Pay2go, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
@@ -136,7 +118,6 @@ class BuyData:
         self.Email = Email
         self.LoginType = "0"
         self.CREDIT = "0"
-        
         self.CheckValue = self.CreateCheckCode(Amt, MerchantOrderNo, TimeStamp)
         
     def getDB(self):

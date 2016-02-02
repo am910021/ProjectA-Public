@@ -11,7 +11,7 @@ class Profile(models.Model):
     phone = models.CharField(max_length=15, blank=True)
     ip = models.CharField(max_length=15, blank=True)
     isVerified = models.BooleanField(default=False)
-    regDate = models.DateTimeField()
+    regDate = models.DateTimeField(auto_now_add=True)
     changeDate = models.DateTimeField(auto_now=True)
     resetCode = models.CharField(max_length=15, blank=True)
     

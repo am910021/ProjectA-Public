@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from main.views import BaseView, UserBase, get_client_ip
-from main.sendEmail import sendGmailSmtp
+from main.sendEmail import SMTP
 from account.forms import ProfileForm, SignupForm, CaptchaForm, UserForm, CheckOutForm, ResetPwd
 from account.models import Profile, MyCart, Order, GroupOrder
 from shop.models import Item
@@ -54,8 +54,6 @@ class CSignUp(BaseView):
         userProfile.username = user.username
         userProfile.ip = get_client_ip(request)
         userProfile.save()
-        user.profile.regDate = timezone.now()
-        user.profile.save()
         log = authenticate(username=user.username, password=password)
         login(request, log)
         messages.add_message(request, 50, request.user.username+'會員 謝謝您的註冊', extra_tags='註冊成功')
@@ -149,7 +147,9 @@ class ForgetView(BaseView):
             </html>
         """.format(url=url, name=user.username, code = resetCode)
         text = "這是您的重置碼(分大小寫)：\n {code} \n 以下是重置您密碼的網址：\n{url}".format(url=url, code = resetCode)
-        return sendGmailSmtp(email, "密碼重置", html , text) # 收件人, 標題, 內容
+        smtp = SMTP()
+        
+        return smtp.send(email, "密碼重置", html , text) # 收件人, 標題, 內容
     
     def createCode(self, num):
         n,l,u=0,0,0
@@ -288,6 +288,7 @@ class Verification(UserBase):
 
     def get(self, request, *args, **kwargs):
         kwargs['get'] = True
+        kwargs['mail'] = SMTP()
         return super(Verification, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
@@ -309,7 +310,8 @@ class Verification(UserBase):
         """.format(url=url, name=request.user.username)
         text = "以下是你的驗證網址：\n {url}".format(url=url)
         response = {}
-        response['success'] = sendGmailSmtp(email, "Email 驗證", html , text) # 收件人, 標題, 內容
+        smtp = SMTP()
+        response['success'] = smtp.send(email, "Email 驗證", html , text) # 收件人, 標題, 內容
         return JsonResponse(response)
 
 

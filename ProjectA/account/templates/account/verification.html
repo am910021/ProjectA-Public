@@ -137,8 +137,11 @@ function sendEmail() {
                             <div>
                                 <span class="text-danger">未驗證</span>
                                 <span>---</span>
-                                {% csrf_token %}
+                                {% if mail.isActive %}
                                 <button type="button" onclick="sendEmail()" >立即驗證</button>
+                                {% else %}
+                                <span>Email 寄信未啟用，請通知管理員</span>
+                                {% endif %}
                             </div>
                             {% else %}
                                 <span class="text-success">已驗證</span>

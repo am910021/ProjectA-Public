@@ -57,7 +57,6 @@ def create():
         userProflie = Profile()
         userProflie.username = username
         userProflie.user = admin
-        userProflie.regDate = timezone.now()
         userProflie.save()
         print(bcolors.OKBLUE + "\n "+ username +"帳號建立成功 \n \n" + bcolors.ENDC)
     except Exception as e:
