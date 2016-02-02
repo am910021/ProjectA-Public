@@ -109,7 +109,7 @@ function changeForm(){
                                 
                             </td>
                             <td>
-                                nofind
+                                
                             </td>
                             <td>
                                 
@@ -206,7 +206,7 @@ function changeForm(){
                     </tbody>
                 </table>
                 {% if BuyData.enable %}
-                <form name="pay2go" style="text-align:center;" method="post" action="{{BuyData.postUrl}}">
+                <form name="pay2go" target="_blank" method="post" action="{{BuyData.postUrl}}">
                         <input type="hidden" name="MerchantID" value="{{BuyData.MerchantID}}">
                         <input type="hidden" name="RespondType" value="{{BuyData.RespondType}}">
                         <input type="hidden" name="CheckValue" size="50" value="{{BuyData.CheckValue}}">

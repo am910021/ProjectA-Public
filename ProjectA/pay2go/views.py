@@ -24,10 +24,21 @@ class setting:
 
 def timeFormat(time):
     return str(datetime.strftime(time, '%Y%m%d'))
-
-
 def time():
     return datetime.now()+ timedelta(hours=8)
+
+def CheckCode(MerchantID, Amt, MerchantOrderNo, TradeNo):
+    db = setting()
+    CheckValue = "HashIV=" + db.hashIV
+    CheckValue+= "&Amt=" + str(Amt)
+    CheckValue+= "&MerchantID=" + MerchantID
+    CheckValue+= "&MerchantOrderNo=" + MerchantOrderNo
+    CheckValue+= "&TradeNo=" + TradeNo
+    CheckValue+= "&HashKey=" + db.hashKEY
+    CheckValue=CheckValue.encode('utf-8')
+    hash_object = hashlib.sha256(CheckValue)
+    hex_dig = hash_object.hexdigest()
+    return hex_dig.upper()
 
 @csrf_exempt
 def NotifyURL(request):
@@ -41,27 +52,20 @@ def NotifyURL(request):
             code = CheckCode(MerchantID, Amt, MerchantOrderNo, TradeNo)
             if code==form.cleaned_data['CheckCode']:
                 form.save()
-    return HttpResponse()
-
-def CheckCode(MerchantID, Amt, MerchantOrderNo, TradeNo):
-    db = setting()
-    CheckValue = "HashIV=" + db.hashIV
-    CheckValue+= "&Amt=" + str(Amt)
-    CheckValue+= "&MerchantID=" + MerchantOrderNo
-    CheckValue+= "&MerchantOrderNo=" + MerchantOrderNo
-    CheckValue+= "&TradeNo=" + TradeNo
-    CheckValue+= "&HashKey=" + db.hashKEY
-    CheckValue=CheckValue.encode('utf-8')
-    hash_object = hashlib.sha256(CheckValue)
-    hex_dig = hash_object.hexdigest()
-    return hex_dig.upper()
+    return HttpResponse(request)
 
 @csrf_exempt
 def CustomerURL(request):
     if request.method=="POST":
         form = CustomerUrlResponse(request.POST)
         if form.is_valid():
-            form.save()
+            MerchantID = form.cleaned_data['MerchantID']
+            Amt = form.cleaned_data['Amt']
+            MerchantOrderNo = form.cleaned_data['MerchantOrderNo']
+            TradeNo = form.cleaned_data['TradeNo']
+            code = CheckCode(MerchantID, Amt, MerchantOrderNo, TradeNo)
+            if code==form.cleaned_data['CheckCode']:
+                form.save()
     return HttpResponse()
 
 
@@ -75,9 +79,6 @@ class Test(UserBase):
             self.template_name = 'pay2go/test2.html' # xxxx/xxx.html
             self.page_title = 'Notify' # title
             kwargs['form'] = NotifyUrlResponse()
-        
-        
-        
         return super(Test, self).get(request, *args, **kwargs)
 
 class Pay2go(UserBase):
@@ -104,32 +105,10 @@ class Pay2go(UserBase):
         kwargs['BuyData'] = data
         kwargs['dataError'] = False
 
-        
-        
         return super(Pay2go, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
         return super(Pay2go, self).post(request, *args, **kwargs)
-
-def pay2go(request):
-    template = 'pay2go/pay2go.html'
-    
-    if request.method=="GET":
-        return render(request, template, {})
-    
-    form = BuyForm(request.POST)
-
-    
-    if not form.is_valid():
-        return render(request, template, {})
-    
-    MerchantOrderNo = "TESTNUMBER" + form.cleaned_data['OrderNumber']
-    Amt = form.cleaned_data['cost']
-    Email = form.cleaned_data['email']
-    ItemDesc = "測試物品"
-    data = BuyData(MerchantOrderNo, Amt, Email, ItemDesc, "")
-    return render(request, template, {"BuyData":data})
-    
     
 class BuyData:
     def __init__(self, MerchantOrderNo, Amt, Email, ItemDesc, host):
@@ -137,15 +116,13 @@ class BuyData:
         self.getDB()
         if self.isTest:
             MerchantOrderNo="TESTORDER"+MerchantOrderNo
-            #self.postUrl="https://capi.pay2go.com/MPG/mpg_gateway"
-            self.NotifyURL="https://"+host+"/pay2go/NotifyURL"
-            self.CustomerURL="https://"+host+"/pay2go/CustomerURL"
+            self.postUrl="https://capi.pay2go.com/MPG/mpg_gateway"
+            self.NotifyURL="http://"+host+"/pay2go/NotifyURL/"
+            self.CustomerURL="http://"+host+"/pay2go/CustomerURL/"
         else:
-            #self.postUrl="https://api.pay2go.com/MPG/mpg_gateway"
+            self.postUrl="https://api.pay2go.com/MPG/mpg_gateway"
             self.NotifyURL="https://"+host+"/pay2go/NotifyURL"
-            self.CustomerURL="https://"+host+"/pay2go/CustomerURL"
-
-        self.postUrl="http://capi.pay2go.com/MPG/mpg_gateway" #test server
+            self.CustomerURL="https://"+host+"/pay2go/CustomerURL/"
         
         self.MerchantID = self.memberID
         self.RespondType = "String"

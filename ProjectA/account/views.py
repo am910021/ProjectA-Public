@@ -451,7 +451,7 @@ class CheckOut(UserBase):
             totalamount+=subtotal
             i.itemID.inventory = i.itemID.inventory-i.qty
             i.itemID.save()
-            i.delete()
+            #i.delete()
         
         group.totalAmount=totalamount
         group.save()

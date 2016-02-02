@@ -31,22 +31,24 @@ class NotifyUrlDB(models.Model):
     CheckCode           = models.CharField(max_length=128)
     PayTime             = models.CharField(max_length=128)
     IP                  = models.CharField(max_length=15)
-    EscrowBank          = models.CharField(max_length=10)
-    TokenUseStatus      = models.IntegerField()
-    RespondCode         = models.CharField(max_length=5)
-    Auth                = models.CharField(max_length=6)
-    Card6No             = models.CharField(max_length=6)
-    Card4No             = models.CharField(max_length=4)
-    Inst                = models.IntegerField()
-    InstFirst           = models.IntegerField()
-    InstEach            = models.IntegerField()
-    ECI                 = models.CharField(max_length=2)
-    PayBankCode         = models.CharField(max_length=10)
-    PayerAccount5Code   = models.CharField(max_length=5)
-    CodeNo              = models.CharField(max_length=30)
-    Barcode_1           = models.CharField(max_length=20)
-    Barcode_2           = models.CharField(max_length=20)
-    Barcode_3           = models.CharField(max_length=20)
+    EscrowBank          = models.CharField(max_length=10, blank=True)
+    TokenUseStatus      = models.CharField(max_length=1, blank=True) #?
+    
+    RespondCode         = models.CharField(max_length=5, blank=True)
+    Auth                = models.CharField(max_length=6, blank=True)
+    Card6No             = models.CharField(max_length=6, blank=True)
+    Card4No             = models.CharField(max_length=4, blank=True)
+    Inst                = models.CharField(max_length=10, blank=True) #?
+    InstFirst           = models.CharField(max_length=10, blank=True) #?
+    InstEach            = models.CharField(max_length=10, blank=True) #?
+    ECI                 = models.CharField(max_length=2, blank=True)
+    
+    PayBankCode         = models.CharField(max_length=10, blank=True)
+    PayerAccount5Code   = models.CharField(max_length=5, blank=True)
+    CodeNo              = models.CharField(max_length=30, blank=True)
+    Barcode_1           = models.CharField(max_length=20, blank=True)
+    Barcode_2           = models.CharField(max_length=20, blank=True)
+    Barcode_3           = models.CharField(max_length=20, blank=True)
 
     #def put(self, *args, **kwargs):
     #    self.ID = self.key().id()
