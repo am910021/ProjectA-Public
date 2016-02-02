@@ -71,6 +71,7 @@ function sendEmail() {
     </div>
     <br>
     
+{% if not get %}
     {% if passed %}
     <div class="row">
         <div class="col-md-2">
@@ -99,7 +100,7 @@ function sendEmail() {
     </div>
     {% endif %}
     
-    {% if get %}
+    {% else %}
     <div class="row">
         <div class="col-md-2">
         </div>
