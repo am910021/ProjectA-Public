@@ -7,13 +7,13 @@ class BuyForm(forms.Form):
     cost  = forms.CharField(required=True)
     email = forms.EmailField(required=True, initial="am910021@gmail.com")
     
+class CustomerUrlResponse(forms.ModelForm):
+    class Meta:
+        model = CustomerUrlDB
+        fields = '__all__'
+    
 class NotifyUrlResponse(forms.ModelForm):
     class Meta:
         model = NotifyUrlDB
         fields = '__all__'
         
-        
-class CustomerUrlResponse(forms.ModelForm):
-    class Meta:
-        model = CustomerUrlDB
-        fields = '__all__'

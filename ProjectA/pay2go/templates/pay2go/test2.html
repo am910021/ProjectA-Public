@@ -1,0 +1,30 @@
+<!doctype html>
+{% load staticfiles %}
+<html>
+<head>
+<title>test</title>
+<meta charset=utf-8>
+</head>
+<body>
+<h2>Pay2Go Function Test</h2>
+<br>
+<a href={% url 'main:main' %}>home</a>
+<br>
+<br>
+{% if data %}
+{% for i in data %}
+<span>{{i}}</span>
+<br>
+{% endfor %}
+{% endif %}
+
+{% if form %}
+<form action="{% url 'pay2go:NotifyURL' %}" method="post">
+{{form.as_p}}
+        <input type="submit" name="submit" value="submit" class="exclusive_large">
+</form>
+{% endif %}
+
+</form>
+</body>
+</html>

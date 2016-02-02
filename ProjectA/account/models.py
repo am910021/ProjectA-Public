@@ -31,7 +31,7 @@ class GroupOrder(models.Model):
     recipientAddress = models.CharField(max_length=128, blank=True)
     recipientPhone = models.CharField(max_length=128, blank=True)
     recipientStatus = models.IntegerField(default=0)
-    date = models.DateTimeField()
+    date = models.DateTimeField(auto_now=True)
     num = models.IntegerField(default=0)
     
     def __str__(self):
@@ -50,7 +50,7 @@ class MyCart(models.Model):
     user = models.ForeignKey(User)
     itemID = models.ForeignKey(Item)
     qty = models.IntegerField()
-    date = models.DateTimeField()
+    date = models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.itemID.name + " ("+ self.user.username +")"
     

@@ -15,9 +15,12 @@ class setting:
         self.memberID = set.c1
         self.hashKEY = set.c2
         self.hashIV = set.c3
-        self.isTest = True if set.c3=="True" else False
+        self.isTest = True if set.c4=="True" else False
         self.isActive = set.isActive
-        self.date = set.c5
+        print(self.isActive)
+        if self.memberID=="" or self.hashIV=="" or self.hashKEY=="":
+            self.isActive = False
+        
 
 def timeFormat(time):
     return str(datetime.strftime(time, '%Y%m%d'))
@@ -35,7 +38,8 @@ def NotifyURL(request):
             Amt = form.cleaned_data['Amt']
             MerchantOrderNo = form.cleaned_data['MerchantOrderNo']
             TradeNo = form.cleaned_data['TradeNo']
-            if CheckCode(Amt, MerchantOrderNo, TradeNo)==form.cleaned_data['CheckCode']:
+            code = CheckCode(MerchantID, Amt, MerchantOrderNo, TradeNo)
+            if code==form.cleaned_data['CheckCode']:
                 form.save()
     return HttpResponse()
 
@@ -47,7 +51,7 @@ def CheckCode(MerchantID, Amt, MerchantOrderNo, TradeNo):
     CheckValue+= "&MerchantOrderNo=" + MerchantOrderNo
     CheckValue+= "&TradeNo=" + TradeNo
     CheckValue+= "&HashKey=" + db.hashKEY
-    
+    CheckValue=CheckValue.encode('utf-8')
     hash_object = hashlib.sha256(CheckValue)
     hex_dig = hash_object.hexdigest()
     return hex_dig.upper()
@@ -58,10 +62,23 @@ def CustomerURL(request):
         form = CustomerUrlResponse(request.POST)
         if form.is_valid():
             form.save()
-    #data = getDATA(request.POST)
     return HttpResponse()
 
 
+class Test(UserBase):
+    def get(self, request, *args, **kwargs):
+        if kwargs['method']=="1":
+            self.template_name = 'pay2go/test.html' # xxxx/xxx.html
+            self.page_title = 'Customer' # title
+            kwargs['form'] = CustomerUrlResponse()
+        else:
+            self.template_name = 'pay2go/test2.html' # xxxx/xxx.html
+            self.page_title = 'Notify' # title
+            kwargs['form'] = NotifyUrlResponse()
+        
+        
+        
+        return super(Test, self).get(request, *args, **kwargs)
 
 class Pay2go(UserBase):
     template_name = 'pay2go/pay2go.html' # xxxx/xxx.html
@@ -71,7 +88,6 @@ class Pay2go(UserBase):
         kwargs['dataError'] = True
         if not 'groupID' in kwargs:
             return super(Pay2go, self).get(request, *args, **kwargs)
-        
         
         group = GroupOrder.objects.get(id=kwargs['groupID'])
         orderID = timeFormat(group.date)+str(group.id)
@@ -116,10 +132,21 @@ def pay2go(request):
     
     
 class BuyData:
-    def __init__(self, MerchantOrderNo, Amt, Email, ItemDesc, url):
+    def __init__(self, MerchantOrderNo, Amt, Email, ItemDesc, host):
+        TimeStamp = timeFormat(time())
         self.getDB()
-        TimeStamp = datetime.strftime(time(), '%Y%m%d')
+        if self.isTest:
+            MerchantOrderNo="TESTORDER"+MerchantOrderNo
+            #self.postUrl="https://capi.pay2go.com/MPG/mpg_gateway"
+            self.NotifyURL="https://"+host+"/pay2go/NotifyURL"
+            self.CustomerURL="https://"+host+"/pay2go/CustomerURL"
+        else:
+            #self.postUrl="https://api.pay2go.com/MPG/mpg_gateway"
+            self.NotifyURL="https://"+host+"/pay2go/NotifyURL"
+            self.CustomerURL="https://"+host+"/pay2go/CustomerURL"
 
+        self.postUrl="http://capi.pay2go.com/MPG/mpg_gateway" #test server
+        
         self.MerchantID = self.memberID
         self.RespondType = "String"
         self.TimeStamp = TimeStamp
@@ -129,8 +156,6 @@ class BuyData:
         self.ItemDesc = ItemDesc
         self.ExpireDate = ""
         self.ReturnURL = ""
-        self.NotifyURL = "https://philipb-pay2go.appspot.com/pay2go/NotifyURL"
-        self.CustomerURL = "https://philipb-pay2go.appspot.com/pay2go/CustomerURL"
         self.Email = Email
         self.LoginType = "0"
         self.CREDIT = "0"
@@ -143,6 +168,7 @@ class BuyData:
         self.hashKEY = db.hashKEY
         self.hashIV = db.hashIV
         self.enable = db.isActive
+        self.isTest = db.isTest
         
     def CreateCheckCode(self, Amt, MerchantOrderNo, TimeStamp):
         CheckValue = "HashKey=" + self.hashKEY

@@ -264,6 +264,7 @@ class VConfig(AdminBase):
     def get(self, request, *args, **kwargs):
         category = Setting.objects.get_or_create(name="category")[0]
         kwargs['isActive'] = category.isActive
+        kwargs['time'] = category.time
         return super(VConfig, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
@@ -280,7 +281,7 @@ class ConfigEmail(AdminBase):
 
     def get(self, request, *args, **kwargs):
         gmail = Setting.objects.get_or_create(name="gmailAccount")[0]
-        kwargs['data'] = [gmail.c1, gmail.c2, gmail.isActive]
+        kwargs['data'] = [gmail.c1, gmail.c2, gmail.isActive, gmail.time]
         return super(ConfigEmail, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
@@ -298,7 +299,7 @@ class ConfigPay2Go(AdminBase):
 
     def get(self, request, *args, **kwargs):
         pay2go = Setting.objects.get(name="pay2go")
-        kwargs['data'] = [pay2go.c1, pay2go.c2, pay2go.c3, pay2go.c4, pay2go.c5, pay2go.isActive]
+        kwargs['data'] = [pay2go.c1, pay2go.c2, pay2go.c3, pay2go.c4, pay2go.isActive, pay2go.time ]
         return super(ConfigPay2Go, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
@@ -308,7 +309,6 @@ class ConfigPay2Go(AdminBase):
         pay2go.c2= form.get('hashKEY')
         pay2go.c3= form.get('hashIV')
         pay2go.c4= True if form.get('isTest') else False
-        pay2go.c5= datetime.datetime.strftime(timezone.now()+ datetime.timedelta(hours=1), '%Y-%m-%d %H:%M:%S')
         pay2go.isActive= True if form.get('isActive') else False
         pay2go.save()
         messages.success(request, '設定成功')

@@ -14,6 +14,11 @@ from account.forms import ProfileForm, SignupForm, CaptchaForm, UserForm, CheckO
 from account.models import Profile, MyCart, Order, GroupOrder
 from shop.models import Item
 from pyaes.aescipher import AESCipher
+from pay2go.views import BuyData
+
+def timeFormat(time):
+    return str(datetime.datetime.strftime(time, '%Y%m%d'))
+
 
 class CSignUp(BaseView):
     template_name = 'account/signup.html'
@@ -353,7 +358,7 @@ class MyCartView(UserBase):
             mycart.save()
             success = True
         except Exception as e:
-            MyCart.objects.create(itemID=item, qty=qty, user=request.user, date=timezone.now())
+            MyCart.objects.create(itemID=item, qty=qty, user=request.user)
             success = True
             print(e)
         response = {}
@@ -427,17 +432,15 @@ class CheckOut(UserBase):
         if now > timeout:
             messages.error(request, '本次結帳時間超時，請重新整理頁面。')
             return redirect(reverse('account:agreement'))
-        
-        
+
         form = request.POST
-        group = GroupOrder.objects.create(user=request.user,date=timezone.now())
+        group = GroupOrder.objects.create(user=request.user)
         group.payerName = form.get('payerName')
         group.payerAddress = form.get('payerAddress')
         group.payerPhone = form.get('payerPhone')
         group.recipientName = form.get('recipientName')
         group.recipientAddress = form.get('recipientAddress')
         group.recipientPhone = form.get('recipientPhone')
-        group.save()
         totalamount = 0
         mycart  = MyCart.objects.all()
         for i in mycart:
@@ -450,52 +453,42 @@ class CheckOut(UserBase):
         
         group.totalAmount=totalamount
         group.save()
-        return redirect(reverse('account:checkoutComplete', args=(group.id, )))
-        
-        
-        self.template_name = 'account/checkout/success.html' # xxxx/xxx.html
-        self.page_title = '結帳-完成' # title
-        order = Order.objects.filter(group=group)
-        kwargs['order'] = order
-        kwargs['group'] = group
-        kwargs['totalamount'] = totalamount
-        kwargs['number'] = list(range(len(order)))
-        
-        return super(CheckOut, self).post(request, *args, **kwargs)
+        return redirect(reverse('account:order', args=("checkout", group.id)))
+
     
     
-class CheckoutComplete(UserBase):
-    template_name = 'account/checkout/success.html' # xxxx/xxx.html
+class OrderView(UserBase):
+    template_name = 'account/order.html' # xxxx/xxx.html
     page_title = "結帳-錯誤"
     
     def get(self, request, *args, **kwargs):
-        kwargs['nofind'] = True
-        if "groupID" in kwargs:
-            group = None
-            try:
-                group = GroupOrder.objects.get(id=kwargs['groupID'])
-            except Exception as e:
-                return super(CheckoutComplete, self).get(request, *args, **kwargs)
+        if not ("groupID" in kwargs and "method" in kwargs):
+            return super(OrderView, self).get(request, *args, **kwargs)
+            
+        try:
+            group = GroupOrder.objects.filter(user=request.user).get(id=kwargs['groupID'])
+        except Exception as e:
+            print(e)
+            return super(OrderView, self).get(request, *args, **kwargs)
 
-            if group.user!=request.user:
-                return super(CheckoutComplete, self).get(request, *args, **kwargs)
-
-            order = Order.objects.filter(group=group)
-            kwargs['group'] = group
-            kwargs['order'] = order
-            kwargs['number'] = list(range(len(order)))
-            kwargs['nofind'] = False
+        order = Order.objects.filter(group=group)
+        kwargs['group'] = group
+        kwargs['order'] = order
+        kwargs['number'] = list(range(len(order)))
+        MerchantOrderNo = timeFormat(group.date)+str(group.id)
+        Amt = str(group.totalAmount)
+        Email = request.user.email
+        ItemDesc = "123"
+        data = BuyData(MerchantOrderNo, Amt, Email, ItemDesc, self.getHost(request))
+        kwargs['BuyData'] = data
+        kwargs['success'] = True
+        
+        if kwargs['method']=="checkout":
             self.page_title = '結帳-完成'
+        else:
+            self.page_title = '訂單'+MerchantOrderNo
             
-            #MerchantOrderNo = "TESTNUMBER" + str(group.id)
-            #Amt = group.totalAmount
-            #Email = form.cleaned_data['email']
-            #ItemDesc = "測試物品"
-            #data = BuyData(MerchantOrderNo, Amt, Email, ItemDesc)
-            #return render(request, template, {"BuyData":data})
-            
-            
-        return super(CheckoutComplete, self).get(request, *args, **kwargs)
+        return super(OrderView, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
         return redirect(reverse('account:center'))

@@ -31,14 +31,18 @@ function changeForm(){
 {% block main %}
 <div class="container-fluid">
     <div class="row">
-    {% if nofind %}
+    {% if not success %}
         <h2>找不到資料</h2>
     {% else %}
         <div class="col-md-2">
         </div>
         <div class="col-md-8">
             <h2 class="text-info">
+                {% if method == "checkout" %}
                 結帳完成-等待付款
+                {% else %}
+                訂單 {{BuyData.MerchantOrderNo}} 的相關資訊
+                {% endif %}
             </h2>
             <br>
             <h4>結帳的商品</h4>
@@ -202,7 +206,7 @@ function changeForm(){
                     </tbody>
                 </table>
                 {% if BuyData.enable %}
-                <form name="pay2go" style="text-align:center;" method="post" action="https://capi.pay2go.com/MPG/mpg_gateway">
+                <form name="pay2go" style="text-align:center;" method="post" action="{{BuyData.postUrl}}">
                         <input type="hidden" name="MerchantID" value="{{BuyData.MerchantID}}">
                         <input type="hidden" name="RespondType" value="{{BuyData.RespondType}}">
                         <input type="hidden" name="CheckValue" size="50" value="{{BuyData.CheckValue}}">
@@ -219,10 +223,10 @@ function changeForm(){
                         <input type="hidden" name="LoginType" value="{{BuyData.LoginType}}">
                         <input type="hidden" name="CREDIT" value="{{BuyData.CREDIT}}">
                     <p>
-                               您的訂單編號：<font color="red">{{BuyData.MerchantOrderNo}}</font> 已經成功下單。<br>
-                               您的訂單金額：<font color="red">{{BuyData.Amt}}</font> 。<br> 
+                               訂單編號：<font color="red">{{BuyData.MerchantOrderNo}}</font><br>
+                               訂單金額：<font color="red">{{BuyData.Amt}}</font> 。<br> 
                     </p>
-                        <input type="submit" name="submit" value="付款" class="exclusive_large">
+                    <button type="submit" name="submit">前往付款</button>
                 </form>
                 {% else %}
                 <span>支付系統未啟用，請通知管理者．</span>

@@ -1,4 +1,5 @@
 from django import template
+import datetime
 register = template.Library()
 
 @register.filter(name='getID')
@@ -56,6 +57,10 @@ def getCategory(value, data):
 @register.filter(name='getItemBrand')
 def getItemBrand(value, data):
     return data[value].category.brand.name
+
+@register.filter(name='getTimeFormat')
+def getTimeFormat(time):
+    return datetime.datetime.strftime(time, '%Y-%m-%d %H:%M:%S')
 
 """@register.filter(name='brand')
 def brand(value,db):

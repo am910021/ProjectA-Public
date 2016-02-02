@@ -53,6 +53,9 @@ class BaseView(TemplateView):
     def getHost(self, request):
         return request.META['HTTP_HOST']
     
+    def getPost(self, request):
+        return request.META['SERVER_PORT']
+    
 class LoginRequiredMixin(object):
     @classmethod
     def as_view(cls):

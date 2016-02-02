@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from account.views import CSignUp, CSignIn, CSignOut, CenterView, CProfile, MyCartView
-from .views import  CheckOut, Agreement, CheckoutComplete, Verification, VerificationEemail
+from .views import  CheckOut, Agreement, OrderView, Verification, VerificationEemail
 from .views import removeItem, ForgetView, ForgetReset
 
 
@@ -14,12 +14,12 @@ urlpatterns = [
     url(r'^center/$', CenterView.as_view(), name='center'),
     url(r'^profile/$', CProfile.as_view(), name='profile'),
     url(r'^mycart/$', MyCartView.as_view(), name='mycart'),
+    url(r'^order/(?P<method>checkout|list+)/(?P<groupID>[0-9]+)/$', OrderView.as_view(), name='order'),
+    
     url(r'^removeitem/$', removeItem, name='removeItem'),
     url(r'^verify/$', Verification.as_view(), name='verify'),
     url(r'^verify/email/(?P<base64string>.+)$', VerificationEemail.as_view(), name='verifyEmail'),
     
     url(r'^checkout/agreement/$', Agreement.as_view(), name='agreement'),
     url(r'^checkout/$', CheckOut.as_view(), name='checkout'),
-    url(r'^checkout/complete/(?P<groupID>[0-9]+)/$', CheckoutComplete.as_view(), name='checkoutComplete'),
-    
 ]
