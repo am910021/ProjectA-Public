@@ -3,6 +3,7 @@
 {% load staticfiles %}
 
 {% block style %}
+<script src="{% static 'main/jquery.form.min.js' %}"></script>
 <style>
 hr {
 border:0; height:2px; background-color:#d4d4d4;
@@ -14,8 +15,6 @@ border:0; height:2px; background-color:#d4d4d4;
 
 }
 </style>
-
-<script type="text/javascript" src="http://malsup.github.com/jquery.form.js"></script>
     <script> 
     
     function showRequest(formData, jqForm, options) {
