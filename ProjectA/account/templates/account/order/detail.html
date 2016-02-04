@@ -37,14 +37,53 @@ function changeForm(){
         <div class="col-md-2">
         </div>
         <div class="col-md-8">
-            <h2 class="text-info">
-                {% if method == "checkout" %}
-                結帳完成-等待付款
-                {% else %}
-                訂單 {{BuyData.MerchantOrderNo}} 的相關資訊
-                {% endif %}
-            </h2>
-            <br>
+        
+
+        {% if method == "checkout" %}
+            <h4>結帳進度 完成</h4>
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+                    <span class="sr-only">100% 完成</span>
+                </div>
+            </div>
+            <h2 class="text-info">結帳完成-等待付款</h2>
+        {% else %}
+            <h2 class="text-info">訂單 {{BuyData.MerchantOrderNo}} 的相關資訊</h2>
+        {% endif %}
+            
+            <h4>訂單資料</h4>
+            
+                 <table class="table">
+                    <thead>
+                        <tr class="active">
+                            <th style="width:10%">
+                                
+                            </th>
+                            <th>
+                               
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="">
+                            <td>
+                                編號
+                            </td>
+                            <td>
+                               {{group.number}}
+                            </td>
+                        </tr>
+                        <tr class="">
+                            <td>
+                                編號
+                            </td>
+                            <td>
+                               {{group.number}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+  
             <h4>結帳的商品</h4>
                 <table class="table">
                     <thead>
@@ -65,10 +104,7 @@ function changeForm(){
                                 小計
                             </th>
                             <th>
-                                庫存
-                            </th>
-                            <th>
-                                加入日期
+                                結帳日期
                             </th>
                         </tr>
                     </thead>
@@ -91,10 +127,7 @@ function changeForm(){
                                 {{i|getSubtotal:order|setMoney}}
                             </td>
                             <td>
-                                {{i|getInventory:order|safe}}
-                            </td>
-                            <td>
-                                
+                                {{group.date|getFormatDate}}
                             </td>
                         </tr>
                      {% endfor %}
@@ -104,9 +137,6 @@ function changeForm(){
                             </td>
                             <td>
                                
-                            </td>
-                            <td>
-                                
                             </td>
                             <td>
                                 
@@ -205,31 +235,34 @@ function changeForm(){
                         </tr>
                     </tbody>
                 </table>
-                {% if BuyData.enable %}
-                <form name="pay2go" target="_blank" method="post" action="{{BuyData.postUrl}}">
-                        <input type="hidden" name="MerchantID" value="{{BuyData.MerchantID}}">
-                        <input type="hidden" name="RespondType" value="{{BuyData.RespondType}}">
-                        <input type="hidden" name="CheckValue" size="50" value="{{BuyData.CheckValue}}">
-                        <input type="hidden" name="TimeStamp" value="{{BuyData.TimeStamp}}">
-                        <input type="hidden" name="Version" value="{{BuyData.Version}}">
-                        <input type="hidden" name="MerchantOrderNo" value="{{BuyData.MerchantOrderNo}}">
-                        <input type="hidden" name="Amt" value="{{BuyData.Amt}}">
-                        <input type="hidden" name="ItemDesc" value="{{BuyData.ItemDesc}}">
-                        <input type="hidden" name="ExpireDate" value="{{BuyData.ExpireDate}}">
-                        <input type="hidden" name="ReturnURL" value="{{BuyData.ReturnURL}}">
-                        <input type="hidden" name="NotifyURL" value="{{BuyData.NotifyURL}}">
-                        <input type="hidden" name="CustomerURL" value="{{BuyData.CustomerURL}}">
-                        <input type="hidden" name="Email" value="{{BuyData.Email}}">
-                        <input type="hidden" name="LoginType" value="{{BuyData.LoginType}}">
-                        <input type="hidden" name="CREDIT" value="{{BuyData.CREDIT}}">
-                    <p>
-                               訂單編號：<font color="red">{{BuyData.MerchantOrderNo}}</font><br>
-                               訂單金額：<font color="red">{{BuyData.Amt}}</font> 。<br> 
-                    </p>
-                    <button type="submit" name="submit">前往付款</button>
-                </form>
-                {% else %}
-                <span>支付系統未啟用，請通知管理者．</span>
+                
+                {% if group.paymentStatus == 0%}
+	                {% if BuyData.enable %}
+	                <form name="pay2go" target="_blank" method="post" action="{{BuyData.postUrl}}">
+	                    <input type="hidden" name="MerchantID" value="{{BuyData.MerchantID}}">
+						<input type="hidden" name="RespondType" value="{{BuyData.RespondType}}">
+						<input type="hidden" name="CheckValue" size="50" value="{{BuyData.CheckValue}}">
+						<input type="hidden" name="TimeStamp" value="{{BuyData.TimeStamp}}">
+						<input type="hidden" name="Version" value="{{BuyData.Version}}">
+						<input type="hidden" name="MerchantOrderNo" value="{{BuyData.MerchantOrderNo}}">
+						<input type="hidden" name="Amt" value="{{BuyData.Amt}}">
+						<input type="hidden" name="ItemDesc" value="{{BuyData.ItemDesc}}">
+						<input type="hidden" name="ExpireDate" value="{{BuyData.ExpireDate}}">
+						<input type="hidden" name="ReturnURL" value="{{BuyData.ReturnURL}}">
+						<input type="hidden" name="NotifyURL" value="{{BuyData.NotifyURL}}">
+						<input type="hidden" name="CustomerURL" value="{{BuyData.CustomerURL}}">
+						<input type="hidden" name="Email" value="{{BuyData.Email}}">
+						<input type="hidden" name="LoginType" value="{{BuyData.LoginType}}">
+						<input type="hidden" name="CREDIT" value="{{BuyData.CREDIT}}">
+						<p>
+						訂單編號：<font color="red">{{BuyData.MerchantOrderNo}}</font><br>
+						訂單金額：<font color="red">{{BuyData.Amt}}</font> 。<br> 
+						</p>
+						button type="submit" name="submit">前往付款</button>
+	                </form>
+	                {% else %}
+	                <span>支付系統未啟用，請通知管理者．</span>
+	                {% endif %}
                 {% endif %}
         </div>
         <div class="col-md-2"></div>  

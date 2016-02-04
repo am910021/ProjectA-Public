@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import CustomerUrlDB, NotifyUrlDB
+from .models import CustomerDB, NotifyDB
 
 
-admin.site.register(CustomerUrlDB)
-admin.site.register(NotifyUrlDB)
+admin.site.register(CustomerDB)
+admin.site.register(NotifyDB)

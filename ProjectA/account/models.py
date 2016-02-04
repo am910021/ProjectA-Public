@@ -1,7 +1,12 @@
+from datetime import datetime
 from django.db import models
+from django.utils import timezone
 from django.contrib.auth.models import User
 from shop.models import Item
 # Create your models here.
+
+def timeFormat(time):
+    return str(datetime.strftime(time, '%Y%m%d'))
 
 class Profile(models.Model):
     user = models.OneToOneField(User)
@@ -21,6 +26,7 @@ class Profile(models.Model):
 
 class GroupOrder(models.Model):
     user = models.ForeignKey(User)
+    number = models.CharField(max_length=128)
     totalAmount = models.IntegerField(default=0)
     paymentMethod = models.IntegerField(default=0)
     paymentStatus = models.IntegerField(default=0)
@@ -30,12 +36,17 @@ class GroupOrder(models.Model):
     recipientName = models.CharField(max_length=128, blank=True)
     recipientAddress = models.CharField(max_length=128, blank=True)
     recipientPhone = models.CharField(max_length=128, blank=True)
-    recipientStatus = models.IntegerField(default=0)
-    date = models.DateTimeField(auto_now=True)
+    status = models.IntegerField(default=0)
+    date = models.DateTimeField()
     num = models.IntegerField(default=0)
     
+    def save(self, *args, **kwargs):
+        self.date = timezone.now()
+        self.number = timeFormat(self.date)+str(self.id)
+        super(GroupOrder, self).save(*args, **kwargs)
+    
     def __str__(self):
-        return str(self.id) + " (" + self.user.profile.fullName + ")"
+        return str(self.id) + " (" + self.user.username + ")"
     
 class Order(models.Model):
     group = models.ForeignKey(GroupOrder)

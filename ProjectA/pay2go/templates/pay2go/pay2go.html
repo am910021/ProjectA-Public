@@ -70,12 +70,20 @@ function changeForm(){
     </div>
     <br>
     
-    {% if dataError %}
+    {% if status == "notfound" %}
     <div class="row">
         <div class="col-md-2">
         </div>
         <div class="col-md-8">
             <h2 class="text-danger">查無此資料</h2>
+        </div>
+    </div>
+    {% elif status == "paid" %}
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-8">
+            <h2 class="text-danger">商品已經支付過。</h2>
         </div>
     </div>
     {% else %}

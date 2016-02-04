@@ -3,31 +3,18 @@ import hashlib
 from django.shortcuts import HttpResponse,redirect
 from django.core.urlresolvers import reverse
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 from main.models import Setting
 from main.views import UserBase
 from account.models import GroupOrder
-from .forms import NotifyUrlResponse, CustomerUrlResponse
-from .models import CustomerUrlDB, NotifyUrlDB
+from .forms import NotifyResponse, CustomerResponse
 
-class setting:
-    def __init__(self):
-        set = Setting.objects.get(name="pay2go")
-        self.memberID = set.c1
-        self.hashKEY = set.c2
-        self.hashIV = set.c3
-        self.isTest = True if set.c4=="True" else False
-        self.isActive = set.isActive
-        if self.memberID=="" or self.hashIV=="" or self.hashKEY=="":
-            self.isActive = False
-        
 
-def timeFormat(time):
-    return str(datetime.strftime(time, '%Y%m%d'))
 def time():
-    return datetime.now()+ timedelta(hours=8)
+    return str(datetime.strftime(datetime.now()+ timedelta(hours=8), '%Y%m%d'))
 
 def CheckCode(MerchantID, Amt, MerchantOrderNo, TradeNo):
-    db = setting()
+    db = Pay2goData()
     CheckValue = "HashIV=" + db.hashIV
     CheckValue+= "&Amt=" + str(Amt)
     CheckValue+= "&MerchantID=" + MerchantID
@@ -42,7 +29,7 @@ def CheckCode(MerchantID, Amt, MerchantOrderNo, TradeNo):
 @csrf_exempt
 def NotifyURL(request):
     if request.method=="POST":
-        form = NotifyUrlResponse(request.POST)
+        form = NotifyResponse(request.POST)
         if form.is_valid():
             MerchantID = form.cleaned_data['MerchantID']
             Amt = form.cleaned_data['Amt']
@@ -56,7 +43,7 @@ def NotifyURL(request):
 @csrf_exempt
 def CustomerURL(request):
     if request.method=="POST":
-        form = CustomerUrlResponse(request.POST)
+        form = CustomerResponse(request.POST)
         if form.is_valid():
             MerchantID = form.cleaned_data['MerchantID']
             Amt = form.cleaned_data['Amt']
@@ -72,39 +59,49 @@ class Pay2go(UserBase):
     page_title = '付款' # title
 
     def get(self, request, *args, **kwargs):
-        kwargs['dataError'] = True
         if not 'groupID' in kwargs:
+            kwargs['status'] = "notfound"
             return super(Pay2go, self).get(request, *args, **kwargs)
         group = GroupOrder.objects.get(id=kwargs['groupID'])
-        orderID = timeFormat(group.date)+str(group.id)
-        pay = CustomerUrlDB.objects.filter(MerchantOrderNo=orderID)
-        if len(pay)>0:
-                return super(Pay2go, self).get(request, *args, **kwargs)
-        MerchantOrderNo = "TESTNUMBER" + orderID
+        if group.paymentStatus>0:
+            kwargs['status'] = "paid"
+            return super(Pay2go, self).get(request, *args, **kwargs)
+        
+        MerchantOrderNo = group.number
         Amt = str(group.totalAmount)
         Email = request.user.email
-        ItemDesc = "123"
-        data = BuyData(MerchantOrderNo, Amt, Email, ItemDesc, self.getHost(request))
+        ItemDesc = "商品"
+        data = Pay2goData()
+        data.create(MerchantOrderNo, Amt, Email, ItemDesc, self.getHost(request))
         kwargs['BuyData'] = data
-        kwargs['dataError'] = False
         return super(Pay2go, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
         return super(Pay2go, self).post(request, *args, **kwargs)
-    
-class BuyData:
-    def __init__(self, MerchantOrderNo, Amt, Email, ItemDesc, host):
-        TimeStamp = timeFormat(time())
-        self.getDB()
+
+class Pay2goData:
+    def __init__(self):
+        set = Setting.objects.get(name="pay2go")
+        self.memberID = set.c1
+        self.hashKEY = set.c2
+        self.hashIV = set.c3
+        self.isTest = True if set.c4=="True" else False
+        self.enable = set.isActive
+        if self.memberID=="" or self.hashIV=="" or self.hashKEY=="":
+            self.isActive = False
+
+        
+    def create(self, MerchantOrderNo, Amt, Email, ItemDesc, host):
+        TimeStamp = time()
         if self.isTest:
-            MerchantOrderNo="TESTORDER"+MerchantOrderNo
+            MerchantOrderNo=MerchantOrderNo #"TEST"+MerchantOrderNo
             self.postUrl="https://capi.pay2go.com/MPG/mpg_gateway"
             self.NotifyURL="http://"+host+"/pay2go/NotifyURL/"
-            self.CustomerURL="http://"+host+"/pay2go/CustomerURL/"
+            #self.CustomerURL="http://"+host+"/pay2go/CustomerURL/"
         else:
             self.postUrl="https://api.pay2go.com/MPG/mpg_gateway"
             self.NotifyURL="https://"+host+"/pay2go/NotifyURL"
-            self.CustomerURL="https://"+host+"/pay2go/CustomerURL/"
+            #self.CustomerURL="https://"+host+"/pay2go/CustomerURL/"
         
         self.MerchantID = self.memberID
         self.RespondType = "String"
@@ -112,7 +109,7 @@ class BuyData:
         self.Version = "1.1"
         self.MerchantOrderNo = MerchantOrderNo
         self.Amt = Amt
-        self.ItemDesc = ItemDesc
+        self.ItemDesc = "["+settings.SITE_NAME+"]"+ ItemDesc
         self.ExpireDate = ""
         self.ReturnURL = ""
         self.Email = Email
@@ -120,23 +117,16 @@ class BuyData:
         self.CREDIT = "0"
         self.CheckValue = self.CreateCheckCode(Amt, MerchantOrderNo, TimeStamp)
         
-    def getDB(self):
-        db = setting()
-        self.memberID = db.memberID
-        self.hashKEY = db.hashKEY
-        self.hashIV = db.hashIV
-        self.enable = db.isActive
-        self.isTest = db.isTest
-        
     def CreateCheckCode(self, Amt, MerchantOrderNo, TimeStamp):
-        CheckValue = "HashKey=" + self.hashKEY
-        CheckValue+= "&Amt=" + Amt
-        CheckValue+= "&MerchantID=" + self.memberID
-        CheckValue+= "&MerchantOrderNo=" + MerchantOrderNo
-        CheckValue+= "&TimeStamp=" + TimeStamp
-        CheckValue+= "&Version=" + self.Version
-        CheckValue+= "&HashIV=" + self.hashIV
-        CheckValue=CheckValue.encode('utf-8')
-        hash_object = hashlib.sha256(CheckValue)
+        Value = "HashKey=" + self.hashKEY
+        Value+= "&Amt=" + Amt
+        Value+= "&MerchantID=" + self.memberID
+        Value+= "&MerchantOrderNo=" + MerchantOrderNo
+        Value+= "&TimeStamp=" + TimeStamp
+        Value+= "&Version=" + self.Version
+        Value+= "&HashIV=" + self.hashIV
+        Value=Value.encode('utf-8')
+        hash_object = hashlib.sha256(Value)
         hex_dig = hash_object.hexdigest()
         return hex_dig.upper()
+    

@@ -1,7 +1,9 @@
 from django.db import models
+from account.models import GroupOrder
 
 # Create your models here. 
-class CustomerUrlDB(models.Model):
+class CustomerDB(models.Model):
+    group = models.OneToOneField(GroupOrder)
     Status          = models.CharField(max_length=10)
     Message         = models.CharField(max_length=50)
     MerchantID      = models.CharField(max_length=15)
@@ -16,10 +18,21 @@ class CustomerUrlDB(models.Model):
     Barcode_1       = models.CharField(max_length=128, blank=True)
     Barcode_2       = models.CharField(max_length=128, blank=True)
     Barcode_3       = models.CharField(max_length=128, blank=True)
-
+    
+    def save(self, *args, **kwargs):
+        group = GroupOrder.objects.get(number=self.MerchantOrderNo)
+        if group.paymentStatus<1:
+            group.paymentStatus=1
+            group.save()
+        self.group = group
+        super(CustomerDB, self).save(*args, **kwargs)
+        
+    def __str__(self):
+        return self.MerchantOrderNo
     
 
-class NotifyUrlDB(models.Model):
+class NotifyDB(models.Model):
+    group = models.OneToOneField(GroupOrder)
     Status              = models.CharField(max_length=10)
     Message             = models.CharField(max_length=50)
     MerchantID          = models.CharField(max_length=15)
@@ -49,6 +62,17 @@ class NotifyUrlDB(models.Model):
     Barcode_1           = models.CharField(max_length=20, blank=True)
     Barcode_2           = models.CharField(max_length=20, blank=True)
     Barcode_3           = models.CharField(max_length=20, blank=True)
+    
+    def save(self, *args, **kwargs):
+        group = GroupOrder.objects.get(number=self.MerchantOrderNo)
+        if group.paymentStatus<2:
+            group.paymentStatus=2
+            group.save()
+        self.group = group
+        super(NotifyDB, self).save(*args, **kwargs)
+        
+    def __str__(self):
+        return self.MerchantOrderNo
 
     #def put(self, *args, **kwargs):
     #    self.ID = self.key().id()

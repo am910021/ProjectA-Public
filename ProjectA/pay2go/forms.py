@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 from django import forms
-from .models import NotifyUrlDB, CustomerUrlDB
+from .models import NotifyDB, CustomerDB
 
 
-class CustomerUrlResponse(forms.ModelForm):
+class CustomerResponse(forms.ModelForm):
     class Meta:
-        model = CustomerUrlDB
-        fields = '__all__'
+        model = CustomerDB
+        exclude = ("group", )
     
-class NotifyUrlResponse(forms.ModelForm):
+class NotifyResponse(forms.ModelForm):
     class Meta:
-        model = NotifyUrlDB
-        fields = '__all__'
+        model = NotifyDB
+        exclude = ("group", )
         

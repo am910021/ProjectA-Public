@@ -1,0 +1,89 @@
+{% extends base_template_name %}
+{% load group %}
+{% load staticfiles %}
+
+{% block style %}
+
+<script type="text/javascript">
+</script>
+
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-8">
+                </div>
+                <div class="col-md-2">
+
+                </div>
+                <div class="col-md-2">
+                     
+                    <a href="{% url 'account:center' %}" class="btn btn-block btn-info">
+                       回會員中心
+                    </a>
+                </div>
+            </div>
+            
+            <h2>我的訂單</h2><br>
+	            <table class="table">
+	                <thead>
+	                    <tr>
+	                        <th>
+	                            #
+	                        </th>
+	                        <th>
+	                           編號
+	                        </th>
+	                        <th>
+	                           總金額
+	                        </th>
+	                        <th>
+	                            訂單狀態
+	                        </th>
+	                        <th>
+	                            付款狀態
+	                        </th>
+                            <th>
+                                詳細資料
+                            </th>
+                            <th>
+                                結帳日期
+                            </th>
+	                    </tr>
+	                </thead>
+	                <tbody>
+	                {% for i in groups %}
+	                    <tr class="{{number|setClass}}">
+	                        <td>
+	                            {{number|setNumber}}
+	                        </td>
+	                        <td>
+                                {{i|getNumber}}
+                            </td>
+                            <td>
+                                {{i|getTotalAmount}}
+                            </td>
+                            <td>
+                                {{i|getStatus}}
+                            </td>
+                            <td>
+                                {{i|getPayStatus|safe}}
+                            </td>
+                            <td>
+                               <a href="{% url 'account:orderDetail' 'list' i|getID %}">查看</a>
+                            </td>
+                            <td>
+                                {{i|getDate}}
+                                {{number|delOneNumber}}
+                            </td>
+	                    </tr>
+	                 {% endfor %}
+	                </tbody>
+	            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

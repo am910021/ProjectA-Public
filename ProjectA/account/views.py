@@ -14,7 +14,7 @@ from account.forms import ProfileForm, SignupForm, CaptchaForm, UserForm, CheckO
 from account.models import Profile, MyCart, Order, GroupOrder
 from shop.models import Item
 from pyaes.aescipher import AESCipher
-from pay2go.views import BuyData
+from pay2go.views import Pay2goData
 
 def timeFormat(time):
     return str(datetime.datetime.strftime(time, '%Y%m%d'))
@@ -457,23 +457,33 @@ class CheckOut(UserBase):
         
         group.totalAmount=totalamount
         group.save()
-        return redirect(reverse('account:order', args=("checkout", group.id)))
+        return redirect(reverse('account:orderDetail', args=("checkout", group.id)))
 
-    
-    
 class OrderView(UserBase):
-    template_name = 'account/order.html' # xxxx/xxx.html
+    template_name = 'account/order/order.html' # xxxx/xxx.html
+    page_title = '我的訂單' # title
+
+    def get(self, request, *args, **kwargs):
+        group = GroupOrder.objects.filter(user=request.user)
+        kwargs['groups'] = group
+        kwargs['number'] = kwargs['number'] = list(range(len(group)))
+        return super(OrderView, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return super(OrderView, self).post(request, *args, **kwargs)
+    
+class OrderDetailView(UserBase):
+    template_name = 'account/order/detail.html' # xxxx/xxx.html
     page_title = "結帳-錯誤"
     
     def get(self, request, *args, **kwargs):
         if not ("groupID" in kwargs and "method" in kwargs):
-            return super(OrderView, self).get(request, *args, **kwargs)
-            
+            return super(OrderDetailView, self).get(request, *args, **kwargs)
         try:
             group = GroupOrder.objects.filter(user=request.user).get(id=kwargs['groupID'])
         except Exception as e:
             print(e)
-            return super(OrderView, self).get(request, *args, **kwargs)
+            return super(OrderDetailView, self).get(request, *args, **kwargs)
 
         order = Order.objects.filter(group=group)
         kwargs['group'] = group
@@ -482,8 +492,9 @@ class OrderView(UserBase):
         MerchantOrderNo = timeFormat(group.date)+str(group.id)
         Amt = str(group.totalAmount)
         Email = request.user.email
-        ItemDesc = "123"
-        data = BuyData(MerchantOrderNo, Amt, Email, ItemDesc, self.getHost(request))
+        ItemDesc = "商品"
+        data = Pay2goData()
+        data.create(MerchantOrderNo, Amt, Email, ItemDesc, self.getHost(request))
         kwargs['BuyData'] = data
         kwargs['success'] = True
         
@@ -492,7 +503,7 @@ class OrderView(UserBase):
         else:
             self.page_title = '訂單'+MerchantOrderNo
             
-        return super(OrderView, self).get(request, *args, **kwargs)
+        return super(OrderDetailView, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
         return redirect(reverse('account:center'))

@@ -68,7 +68,12 @@ function resetForm(){
         <div class="col-md-2">
         </div>
         <div class="col-md-8">
-        
+		    <h4>結帳進度 50%</h4>
+		    <div class="progress">
+		        <div class="progress-bar" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:50%">
+		            <span class="sr-only">50% 完成</span>
+		        </div>
+		    </div>
             <form id="resetForm" method="post" action="{% url 'account:checkout' %}">
                 {% csrf_token %}
                 <input id="reSet" name="reSet" type="hidden" readonly>
