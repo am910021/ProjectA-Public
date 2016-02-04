@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import datetime
+from django.utils import timezone
 
 # Create your models here.
 class Brand(models.Model):
@@ -39,11 +40,7 @@ class Item(models.Model):
     isActive = models.BooleanField(default=True)
     sp = models.BooleanField(default=False)
     new = models.BooleanField(default=True)
-    time = models.DateTimeField()
-    
-    def save(self, *args, **kwargs):
-        self.time = datetime.now()
-        super(Item, self).save(*args, **kwargs)
+    time = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         shownumber = self.number if self.number!="" else "未設定編號"

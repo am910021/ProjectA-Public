@@ -357,12 +357,12 @@ class MyCartView(UserBase):
         item = Item.objects.get(id=itemID)
         success = False
         try:
-            mycart = MyCart.objects.get(itemID=item)
+            mycart = MyCart.objects.get(item=item)
             mycart.qty+=qty
             mycart.save()
             success = True
         except Exception as e:
-            MyCart.objects.create(itemID=item, qty=qty, user=request.user)
+            MyCart.objects.create(item=item, qty=qty, user=request.user)
             success = True
             print(e)
         response = {}
@@ -378,7 +378,7 @@ def removeItem(request):
     removeID= request.POST.get('removeID')
     try:
         item = MyCart.objects.get(id=removeID)
-        messages.success(request, '商品： '+ item.itemID.name +' 移除成功。')
+        messages.success(request, '商品： '+ item.item.name +' 移除成功。')
         item.delete()
     except Exception as e:
         messages.error(request, '移除失敗。')
@@ -448,13 +448,12 @@ class CheckOut(UserBase):
         totalamount = 0
         mycart  = MyCart.objects.all()
         for i in mycart:
-            subtotal = i.itemID.cost * i.qty
-            Order.objects.create(group=group, itemID=i.itemID, itemNmae=i.itemID.name,itemPrice=subtotal, qty=i.qty)
+            subtotal = i.item.cost * i.qty
+            Order.objects.create(group=group, item=i.item, nmae=i.item.name,price=subtotal, qty=i.qty)
             totalamount+=subtotal
-            i.itemID.inventory = i.itemID.inventory-i.qty
-            i.itemID.save()
+            i.item.inventory = i.item.inventory-i.qty
+            i.item.save()
             #i.delete()
-        
         group.totalAmount=totalamount
         group.save()
         return redirect(reverse('account:orderDetail', args=("checkout", group.id)))

@@ -2,7 +2,6 @@ import locale
 from django.core.urlresolvers import reverse
 from datetime import datetime
 from django import template
-
 register = template.Library()
 
 @register.filter(name='delOneNumber')

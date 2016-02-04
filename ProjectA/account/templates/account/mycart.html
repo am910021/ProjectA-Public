@@ -1,5 +1,5 @@
 {% extends base_template_name %}
-{% load account %}
+{% load account2 %}
 {% load staticfiles %}
 
 {% block style %}
@@ -75,31 +75,32 @@ function removeItem(input){
 	                    </tr>
 	                </thead>
 	                <tbody>
-	                {% for i in number %}
-	                    <tr class="{{i|setClass}}">
+	                {% for i in mycart %}
+	                    <tr class="{{number|setClass}}">
 	                        <td>
-	                            {{i|setNumber}}
+	                            {{number|setNumber}}
 	                        </td>
 	                        <td>
-	                           {{i|getName:mycart}}
+	                           {{i.item.name}}
 	                        </td>
 	                        <td>
-	                            {{i|getCost:mycart}}
+	                            {{i.item.cost}}
 	                        </td>
 	                        <td>
-	                            {{i|getQty:mycart}}
+	                            {{i.qty}}
 	                        </td>
 	                        <td>
-	                            {{i|getSubtotal:mycart}}
+	                            {{i|getSubtotal}}
 	                        </td>
                             <td>
-                                {{i|getInventory:mycart|safe}}
+                                {{i|getInventory|safe}}
                             </td>
                             <td>
-                                {{i|getDate:mycart}}
+                                {{i|getDate}}
                             </td>
 	                        <td>
-	                            <button type="button" onClick="removeItem({{i|getID:mycart}})" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-trash"></span></button>
+	                            <button type="button" onClick="removeItem({{i|getID}})" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-trash"></span></button>
+	                            {{number|delOneNumber}}
 	                        </td>
 	                    </tr>
 	                 {% endfor %}

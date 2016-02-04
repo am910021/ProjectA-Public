@@ -1,5 +1,5 @@
 {% extends base_template_name %}
-{% load account %}
+{% load account2 %}
 {% load staticfiles %}
 {% block style %}
     
@@ -120,28 +120,29 @@ function changeForm(){
                         </tr>
                     </thead>
                     <tbody>
-                    {% for i in number %}
-                        <tr class="{{i|setClass}}">
+                    {% for i in mycart %}
+                        <tr class="{{number|setClass}}">
                             <td>
-                                {{i|setNumber}}
+                                {{number|setNumber}}
                             </td>
                             <td>
-                               {{i|getName:mycart}}
+                               {{i.item.name}}
                             </td>
                             <td>
-                                {{i|getCost:mycart|setMoney}}
+                                {{i.item.cost}}
                             </td>
                             <td>
-                                {{i|getQty:mycart}}
+                                {{i.qty}}
                             </td>
                             <td>
-                                {{i|getSubtotal:mycart|setMoney}}
+                                {{i|getSubtotal|setMoney}}
                             </td>
                             <td>
-                                {{i|getInventory:mycart|safe}}
+                                {{i|getInventory|safe}}
                             </td>
                             <td>
-                                {{i|getDate:mycart}}
+                                {{i|getDate}}
+                                {{number|delOneNumber}}
                             </td>
                         </tr>
                      {% endfor %}

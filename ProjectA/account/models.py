@@ -50,18 +50,18 @@ class GroupOrder(models.Model):
     
 class Order(models.Model):
     group = models.ForeignKey(GroupOrder)
-    itemID = models.ForeignKey(Item)
-    itemNmae = models.CharField(max_length=128)
-    itemPrice = models.CharField(max_length=128)
+    item = models.ForeignKey(Item)
+    nmae = models.CharField(max_length=128)
+    price = models.CharField(max_length=128)
     qty = models.IntegerField()
     def __str__(self):
-        return self.itemID.name + " ("+ str(self.id) +")"
+        return self.item.name + " ("+ str(self.id) +")"
     
 class MyCart(models.Model):
     user = models.ForeignKey(User)
-    itemID = models.ForeignKey(Item)
+    item = models.ForeignKey(Item)
     qty = models.IntegerField()
     date = models.DateTimeField(auto_now=True)
     def __str__(self):
-        return self.itemID.name + " ("+ self.user.username +")"
+        return self.item.name + " ("+ self.user.username +")"
     

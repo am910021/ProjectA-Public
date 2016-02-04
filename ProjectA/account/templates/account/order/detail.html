@@ -1,5 +1,5 @@
 {% extends base_template_name %}
-{% load account %}
+{% load account2 %}
 {% load staticfiles %}
 
 {% block style %}
@@ -56,7 +56,7 @@ function changeForm(){
                  <table class="table">
                     <thead>
                         <tr class="active">
-                            <th style="width:10%">
+                            <th style="width:20%">
                                 
                             </th>
                             <th>
@@ -66,16 +66,24 @@ function changeForm(){
                     </thead>
                     <tbody>
                         <tr class="">
-                            <td>
-                                編號
+                            <td class="text-right">
+                                訂單編號
                             </td>
                             <td>
                                {{group.number}}
                             </td>
                         </tr>
                         <tr class="">
+                            <td class="text-right">
+                                付款狀態
+                            </td>
                             <td>
-                                編號
+                               {{group.number}}
+                            </td>
+                        </tr>
+                        <tr class="">
+                            <td class="text-right">
+                                訂單狀態
                             </td>
                             <td>
                                {{group.number}}
@@ -109,25 +117,26 @@ function changeForm(){
                         </tr>
                     </thead>
                     <tbody>
-                    {% for i in number %}
-                        <tr class="{{i|setClass}}">
+                    {% for i in order %}
+                        <tr class="{{number|setClass}}">
                             <td>
-                                {{i|setNumber}}
+                               {{number|setNumber}}
                             </td>
                             <td>
-                               {{i|getName:order}}
+                               {{i.nmae}}
                             </td>
                             <td>
-                                {{i|getCost:order|setMoney}}
+                                {{i.price}}
                             </td>
                             <td>
-                                {{i|getQty:order}}
+                                {{i.qty}}
                             </td>
                             <td>
-                                {{i|getSubtotal:order|setMoney}}
+                                {{i|getSubtotal}}
                             </td>
                             <td>
-                                {{group.date|getFormatDate}}
+                                {{group|getDate}}
+                                {{number|delOneNumber}}
                             </td>
                         </tr>
                      {% endfor %}
@@ -258,7 +267,7 @@ function changeForm(){
 						訂單編號：<font color="red">{{BuyData.MerchantOrderNo}}</font><br>
 						訂單金額：<font color="red">{{BuyData.Amt}}</font> 。<br> 
 						</p>
-						button type="submit" name="submit">前往付款</button>
+						<button type="submit" name="submit">前往付款</button>
 	                </form>
 	                {% else %}
 	                <span>支付系統未啟用，請通知管理者．</span>
