@@ -449,11 +449,11 @@ class CheckOut(UserBase):
         mycart  = MyCart.objects.all()
         for i in mycart:
             subtotal = i.item.cost * i.qty
-            Order.objects.create(group=group, item=i.item, nmae=i.item.name,price=subtotal, qty=i.qty)
+            Order.objects.create(group=group, item=i.item, nmae=i.item.name,cost=i.item.cost, qty=i.qty)
             totalamount+=subtotal
             i.item.inventory = i.item.inventory-i.qty
             i.item.save()
-            #i.delete()
+            i.delete()
         group.totalAmount=totalamount
         group.save()
         return redirect(reverse('account:orderDetail', args=("checkout", group.id)))

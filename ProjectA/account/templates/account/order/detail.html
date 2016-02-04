@@ -1,5 +1,5 @@
 {% extends base_template_name %}
-{% load account2 %}
+{% load account %}
 {% load staticfiles %}
 
 {% block style %}
@@ -78,7 +78,7 @@ function changeForm(){
                                 付款狀態
                             </td>
                             <td>
-                               {{group.number}}
+                               {{group|getPayStatus|safe}}
                             </td>
                         </tr>
                         <tr class="">
@@ -86,11 +86,11 @@ function changeForm(){
                                 訂單狀態
                             </td>
                             <td>
-                               {{group.number}}
+                               {{group|getStatus}}
                             </td>
                         </tr>
                     </tbody>
-                </table>
+                </table>    
   
             <h4>結帳的商品</h4>
                 <table class="table">
@@ -126,7 +126,7 @@ function changeForm(){
                                {{i.nmae}}
                             </td>
                             <td>
-                                {{i.price}}
+                                {{i.cost}}
                             </td>
                             <td>
                                 {{i.qty}}

@@ -52,7 +52,7 @@ class Order(models.Model):
     group = models.ForeignKey(GroupOrder)
     item = models.ForeignKey(Item)
     nmae = models.CharField(max_length=128)
-    price = models.CharField(max_length=128)
+    cost = models.IntegerField()
     qty = models.IntegerField()
     def __str__(self):
         return self.item.name + " ("+ str(self.id) +")"

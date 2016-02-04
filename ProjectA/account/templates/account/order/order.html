@@ -1,5 +1,5 @@
 {% extends base_template_name %}
-{% load group %}
+{% load account %}
 {% load staticfiles %}
 
 {% block style %}
@@ -64,7 +64,7 @@
                                 {{i|getNumber}}
                             </td>
                             <td>
-                                {{i|getTotalAmount}}
+                                {{i.totalAmount}}
                             </td>
                             <td>
                                 {{i|getStatus}}
