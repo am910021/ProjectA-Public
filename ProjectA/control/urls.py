@@ -26,6 +26,8 @@ urlpatterns = [
     url(r'^item/add/$', ItemAdd.as_view(), name='itemAdd'),
     url(r'^item/edit/(?P<itemID>[0-9]+)/$', ItemEdit.as_view(), name='itemEdit'),
     url(r'^item/preview/(?P<itemID>[0-9]+)/$', ItemPreview.as_view(), name='itemPreview'),
+    
+    url(r'^order/(?P<groupID>[0-9]+)/$', ItemManage.as_view(), name='group'),
 
     url(r'^.*$', redirectAdminIndex),
 ]

@@ -8,6 +8,7 @@ from main.dropbox import file_put2, file_delete
 from .forms import BrandForm, CategoryForm, ItemForm
 from shop.models import Brand, Category, Item
 from django.utils import timezone
+from account.models import GroupOrder
 
 class AdminRequiredMixin(object):
     @classmethod
@@ -314,10 +315,21 @@ class ConfigPay2Go(AdminBase):
         messages.success(request, '設定成功')
         return redirect(reverse('control:configPay2go'))
     
+class OrderView(AdminBase):
+    template_name = 'control/order/list.html' # xxxx/xxx.html
+
+    def get(self, request, *args, **kwargs):
+        if 'category' not in kwargs:
+            kwargs['group']=GroupOrder.objects.all()
+            kwargs['category']='0'
+        else:
+            kwargs['group']=GroupOrder.objects.filter(status=kwargs['category'])
+        
+        
+        
+        return super(OrderView, self).get(request, *args, **kwargs)
     
-    
-    
-    
-    
+    def post(self, request, *args, **kwargs):
+        return super(OrderView, self).post(request, *args, **kwargs)
     
     
