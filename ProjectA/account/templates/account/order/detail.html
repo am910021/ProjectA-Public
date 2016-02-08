@@ -265,7 +265,7 @@ function changeForm(){
 						<input type="hidden" name="CREDIT" value="{{BuyData.CREDIT}}">
 						<p>
 						訂單編號：<font color="red">{{BuyData.MerchantOrderNo}}</font><br>
-						訂單金額：<font color="red">{{BuyData.Amt}}</font> 。<br> 
+						訂單金額：<font color="red">{{BuyData.Amt|setMoney}}</font><br> 
 						</p>
 						<button type="submit" name="submit">前往付款</button>
 	                </form>

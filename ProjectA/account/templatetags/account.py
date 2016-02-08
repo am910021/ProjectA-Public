@@ -85,9 +85,11 @@ def getStatus(data):
     status = data.status
     if status==0:
         return "未處理"
-    if status==1:
+    elif status==1:
         return "處理中"
-    if status==2:
+    elif status==2:
         return "已配送"
+    elif status==3:
+        return "已完成"
     return data.status
 

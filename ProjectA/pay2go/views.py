@@ -62,7 +62,12 @@ class Pay2go(UserBase):
         if not 'groupID' in kwargs:
             kwargs['status'] = "notfound"
             return super(Pay2go, self).get(request, *args, **kwargs)
-        group = GroupOrder.objects.get(id=kwargs['groupID'])
+        try:
+            group = GroupOrder.objects.get(id=kwargs['groupID'])
+        except Exception as e:
+            kwargs['status'] = "notfound"
+            return super(Pay2go, self).get(request, *args, **kwargs)
+        
         if group.paymentStatus>0:
             kwargs['status'] = "paid"
             return super(Pay2go, self).get(request, *args, **kwargs)

@@ -42,7 +42,8 @@ class GroupOrder(models.Model):
     
     def save(self, *args, **kwargs):
         self.date = timezone.now()
-        self.number = timeFormat(self.date)+str(self.id)
+        orderID = timeFormat(self.date)+str(self.id)
+        self.number = orderID[2:]
         super(GroupOrder, self).save(*args, **kwargs)
     
     def __str__(self):

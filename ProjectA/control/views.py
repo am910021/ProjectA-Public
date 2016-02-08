@@ -319,17 +319,49 @@ class OrderView(AdminBase):
     template_name = 'control/order/list.html' # xxxx/xxx.html
 
     def get(self, request, *args, **kwargs):
-        if 'category' not in kwargs:
-            kwargs['group']=GroupOrder.objects.all()
-            kwargs['category']='0'
+        if 'status' not in kwargs or int(kwargs['status'])>4:
+            group = GroupOrder.objects.all()
+            kwargs['groups']=group
+            kwargs['number'] = list(range(len(group)))
+            kwargs['status']='0'
+            self.page_title = "未完成訂單"
         else:
-            kwargs['group']=GroupOrder.objects.filter(status=kwargs['category'])
-        
-        
+            category = int(kwargs['status'])
+            group = GroupOrder.objects.filter(status=category)
+            kwargs['groups']=group
+            kwargs['number'] = list(range(len(group)))
+            
+            if category==0:
+                self.page_title = "未處理訂單"
+            if category==1:
+                self.page_title = "處理中訂單"
+            if category==2:
+                self.page_title = "配送中訂單"
+            if category==3:
+                self.page_title = "已完成訂單"
+                
         
         return super(OrderView, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
-        return super(OrderView, self).post(request, *args, **kwargs)
+        try:
+            groupID = int(request.POST.get('groupID'))
+            status = int(request.POST.get('setStatus'))
+            group = GroupOrder.objects.get(id=groupID)
+            group.status=status
+            group.save()
+            if status==0:
+                msg = "未處理"
+            elif status==1:
+                msg = "處理中"
+            elif status==2:
+                msg = "已配送"
+            elif status==3:
+                msg = "已完成"
+            messages.add_message(request, 50, group.number, extra_tags=msg)    
+        except Exception as e:
+            print(e)
+        
+        return redirect(reverse('control:order', args=(status-1,)))
     
     

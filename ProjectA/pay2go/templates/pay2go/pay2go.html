@@ -91,7 +91,7 @@ function changeForm(){
         </div>
         <div class="col-md-8 text-left">
 			{% if BuyData.enable %}
-			<form name="pay2go" style="text-align:center;" method="post" action="https://capi.pay2go.com/MPG/mpg_gateway">
+			<form name="pay2go" target="_blank" method="post" action="https://capi.pay2go.com/MPG/mpg_gateway" style="text-align:center;">
 	            <input type="hidden" name="MerchantID" value="{{BuyData.MerchantID}}">
 	            <input type="hidden" name="RespondType" value="{{BuyData.RespondType}}">
 	            <input type="hidden" name="CheckValue" size="50" value="{{BuyData.CheckValue}}">

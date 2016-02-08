@@ -1,67 +1,70 @@
-from django import template
+import locale
 import datetime
+from django import template
+from django.core.urlresolvers import reverse
 register = template.Library()
 
-@register.filter(name='getID')
-def getID(value, data):
-    return data[value].id
-
-@register.filter(name='getContent')
-def getContent(value, data):
-    return data[value].content
-
-@register.filter(name='getDescription')
-def getDescription(value, data):
-    return data[value].description
+@register.filter(name='delOneNumber')
+def delOneNumber(data):
+    data.pop(0)
+    return ""
 
 @register.filter(name='setClass')
-def setAvtive(value):
+def setClass(data):
+    value = data[0]
     return "active" if value % 2==0 else "info"
 
+@register.filter(name='setNumber')
+def setNumber(data):
+    value = data[0]
+    return value+1
+
+@register.filter(name='setMoney')
+def setMoney(data):
+    money = str(data)
+    return "{:,.0f}".format(locale.atoi(money))
+
+@register.filter(name='getPayStatus')
+def getPayStatus(data):
+    span="""<span class="{cls}">{text}</span>"""
+    if data.paymentStatus<2:
+        return span.format(cls="text-danger", text="未付款")
+    
+    # paymentStatus=2
+    return span.format(cls="text-success", text="已付款")
+
+@register.filter(name='setNext')
+def setNext(data):
+    buttom="""
+    <input type="hidden" name="groupID" value="{id}" readonly>
+    <input type="hidden" name="setStatus" value="{status}" readonly>
+    <button type="button" onclick="this.form.action='{url}';this.form.submit();;">{text}</button>
+    """
+    if data.status==0:
+        text="移到處理中"
+    elif data.status==1:
+        text="移到配送中"
+    elif data.status==2:
+        text="移到已完成"
+    else:
+        return ""
+
+    return buttom.format(id=data.id, status=data.status+1, text=text, url=reverse('control:order', args=(data.status+1,)))
+
 @register.filter(name='getStatus')
-def getStatus(value, data):
-    normal = """<span class='text-info'>正常</span>"""
-    shelves = """<span class='text-danger'>下架</span>"""
-    return normal if data[value].isActive else shelves
+def getStatus(data):
+    status = data.status
+    if status==0:
+        return "未處理"
+    elif status==1:
+        return "處理中"
+    elif status==2:
+        return "已配送"
+    elif status==3:
+        return "已完成"
+    return data.status
 
-@register.filter(name='getImage')
-def getImage(value, data):
-    html = """<img src="https://dl.dropboxusercontent.com/s/{path}" class="list-img">"""
-    return html.format(path=data[value].image) if data[value].image!="" else "沒有圖片"
+@register.filter(name='getDate')
+def getDate(data):
+    return str(datetime.datetime.strftime(data.date, '%Y-%m-%d %H:%M:%S'))
 
-@register.filter(name='getImageUrl')
-def getImageUrl(path):
-    url = """https://dl.dropboxusercontent.com/s/{path}"""
-    return url.format(path=path if path!="" else "#")
-
-@register.filter(name='getName')
-def getName(value, data):
-    return data[value].name
-
-@register.filter(name='getCost')
-def getCost(value, data):
-    return data[value].cost
-
-@register.filter(name='getIntro')
-def getIntro(value, data):
-    return data[value].intro
-
-@register.filter(name='getBrand')
-def getBrand(value, data):
-    return data[value].brand.name
-
-@register.filter(name='getCategory')
-def getCategory(value, data):
-    return data[value].category.name
-
-@register.filter(name='getItemBrand')
-def getItemBrand(value, data):
-    return data[value].category.brand.name
-
-@register.filter(name='getTimeFormat')
-def getTimeFormat(time):
-    return datetime.datetime.strftime(time, '%Y-%m-%d %H:%M:%S')
-
-"""@register.filter(name='brand')
-def brand(value,db):
-    return db[value].name"""

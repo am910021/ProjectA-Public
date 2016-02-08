@@ -4,6 +4,7 @@ from control.views import CAdminIndex, redirectAdminIndex, CAdminSignIn, VConfig
 from .views import CBrand, CBrandAdd, CBrandEdit, CBrandPreview
 from .views import CCategory, CCategoryAdd, CCategoryEdit
 from .views import ItemManage, ItemAdd, ItemEdit, ItemPreview
+from .views import OrderView
 
 
 urlpatterns = [
@@ -27,7 +28,8 @@ urlpatterns = [
     url(r'^item/edit/(?P<itemID>[0-9]+)/$', ItemEdit.as_view(), name='itemEdit'),
     url(r'^item/preview/(?P<itemID>[0-9]+)/$', ItemPreview.as_view(), name='itemPreview'),
     
-    url(r'^order/(?P<groupID>[0-9]+)/$', ItemManage.as_view(), name='group'),
+    url(r'^order/$', OrderView.as_view(), name='orderNone'),
+    url(r'^order/(?P<status>[0-9]+)/$', OrderView.as_view(), name='order'),
 
     url(r'^.*$', redirectAdminIndex),
 ]

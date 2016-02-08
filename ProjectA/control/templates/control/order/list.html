@@ -1,96 +1,101 @@
 {% extends base_template_name %}
-{% load control %}
+{% load control2 %}
 {% load staticfiles %}
 
 {% block style %}
-<style type="text/css">
-.text-size18{
-    font-size: 18px;
-    line-height: 18px;
-}
 
-.list-img{
-    width:60px;
-}
-</style>
+<script type="text/javascript">
+</script>
 
 {% endblock %}
 
 {% block main %}
+<div class="container">
     <div class="row">
         <div class="col-md-12">
-        
             <div class="row">
                 <div class="col-md-8">
                 </div>
                 <div class="col-md-2">
-                    <a href="{% url 'control:brandAdd' %}" class="btn btn-block btn-info">
-                        新增品牌
-                    </a>
                 </div>
                 <div class="col-md-2">
                     <a href="{% url 'control:admin' %}" class="btn btn-block btn-info">
-                        管理員首頁
+                       管理員首頁
                     </a>
                 </div>
             </div>
-            
-            <br>
-            <table class="table">
-                <thead>
-                    <tr class="success">
-                        <th>
-                            #
-                        </th>
-                        <th>
-                            編號
-                        </th>
-                        <th>
-                            名稱
-                        </th>
-                        <th>
-                            說明
-                        </th>
-                        <th>
-                            預覽
-                        </th>
-                        <th>
-                            修改
-                        </th>
-                        <th>
-                            狀態
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for i in number %}
-                    <tr class="{{i|setClass}}">
-                        <td style="width:3%;vertical-align: middle;">
-                            {{i|getID:brand}}
-                        </td>
-                        <td style="width:10%;vertical-align: middle;">
-                            {{i|getImage:brand|safe}}
-                        </td>
-                        <td style="width:10%;vertical-align: middle;">
-                            {{i|getName:brand}}
-                        </td>
-                        <td style=";vertical-align: middle;">
-                        {{i|getDescription:brand}}
-                        </td>
-                        <td style="width:4%;vertical-align: middle;">
-                            <a href="{% url 'control:brandPreview' i|getID:brand %}" target="_blank">預覽</a>
-                        </td>
-                        </td>
-                        <td style="width:4%;vertical-align: middle;">
-                            <a href="{% url 'control:brandEdit' i|getID:brand %}">修改</a>
-                        </td>
-                        <td style="width:4%;vertical-align: middle;">
-                            <!-- {{ "too long, don't read"|truncatewords:4}} --> {{i|getStatus:brand|safe}}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+            <h2>{{page_title}}</h2><br>
+			{% for message in messages %}
+			{% if 1 == 1 %}
+			<br>
+			<h3 class="text-success">訂單編號： {{message}} 已成功移到 {{message.tags}}</h3>
+			{% endif %}
+			{% endfor %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                買家
+                            </th>
+                            <th>
+                               編號
+                            </th>
+                            <th>
+                               總金額
+                            </th>
+                            <th>
+                                目前狀態
+                            </th>
+                            <th>
+                                付款狀態
+                            </th>
+                            <th>
+                                詳細資料
+                            </th>
+                            <th>
+                                結帳日期
+                            </th>
+                            <th>
+                                轉移訂單
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in groups %}
+                        <tr class="{{number|setClass}}">
+                            <td>
+                                {{i.user.username}}
+                            </td>
+                            <td>
+                                {{i.number}}
+                            </td>
+                            <td>
+                                {{i.totalAmount|setMoney}}
+                            </td>
+                            <td>
+                                {{i|getStatus}}
+                            </td>
+                            <td>
+                                {{i|getPayStatus|safe}}
+                            </td>
+                            <td>
+                               <a href="{% url 'account:orderDetail' 'list' i.id %}">查看</a>
+                            </td>
+                            <td>
+                                {{i|getDate}}
+                            </td>
+                            <td>
+                                <form method="post">
+                                {% csrf_token %}
+                                {{i|setNext|safe}}
+                                </form>
+                                {{number|delOneNumber}}
+                            </td>
+                        </tr>
+                     {% endfor %}
+                    </tbody>
+                </table>
         </div>
     </div>
+</div>
 {% endblock %}

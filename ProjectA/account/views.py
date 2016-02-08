@@ -488,7 +488,7 @@ class OrderDetailView(UserBase):
         kwargs['group'] = group
         kwargs['order'] = order
         kwargs['number'] = list(range(len(order)))
-        MerchantOrderNo = timeFormat(group.date)+str(group.id)
+        MerchantOrderNo = group.number
         Amt = str(group.totalAmount)
         Email = request.user.email
         ItemDesc = "商品"
