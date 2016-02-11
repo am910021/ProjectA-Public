@@ -1,0 +1,73 @@
+{% extends base_template_name %}
+{% load control2 %}
+{% load staticfiles %}
+
+{% block style %}
+{% endblock %}
+
+
+{% block main %}
+<div class="container">
+	<div class="row">
+		<div class="col-md-8">
+		</div>
+		<div class="col-md-2">
+            <a href="{% url 'control:noticePost' %}" class="btn btn-block btn-info">
+             發布公告
+            </a>
+		</div>
+		<div class="col-md-2">
+			<a href="{% url 'control:admin' %}" class="btn btn-block btn-info">
+			 管理員首頁
+			</a>
+		</div>
+	</div>
+	{% for message in messages %}
+	<h3 class="text-success">公告 {{message}} 發布成功</h3>
+	<br>
+	{% endfor %}
+    <div class="row">
+        <div class="col-md-12">
+            <br>
+            <h3>已發布的公告</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            #
+                        </th>
+                        <th>
+                            標題
+                        </th>
+                        <th>
+                            檢視
+                        </th>
+                        <th>
+                            發布時間
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for i in post %}
+                    <tr class="{{number|setClass}}">
+                        <td>
+                            {{number|setNumber}}
+                        </td>
+                        <td>
+                            {{i.title}}
+                        </td>
+                        <td>
+                            <a href="{% url 'main:noticeDetail' i.id %}" target="_blank">檢視</a>
+                        </td>
+                        <td>
+                            {{i|getDate}}
+                            {{number|delOneNumber}}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

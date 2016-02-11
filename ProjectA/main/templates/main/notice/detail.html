@@ -1,0 +1,44 @@
+{% extends base_template_name %}
+{% load main %}
+{% load staticfiles %}
+
+{% block style %}
+{% endblock %}
+
+
+{% block main %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <!-- <div class="row">
+                <div class="col-md-10">
+                </div>
+                <div class="col-md-2">
+		            <a href="{% url 'main:notice' %}" class="btn btn-block btn-info">
+		             回所有公告
+		            </a>
+                </div>
+            </div> -->
+        
+            <h2>
+                {{notice.title}}
+            </h2>
+            <h5 class="text-right">
+                發布時間：{{notice|getDate}}
+            </h5>
+            <br>
+            {{notice.content|safe}}
+            <br>
+            <div class="row">
+	            <div class="col-md-10">
+	            </div>
+	            <div class="col-md-2">
+	            <button type="button" class="btn btn-block btn-warning" onclick="window.close()">
+	                關閉
+	            </button>
+	            </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

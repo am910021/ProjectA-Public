@@ -1,15 +1,15 @@
 from django import forms
 from shop.models import Brand, Category, Item
-from main.models import Setting
+from main.models import Setting, Notice
 
 class BrandForm(forms.ModelForm):
     name = forms.CharField(max_length=128)
-    name.widget.attrs.update({'class':'form-control required'})
+    name.widget.attrs.update({'class':'form-control'})
     description = forms.CharField(max_length=100)
     description.widget.attrs.update({'class':'form-control'})
     image = forms.ImageField(required=False)
     content = forms.CharField( widget=forms.Textarea )
-    content.widget.attrs.update({'class':'form-control required'})
+    content.widget.attrs.update({'class':'form-control'})
     isActive = forms.BooleanField(label=("啟用"), required=False)
     isActive.initial=True
     
@@ -47,13 +47,6 @@ class ItemForm(forms.ModelForm):
     introduction = forms.CharField( widget=forms.Textarea, label='介紹')
     ingredient = forms.CharField( widget=forms.Textarea, label='成份')
     manual = forms.CharField( widget=forms.Textarea, label='使用手冊')
-
-    isActive = forms.BooleanField(label='啟用商品', required=False)
-    isActive.initial=True
-    sp = forms.BooleanField(label='促銷商品', required=False)
-    sp.initial=False
-    new = forms.BooleanField(label='新上架商品', required=False)
-    new.initial=False
     
     """
     category = forms.ChoiceField(label=u'category')
@@ -72,3 +65,11 @@ class ItemForm(forms.ModelForm):
         return cost
 
         
+class PostForm(forms.ModelForm):
+    title = forms.CharField(max_length=128)
+    title.widget.attrs.update({'class':'form-control'})
+    content = forms.CharField(widget=forms.Textarea)
+    
+    class Meta:
+        model = Notice
+        exclude = ('date',)

@@ -1,4 +1,5 @@
 {% extends base_template_name %}
+{% load main %}
 {% load staticfiles %}
 {% block style %}
 <style>
@@ -21,10 +22,15 @@ height:auto;
 height:450px;
 margin-bottom:20px;
 }
-
+    
 #Picture-turns{
 margin-top:5px;
+}
 
+#notice{
+list-style:none;
+padding-left: 5px;
+padding-top: 5px;
 }
 
 </style>
@@ -146,10 +152,18 @@ margin-top:5px;
 		<div class="container">
 			<div class="row">
 				<div class="col-md-4">
-					<div style="border: 1px solid #ddd;border-radius: 4px">
-						<div style="height:20px;background-color:#ddd"> 公告 </div>
-						<div class="caption" style="height:316.986px">
-							<br> {{news_list|safe}} </div>
+					<div style="border: 1px solid #ddd;border-radius: 4px;margin-bottom:15px;">
+						<div style="height:20px;background-color:#ddd;padding-left:5px"> 公告 </div>
+						<div class="caption" style="height:240px"> <!-- 316.986 -->
+				            <ul id="notice">
+				                {% for i in notice %}
+				                <li>
+				                    <a href="{% url 'main:noticeDetail' i.id %}" target="_blank">{{i|getMMDD}}{{i.title}}</a>
+				                </li>
+				                {% endfor %}
+				            </ul>
+				            <div class="text-right"><a href="{% url 'main:notice' %}">（所有公告...）</a></div>
+						</div>
 						</div>
 					</div>
           
@@ -206,9 +220,11 @@ margin-top:5px;
                         </div>
                         </div>
                     </div>
-                                        <div class="row">
+                    <div class="row">
                         <div class="col-md-12">
-                        <h5 class="text-right"><a class="btn" href="/sp/"> 查看其他促銷產品... </a><h6>
+                            <div class="text-right">
+                                <a class="btn" href="{% url 'main:deals' %}"> (查看其他促銷產品...) </a>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -5,6 +5,12 @@
 {% block style %}
 
 <script type="text/javascript">
+function nextStatus(id, status){
+    form = document.getElementById("nextStatus");
+    document.getElementById("groupID").value=id;
+    document.getElementById("setStatus").value=status;
+    form.submit();
+}
 </script>
 
 {% endblock %}
@@ -31,6 +37,13 @@
 			<h3 class="text-success">訂單編號： {{message}} 已成功移到 {{message.tags}}</h3>
 			{% endif %}
 			{% endfor %}
+			
+                <form id="nextStatus" method="post" action="{% url 'control:orderNone' %}">
+                {% csrf_token %}
+			    <input type="hidden" id="groupID" name="groupID" value="" readonly>
+			    <input type="hidden" id="setStatus" name="setStatus" value="" readonly>
+                </form>
+                
                 <table class="table">
                     <thead>
                         <tr>
@@ -85,10 +98,7 @@
                                 {{i|getDate}}
                             </td>
                             <td>
-                                <form method="post">
-                                {% csrf_token %}
                                 {{i|setNext|safe}}
-                                </form>
                                 {{number|delOneNumber}}
                             </td>
                         </tr>

@@ -24,6 +24,12 @@ def setMoney(data):
     money = str(data)
     return "{:,.0f}".format(locale.atoi(money))
 
+@register.filter(name='getImage')
+def getImage(data):
+    html = """<img src="https://dl.dropboxusercontent.com/s/{path}" class="list-img">"""
+    return html.format(path=data.image) if data.image!="" else "沒有圖片"
+
+
 @register.filter(name='getPayStatus')
 def getPayStatus(data):
     span="""<span class="{cls}">{text}</span>"""
@@ -36,9 +42,7 @@ def getPayStatus(data):
 @register.filter(name='setNext')
 def setNext(data):
     buttom="""
-    <input type="hidden" name="groupID" value="{id}" readonly>
-    <input type="hidden" name="setStatus" value="{status}" readonly>
-    <button type="button" onclick="this.form.action='{url}';this.form.submit();;">{text}</button>
+    <button type="button" onclick="nextStatus({id},{status})">{text}</button>
     """
     if data.status==0:
         text="移到處理中"
@@ -59,7 +63,7 @@ def getStatus(data):
     elif status==1:
         return "處理中"
     elif status==2:
-        return "已配送"
+        return "配送中"
     elif status==3:
         return "已完成"
     return data.status
@@ -68,3 +72,23 @@ def getStatus(data):
 def getDate(data):
     return str(datetime.datetime.strftime(data.date, '%Y-%m-%d %H:%M:%S'))
 
+@register.filter(name='getShelfStatus')
+def getShelfStatus(data):
+    span = """<span class="{cls}">{text}</span>"""
+    if data.inventory<=0:
+        return span.format(cls="text-danger", text="缺貨")
+    if not data.isActive:
+        return span.format(cls="text-danger", text="下架中")
+    return span.format(cls="text-success", text="正常")
+
+@register.filter(name='getDeals')
+def getDeals(data):
+    if data.sp:
+        return "是"
+    return "否"
+
+@register.filter(name='getNew')
+def getNew(data):
+    if data.new:
+        return "是"
+    return "否"

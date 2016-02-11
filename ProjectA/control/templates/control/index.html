@@ -57,7 +57,7 @@
 						<tbody>
 							<tr>
 								<td>
-									<a href="#">公告</a>
+									<a href="{% url 'control:notice' %}">公告管理</a>
 								</td>
 							</tr>
 							<tr>
@@ -81,9 +81,14 @@
                         <tbody>
                             <tr>
                                 <td>
+                                    <a href="/control/admin/">Pay2go交易狀態查詢</a>
+                                </td>
+                            </tr> 
+                            <tr>
+                                <td>
                                     <a href="/control/admin/">移除超時驗證帳號</a>
                                 </td>
-                            order</tr>  
+                            </tr>  
                             <tr>
                                 <td>
                                     <a href="/control/admin/">資料庫管理</a>
@@ -148,12 +153,17 @@
                             </tr>
                             <tr class="success">
                                 <td>
-                                    <a href="{% url 'control:configEmail' %}">Email設定</a>
+                                    <a href="{% url 'control:configEmail' %}">Email設定（必填）</a>
                                 </td>
                             </tr>
                             <tr class="info">
                                 <td>
-                                    <a href="{% url 'control:configPay2go' %}">Pay2Go 設定</a>
+                                    <a href="{% url 'control:configPay2go' %}">Pay2Go 設定（必填）</a>
+                                </td>
+                            </tr>
+                            <tr class="warning">
+                                <td>
+                                    <a href="">系統金鑰（必填）</a>
                                 </td>
                             </tr>
                         </tbody>

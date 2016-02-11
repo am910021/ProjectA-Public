@@ -2,10 +2,10 @@ from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 import datetime
-from main.models import Setting
+from main.models import Setting, Notice
 from main.views import BaseView, admin_required
 from main.dropbox import file_put2, file_delete
-from .forms import BrandForm, CategoryForm, ItemForm
+from .forms import BrandForm, CategoryForm, ItemForm, PostForm
 from shop.models import Brand, Category, Item
 from django.utils import timezone
 from account.models import GroupOrder
@@ -317,30 +317,20 @@ class ConfigPay2Go(AdminBase):
     
 class OrderView(AdminBase):
     template_name = 'control/order/list.html' # xxxx/xxx.html
+    s=("未處理","處理中","配送中","已完成")
 
     def get(self, request, *args, **kwargs):
         if 'status' not in kwargs or int(kwargs['status'])>4:
-            group = GroupOrder.objects.all()
-            kwargs['groups']=group
-            kwargs['number'] = list(range(len(group)))
+            group = GroupOrder.objects.filter(status__range=(0,2))
             kwargs['status']='0'
             self.page_title = "未完成訂單"
         else:
-            category = int(kwargs['status'])
-            group = GroupOrder.objects.filter(status=category)
-            kwargs['groups']=group
-            kwargs['number'] = list(range(len(group)))
+            status = int(kwargs['status'])
+            group = GroupOrder.objects.filter(status=status)
+            self.page_title = self.s[status]+"訂單"
             
-            if category==0:
-                self.page_title = "未處理訂單"
-            if category==1:
-                self.page_title = "處理中訂單"
-            if category==2:
-                self.page_title = "配送中訂單"
-            if category==3:
-                self.page_title = "已完成訂單"
-                
-        
+        kwargs['groups']=group
+        kwargs['number'] = list(range(len(group)))
         return super(OrderView, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
@@ -350,18 +340,36 @@ class OrderView(AdminBase):
             group = GroupOrder.objects.get(id=groupID)
             group.status=status
             group.save()
-            if status==0:
-                msg = "未處理"
-            elif status==1:
-                msg = "處理中"
-            elif status==2:
-                msg = "已配送"
-            elif status==3:
-                msg = "已完成"
+            msg = self.s[status]
             messages.add_message(request, 50, group.number, extra_tags=msg)    
         except Exception as e:
             print(e)
-        
         return redirect(reverse('control:order', args=(status-1,)))
     
+class NoticeView(AdminBase):
+    template_name = 'control/notice/notice.html' # xxxx/xxx.html
+    page_title = '公告管理' # title
+
+    def get(self, request, *args, **kwargs):
+        post = Notice.objects.all().order_by("-date")
+        kwargs['post'] = post
+        kwargs['number'] = list(range(len(post)))
+        return super(NoticeView, self).get(request, *args, **kwargs)
     
+class NoticePost(AdminBase):
+    template_name = 'control/notice/post.html' # xxxx/xxx.html
+    page_title = '發布公告' # title
+
+    def get(self, request, *args, **kwargs):
+        kwargs['form'] = PostForm()
+        return super(NoticePost, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        form = PostForm(request.POST)
+        if not form.is_valid():
+            kwargs['form'] = form
+            return super(NoticePost, self).post(request, *args, **kwargs)
+        
+        form.save()
+        messages.success(request, request.POST.get('title'))
+        return redirect(reverse('control:notice'))

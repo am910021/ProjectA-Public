@@ -4,7 +4,7 @@ from control.views import CAdminIndex, redirectAdminIndex, CAdminSignIn, VConfig
 from .views import CBrand, CBrandAdd, CBrandEdit, CBrandPreview
 from .views import CCategory, CCategoryAdd, CCategoryEdit
 from .views import ItemManage, ItemAdd, ItemEdit, ItemPreview
-from .views import OrderView
+from .views import OrderView, NoticePost, NoticeView
 
 
 urlpatterns = [
@@ -13,6 +13,9 @@ urlpatterns = [
     url(r'^config/$', VConfig.as_view(), name='config'),
     url(r'^config/email/$', ConfigEmail.as_view(), name='configEmail'),
     url(r'^config/pay2go/$', ConfigPay2Go.as_view(), name='configPay2go'),
+    
+    url(r'^notice/$', NoticeView.as_view(),name="notice"),
+    url(r'^notice/post/$', NoticePost.as_view(),name="noticePost"),
     
     url(r'^brand/$', CBrand.as_view(), name='brand'),
     url(r'^brandadd/$', CBrandAdd.as_view(), name='brandAdd'),

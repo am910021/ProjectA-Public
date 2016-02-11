@@ -1,5 +1,5 @@
 {% extends base_template_name %}
-{% load control %}
+{% load control2 %}
 {% load staticfiles %}
 
 {% block style %}
@@ -61,55 +61,68 @@
                         <th>
                             說明
                         </th>
-                        <th style="width:4%;vertical-align: middle;">
+                        <th style="width:5%;vertical-align: middle;">
                             品牌
                         </th>
-                        <th style="width:4%;vertical-align: middle;">
+                        <th style="width:5%;vertical-align: middle;">
                             類別
                         </th>
-                        <th style="width:4%;vertical-align: middle;">
+                        <th style="width:5%;vertical-align: middle;">
                             預覽
                         </th>
-                        <th style="width:4%;vertical-align: middle;">
+                        <th style="width:5%;vertical-align: middle;">
                             修改
                         </th>
+                        <th style="width:5%;vertical-align: middle;">
+                            貨架
+                        </th>
                         <th style="width:4%;vertical-align: middle;">
-                            狀態
+                            促銷
+                        </th>
+                        <th style="width:4%;vertical-align: middle;">
+                            新品
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                {% for i in number %}
-                    <tr class="{{i|setClass}}">
+                {% for i in item %}
+                    <tr class="{{number|setClass}}">
                         <td>
-                            {{i|getID:item}}
+                            {{i.id}}
                         </td>
                         <td>
-                            {{i|getImage:item|safe}}
+                            {{i|getImage|safe}}
                         </td>
                         <td>
-                            {{i|getName:item}}
+                            {{i.name}}
                         </td>
                         <td>
-                            {{i|getCost:item}}
+                            {{i.cost|setMoney}}
                         </td>
                         <td>
-                            {{i|getIntro:item}}
+                            {{i.intro}}
                         </td>
                         <td>
-                            {{i|getItemBrand:item}}
+                            {{i.category.brand.name}}
                         </td>
                         <td>
-                            {{i|getCategory:item}}
+                            {{i.category.name}}
                         </td>
                         <td>
-                            <a href="{% url 'control:itemPreview' i|getID:item %}" target="_blank">預覽</a>
+                            <a href="{% url 'control:itemPreview' i.id %}" target="_blank">預覽</a>
                         </td>
                         <td>
-                            <a href="{% url 'control:itemEdit' i|getID:item %}">修改</a>
+                            <a href="{% url 'control:itemEdit' i.id %}">修改</a>
                         </td>
                         <td>
-                            {{i|getStatus:item|safe}}
+                            {{i|getShelfStatus|safe}}
+                        </td>
+                        <td>
+                            {{i|getDeals}}
+                        </td>
+                        <td>
+                            {{i|getNew}}
+                            {{number|delOneNumber}}
                         </td>
                     </tr>
 
