@@ -100,41 +100,48 @@ padding-top: 5px;
 		
             <div class="carousel slide" id="carousel-209253">
                 <ol class="carousel-indicators">
-                    {% if first %}
-                    <li class="active" data-slide-to="0" data-target="#carousel-209253"></li>
-                    {% for i in number %}
-                    <li data-slide-to="{{i}}" data-target="#carousel-209253"></li>
-                    {% endfor %}
-                    {% endif %}
+                    <li class="active" data-slide-to="0" data-target="#carousel-209253">
+                    </li>
+                    <li data-slide-to="1" data-target="#carousel-209253">
+                    </li>
+                    <li data-slide-to="2" data-target="#carousel-209253">
+                    </li>
                 </ol>
                 <div class="carousel-inner">
-                {% if first %}
                     <div class="item active">
-                        <img alt="{{first.name}}" src="first.image|getImageUrl" />
+                        <img alt="Carousel Bootstrap First" src="http://lorempixel.com/image_output/technics-q-c-1600-500-3.jpg" />
                         <div class="carousel-caption">
                             <h4>
-                                {{first.name}}
+                                First Thumbnail label
                             </h4>
-                            <!-- <p>
+                            <p>
                                 Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.
-                            </p> -->
+                            </p>
                         </div>
                     </div>
                     
-                    {% for i in new %}
-                    <div class="item active">
-                        <img alt="{{i.name}}" src="{{i.image|getImageUrl}}" />
+                    <div class="item">
+                        <img alt="Carousel Bootstrap Second" src="http://lorempixel.com/image_output/technics-q-c-1600-500-2.jpg" />
                         <div class="carousel-caption">
                             <h4>
-                                {{i.name}}
+                                Second Thumbnail label
                             </h4>
-                            <!-- <p>
+                            <p>
                                 Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.
-                            </p> -->
+                            </p>
                         </div>
                     </div>
-                    {% endfor %}
-                {% endif %}
+                    <div class="item">
+                        <img alt="Carousel Bootstrap Third" src="http://lorempixel.com/image_output/technics-q-c-1600-500-4.jpg" />
+                        <div class="carousel-caption">
+                            <h4>
+                                Third Thumbnail label
+                            </h4>
+                            <p>
+                                Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.
+                            </p>
+                        </div>
+                    </div>
                 </div> <a class="left carousel-control" href="#carousel-209253" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a> <a class="right carousel-control" href="#carousel-209253" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
             </div>
             

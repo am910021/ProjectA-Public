@@ -68,13 +68,29 @@ class UserBase(LoginRequiredMixin,BaseView):
 
 
 class IndexView(BaseView):
-    template_name = 'main/index.html'
+    template_name = 'main/index2.html'
     page_title = '首頁'
     
     def get(self, request, *args, **kwargs):
-        notice = Notice.objects.all().order_by("-date")
-        kwargs['notice'] = notice[:10]
-        kwargs['number'] = list(range(len(notice)))
+        try:
+            notice = Notice.objects.all().order_by("-date")
+            kwargs['notice'] = notice[:10]
+        except Exception as e:
+            print(e)
+            
+        try:
+            deals = Item.objects.filter(sp=True, isActive=True)
+            kwargs['deals'] = deals[:3]
+        except Exception as e:
+            print(e)
+        
+        try:
+            new = Item.objects.filter(new=True, isActive=True)
+            kwargs['first'] = new[0]
+            kwargs['new'] = new[1:5]
+            kwargs['number'] = list(range(len(new[1:5])))
+        except Exception as e:
+            print(e)
         return super(IndexView, self).get(request, *args, **kwargs)
     
 class NoticeView(BaseView):
