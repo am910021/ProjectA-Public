@@ -51,13 +51,13 @@ def setup():
     from shop.models import Brand, Category, Item
     try:
         Setting.objects.get_or_create(name="key",c1=createCode(32))
-        Setting.objects.get_or_create(name="category")
+        Setting.objects.get_or_create(name="category", isActive=True)
         Setting.objects.get_or_create(name="gmailAccount")
         Setting.objects.get_or_create(name="pay2go", c4="True")
-        brand = Brand.objects.create(name="未分類",
+        brand = Brand.objects.get_or_create(name="未分類",
                                     description="未分類",
                                     content="未分類", isActive=True)
-        Category.objects.create(name="未分類",
+        Category.objects.get_or_create(name="未分類",
                                     description="未分類",
                                     isActive=True, brand=brand)
         print(bcolors.OKBLUE + "\n 設定成功。 \n \n" + bcolors.ENDC)
