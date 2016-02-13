@@ -1,10 +1,5 @@
+dj-database-url==0.3.0
+dj-static==0.0.6
 django-toolbelt
-dropbox==5.2.1
-gunicorn==19.3.0
-psycopg2==2.6.1
-pycrypto==2.6.1
-requests==2.9.1
-six==1.10.0
-static3==0.6.1
-urllib3==1.14
-wheel==0.24.0
+dropbox
+pycrypto
