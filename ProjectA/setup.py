@@ -49,24 +49,19 @@ def setup():
     django.setup()
     from main.models import Setting
     from shop.models import Brand, Category, Item
-    try:
-        Setting.objects.get_or_create(name="key",c1=createCode(32))
-        Setting.objects.get_or_create(name="category", isActive=True)
-        Setting.objects.get_or_create(name="gmailAccount")
-        Setting.objects.get_or_create(name="pay2go", c4="True")
-        brand = Brand.objects.get_or_create(name="未分類",
+
+    Setting.objects.get_or_create(name="key",c1=createCode(32))
+    Setting.objects.get_or_create(name="category", isActive=True)
+    Setting.objects.get_or_create(name="gmailAccount")
+    Setting.objects.get_or_create(name="pay2go", c4="True")
+    brand = Brand.objects.create(name="未分類",
                                     description="未分類",
                                     content="未分類", isActive=True)
-        Category.objects.get_or_create(name="未分類",
+    Category.objects.create(name="未分類",
                                     description="未分類",
                                     isActive=True, brand=brand)
-        print(bcolors.OKBLUE + "\n 設定成功。 \n \n" + bcolors.ENDC)
-    except Exception as e:
-        s = str(e)
-        print(bcolors.FAIL + "\n\n取消設定。 \n"  + bcolors.ENDC)
-        print(e)
-        if """does not exist""" in s:
-            print(bcolors.FAIL + "資料庫有問題，請檢查。 \n"  + bcolors.ENDC)
+    print(bcolors.OKBLUE + "\n 設定成功。 \n \n" + bcolors.ENDC)
+
 
 
 if __name__ == '__main__':
