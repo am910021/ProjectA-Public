@@ -1,3 +1,4 @@
+import random
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.contrib import messages
@@ -201,7 +202,7 @@ class ItemAdd(AdminBase):
         if 'image' in request.FILES:
             item.image = file_put2(request.FILES['image'], item.id, 'item')
         if 'image2' in request.FILES:
-            item.image = file_put2(request.FILES['image2'], item.id, 'item2')
+            item.image2 = file_put2(request.FILES['image2'], item.id, 'item2')
         item.save()
             
         
@@ -234,9 +235,13 @@ class ItemEdit(AdminBase):
             return super(ItemEdit, self).post(request, *args, **kwargs)
         item = form.save()
         if 'image' in request.FILES:
-            item.image = file_put2(request.FILES['image'], item.id, "item")
+            if item.image!="":
+                file_delete(item.image.split("/")[1],"item")
+            item.image = file_put2(request.FILES['image'], item.id, 'item')
         if 'image2' in request.FILES:
-            item.image = file_put2(request.FILES['image2'], item.id, "item2")
+            if item.image2!="":
+                file_delete(item.image2.split("/")[1],"item2")
+            item.image2 = file_put2(request.FILES['image2'], item.id, 'item2')
         item.save()
         messages.success(request, '商品：'+request.POST.get('name')+"已更新成功")        
         return redirect(reverse('control:item'))
@@ -314,6 +319,23 @@ class ConfigPay2Go(AdminBase):
         pay2go.save()
         messages.success(request, '設定成功')
         return redirect(reverse('control:configPay2go'))
+    
+class ConfigKey(AdminBase):
+    template_name = 'control/config/key.html' # xxxx/xxx.html
+    page_title = '系統金鑰設定' # title
+
+    def get(self, request, *args, **kwargs):
+        key = Setting.objects.get(name="key")
+        kwargs['data'] = (key.c1, key.time)
+        return super(ConfigKey, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        form = request.POST
+        key = Setting.objects.get(name="key")
+        key.c1=form.get('key') if form.get('key')!="" else self.createCode(30)
+        key.save()
+        messages.success(request, '設定成功')
+        return redirect(reverse('control:configKey'))
     
 class OrderView(AdminBase):
     template_name = 'control/order/list.html' # xxxx/xxx.html

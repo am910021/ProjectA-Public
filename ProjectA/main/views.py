@@ -68,7 +68,7 @@ class UserBase(LoginRequiredMixin,BaseView):
 
 
 class IndexView(BaseView):
-    template_name = 'main/index2.html'
+    template_name = 'main/index.html'
     page_title = '首頁'
     
     def get(self, request, *args, **kwargs):
@@ -80,15 +80,16 @@ class IndexView(BaseView):
             
         try:
             deals = Item.objects.filter(sp=True, isActive=True)
-            kwargs['deals'] = deals[:3]
+            kwargs['deals'] = deals[:4]
         except Exception as e:
             print(e)
         
         try:
+            #print('aa')
             new = Item.objects.filter(new=True, isActive=True)
-            kwargs['first'] = new[0]
-            kwargs['new'] = new[1:5]
-            kwargs['number'] = list(range(len(new[1:5])))
+            kwargs['new'] = new
+            kwargs['number'] = list(range(len(new)))
+            kwargs['number2'] = list(range(len(new)))
         except Exception as e:
             print(e)
         return super(IndexView, self).get(request, *args, **kwargs)

@@ -39,7 +39,7 @@ class Item(models.Model):
     manual = models.TextField(blank=True)
     isActive = models.BooleanField(default=True)
     sp = models.BooleanField(default=False)
-    new = models.BooleanField(default=True)
+    new = models.BooleanField(default=False)
     time = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):

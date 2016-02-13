@@ -3,15 +3,14 @@ import base64
 import hashlib
 from Crypto import Random
 from Crypto.Cipher import AES
-
-def getKey():
-    return "8GcJ_eJjD&Q7qSGVjG6E=Rz8qX$3&R$e"
-
+from .models import Setting
 
 class AESCipher(object):
     
     def __init__(self):
-        key = getKey()
+        set = Setting.objects.get(name="key")
+        key = set.c1
+        print("key: "+key)
         self.bs = 32
         self.key = hashlib.sha256(AESCipher.str_to_bytes(key)).digest()
         

@@ -1,2 +1,3 @@
 eclipse.preferences.version=1
-encoding//pyaes/aescipher.py=utf-8
+encoding//account/views.py=utf-8
+encoding//main/aescipher.py=utf-8

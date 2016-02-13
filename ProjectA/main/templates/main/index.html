@@ -1,5 +1,6 @@
 {% extends base_template_name %}
 {% load main %}
+{% load index %}
 {% load staticfiles %}
 {% block style %}
 <style>
@@ -19,7 +20,7 @@ width:600px;
 height:auto;
 }
 .promotion{
-height:450px;
+//height:450px;
 margin-bottom:20px;
 }
     
@@ -33,6 +34,12 @@ padding-left: 5px;
 padding-top: 5px;
 }
 
+.carousel-indicators .active {
+    width: 12px;
+    height: 12px;
+    margin: 0;
+    background-color: #31708f;
+}
 </style>
 {% endblock %}
 {% block main %}
@@ -97,33 +104,19 @@ padding-top: 5px;
 <div class="row">
 	<div class="container">
 		<div id="Picture-turns">
-		
             <div class="carousel slide" id="carousel-209253">
                 <ol class="carousel-indicators">
-                    {% if first %}
-                    <li class="active" data-slide-to="0" data-target="#carousel-209253"></li>
-                    {% for i in number %}
-                    <li data-slide-to="{{i}}" data-target="#carousel-209253"></li>
-                    {% endfor %}
-                    {% endif %}
+                {% for i in new %}
+                    <li class="{{number|setClass}}" data-slide-to="{{number|setNumber}}" data-target="#carousel-209253" style="border: 2px solid #31708f;">
+                    </li>
+                    {{number|delOneNumber}}
+                {% endfor %}
                 </ol>
                 <div class="carousel-inner">
-                {% if first %}
-                    <div class="item active">
-                        <img alt="{{first.name}}" src="first.image|getImageUrl" />
-                        <div class="carousel-caption">
-                            <h4>
-                                {{first.name}}
-                            </h4>
-                            <!-- <p>
-                                Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.
-                            </p> -->
-                        </div>
-                    </div>
-                    
-                    {% for i in new %}
-                    <div class="item active">
-                        <img alt="{{i.name}}" src="{{i.image|getImageUrl}}" />
+                
+                {% for i in new %}
+                    <div class="item {{number2|setClass}}">
+                        <img alt="{{i.name}}" src="{{i.image2|getImageUrl}}" />
                         <div class="carousel-caption">
                             <h4>
                                 {{i.name}}
@@ -133,8 +126,10 @@ padding-top: 5px;
                             </p> -->
                         </div>
                     </div>
-                    {% endfor %}
-                {% endif %}
+                    {{number2|delOneNumber}}
+                 {% endfor %}   
+
+                    
                 </div> <a class="left carousel-control" href="#carousel-209253" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a> <a class="right carousel-control" href="#carousel-209253" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
             </div>
             
@@ -163,73 +158,23 @@ padding-top: 5px;
           
           <div class="col-md-8">
                     <div class="row">
-                        {% if deals.0 %}
-                        <div class="col-md-6 promotion">
-	                        <div class="thumbnail">
-	                            <a href="{% url 'shop:item' deals.0.id %}"> 
-	                                <img class="promotion-img" alt="{{deals.0.name}}" src="{{deals.0.image|getImageUrl}}" />
-	                            </a>
-	                            <div class="caption">
-	                                <h3>{{deals.0.name}}</h3>
-	                                <!-- <p > {{sp.0.2}} </p> -->
-	                                <p>
-	                                    <a class="btn" href="{% url 'shop:item' deals.0.id %}"> 前往購物 </a>
-	                                </p>
-	                            </div>
-	                        </div>
-                        </div>
-                        {% endif %}
-                        {% if deals.1 %}
+                        {% for i in deals %}
                         <div class="col-md-6 promotion">
                             <div class="thumbnail">
-                                <a href="{% url 'shop:item' deals.1.id %}"> 
-                                    <img class="promotion-img" alt="{{deals.1.name}}" src="{{deals.1.image|getImageUrl}}" />
+                                <a href="{% url 'shop:item' i.id %}"> 
+                                    <img class="promotion-img" alt="{{i.name}}" src="{{i.image2|getImageUrl}}" />
                                 </a>
                                 <div class="caption">
-                                    <h3>{{deals.1.name}}</h3>
+                                    <h3>{{i.name}}</h3>
                                     <!-- <p > {{sp.0.2}} </p> -->
                                     <p>
-                                        <a class="btn" href="{% url 'shop:item' deals.1.id %}"> 前往購物 </a>
+                                        <a class="btn" href="{% url 'shop:item' i.id %}"> 前往購物 </a>
                                     </p>
                                 </div>
                             </div>
                         </div>
+                        {% endfor %}
                     </div>
-                    {% endif %}
-                    <div class="row">
-                    {% if deals.2 %}
-                        <div class="col-md-6 promotion">
-                            <div class="thumbnail">
-                                <a href="{% url 'shop:item' deals.2.id %}"> 
-                                    <img class="promotion-img" alt="{{deals.2.name}}" src="{{deals.2.image|getImageUrl}}" />
-                                </a>
-                                <div class="caption">
-                                    <h3>{{deals.2.name}}</h3>
-                                    <!-- <p > {{sp.0.2}} </p> -->
-                                    <p>
-                                        <a class="btn" href="{% url 'shop:item' deals.2.id %}"> 前往購物 </a>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        {% endif %}
-                        {% if deals.3 %}
-                        <div class="col-md-6 promotion">
-                            <div class="thumbnail">
-                                <a href="{% url 'shop:item' deals.3.id %}"> 
-                                    <img class="promotion-img" alt="{{deals.3.name}}" src="{{deals.3.image|getImageUrl}}" />
-                                </a>
-                                <div class="caption">
-                                    <h3>{{deals.3.name}}</h3>
-                                    <!-- <p > {{sp.0.2}} </p> -->
-                                    <p>
-                                        <a class="btn" href="{% url 'shop:item' deals.3.id %}"> 前往購物 </a>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
                     <div class="row">
                         <div class="col-md-12">
                             <div class="text-right">

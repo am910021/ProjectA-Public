@@ -48,9 +48,9 @@ def file_get2(saveName, number, content_type, size):
     file = dbx.files_get('/'+name)
 
 
-def file_delete(name):
+def file_delete(name, path):
     dbx = dropbox.Dropbox(token)
-    delFile = dbx.files_delete('/'+name)
+    delFile = dbx.files_delete('/'+path+"/"+name)
     print(delFile)
 
 
